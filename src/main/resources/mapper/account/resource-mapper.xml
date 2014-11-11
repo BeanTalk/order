@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- 资源数据访问映射 -->
-<mapper namespace="com.saituo.order.dao.account.ResourceDao" >
+<mapper namespace="com.saituo.order.dao.account.MenuDao" >
 
     <select id="get" resultType="hashmap">
         SELECT 
