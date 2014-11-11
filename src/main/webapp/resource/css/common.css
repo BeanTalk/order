@@ -1,0 +1,65 @@
+input[type=text]{
+	padding:5px;
+	
+}
+select{
+	padding:2px;
+	
+}
+.message{
+	padding:10px;
+	background-color:#eee;
+	border-bottom:1px solid #D6DFEA;
+	font-size:14px;
+	text-align:left;
+}
+.left {
+	text-align:left;
+}
+.right {
+	text-align:right;
+}
+.fl {
+	float:left;
+}
+.fr {
+	float:right;
+}
+.font14 {
+	font-size:14px;
+}
+.font16 {
+	font-size:16px;
+}
+.bgred {
+	color:#FFF;
+	background-color:#990000;
+}
+.fb {
+	font-weight:bold;
+}
+.fontred {
+	color:#FF0000;
+}
+.fontgray{
+	color:#ccc;
+	
+	
+}
+/*************************************/
+
+.odd {
+	background-color:#f7f7f7;
+}
+.even {
+	background-color:#FFF;
+}
+.selected {
+	background-color:#FFFFE6;
+}
+.mouseover {
+	background: #d9ebf5;
+	border-left: 1px solid #eef8ff;
+	border-bottom: 1px dotted #a8d8eb;
+}
+

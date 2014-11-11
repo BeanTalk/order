@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<jmxConfigurator />
+
+	<appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>%d [%t] %-5p [%c:%L] - %m%n</pattern>
+		</encoder>
+	</appender>
+	
+	<appender name="rollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>logs/base-framework.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>logs/base-framework-%d{yyyy-MM-dd}.log</fileNamePattern>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d [%t] %-5p [%c:%L] - %m%n</pattern>
+		</encoder>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy" />
+	</appender>
+
+	<!--log4jdbc -->
+	<logger name="jdbc.sqltiming" level="debug"/>
+	<logger name="com.ibatis" level="debug" />
+	<logger name="com.ibatis.common.jdbc.SimpleDataSource" level="debug" />
+	<logger name="com.ibatis.common.jdbc.ScriptRunner" level="debug" />
+	<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="debug" />
+	
+	<root level="info">
+		<appender-ref ref="console" />
+		<appender-ref ref="com.saituo.order" />
+		<appender-ref ref="com.ibatis" />
+		<appender-ref ref="rollingFile" />
+	</root>
+	
+</configuration>
