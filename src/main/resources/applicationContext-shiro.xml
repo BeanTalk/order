@@ -4,11 +4,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans.xsd ">
-	
+
 	<description>apache shiro 配置</description>
 
 	<!-- 自定义shiro的realm数据库身份验证 -->
-	<bean id="jdbcAuthenticationRealm" class="com.saituo.order.service.account.JdbcAuthenticationRealm">
+	<bean id="jdbcAuthenticationRealm"
+		class="com.saituo.order.service.account.JdbcAuthenticationRealm">
 		<property name="name" value="jdbcAuthentication" />
 		<property name="credentialsMatcher">
 			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
@@ -24,41 +25,46 @@
 		<property name="authenticationCacheName" value="shiroAuthenticationCache" />
 	</bean>
 
-	<!-- shiro 的缓存管理,使用spring的ehCacheManagerFactory,
-		  操作spring缓存工厂来及时更新shiro的缓存管理
-		 ehCacheManagerFactory对象在applicationContext-core.xml中配置 -->
-	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-		<property name="cacheManager" ref="ehCacheManagerFactory" />
-	</bean>
-    
 	<!-- 使用默认的WebSecurityManager -->
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="sessionManager" ref="sessionManager" />
 		<!-- realm认证和授权,从数据库读取资源 -->
 		<property name="realm" ref="jdbcAuthenticationRealm" />
 		<!-- cacheManager,集合spring缓存工厂 -->
 		<property name="cacheManager" ref="cacheManager" />
-		<!-- 记住我，当用户登录后 30 天不在登录，但执行某些动作时，需要再次认证-->
-		<!--
-			<property name="rememberMeManager">
-				<bean class="org.apache.shiro.web.mgt.CookieRememberMeManager">
-					<property name="cookie">
-						<bean class="org.apache.shiro.web.servlet.SimpleCookie">
-							<constructor-arg name="name" value="base-framework-cookie" />
-							<property name="maxAge" value="2592000"/>
-						</bean>
-					</property>
-				</bean>
-			</property>
-			-->
+		<!-- 记住我，当用户登录后 30 天不在登录，但执行某些动作时，需要再次认证 -->
+		<!-- <property name="rememberMeManager"> <bean class="org.apache.shiro.web.mgt.CookieRememberMeManager"> 
+			<property name="cookie"> <bean class="org.apache.shiro.web.servlet.SimpleCookie"> 
+			<constructor-arg name="name" value="base-framework-cookie" /> <property name="maxAge" 
+			value="2592000"/> </bean> </property> </bean> </property> -->
 	</bean>
 
-	<bean id="filterChainDefinitionMap" class="com.saituo.order.service.account.ChainDefinitionSectionMetaSource">
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="globalSessionTimeout" value="3600000" />
+		<property name="sessionDAO" ref="sessionDAO" />
+	</bean>
+
+	<bean id="sessionDAO"
+		class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+		<property name="activeSessionsCacheName" value="shiro-activeSessionCache" />
+		<property name="cacheManager" ref="cacheManager" />
+	</bean>
+
+	<!-- shiro 的缓存管理,使用spring的ehCacheManagerFactory, 操作spring缓存工厂来及时更新shiro的缓存管理 
+		ehCacheManagerFactory对象在applicationContext-core.xml中配置 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManager" ref="ehCacheManagerFactory" />
+	</bean>
+
+	<bean id="filterChainDefinitionMap"
+		class="com.saituo.order.service.account.ChainDefinitionSectionMetaSource">
 		<!-- 默认的连接配置 -->
 		<property name="filterChainDefinitions">
 			<value>
-                /login = captchaAuthc
-                /logout = logout
-                /order/** = authc
+				/login = captchaAuthc
+				/logout = logout
+				/order/** = authc
 			</value>
 		</property>
 	</bean>
@@ -72,7 +78,7 @@
 		</property>
 		<!-- shiro的核心安全接口 -->
 		<property name="securityManager" ref="securityManager" />
-		<!-- 要求登录时的链接-->
+		<!-- 要求登录时的链接 -->
 		<property name="loginUrl" value="/login" />
 		<!-- 登陆成功后要跳转的连接 -->
 		<property name="successUrl" value="/order/user/list" />
@@ -81,5 +87,5 @@
 		<!-- shiro连接约束配置,在这里使用自定义的动态获取资源类 -->
 		<property name="filterChainDefinitionMap" ref="filterChainDefinitionMap" />
 	</bean>
-	
+
 </beans>

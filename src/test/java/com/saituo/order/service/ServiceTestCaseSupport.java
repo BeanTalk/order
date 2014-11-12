@@ -1,5 +1,10 @@
 package com.saituo.order.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import javax.sql.DataSource;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,13 +15,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * 业务单元测试基类
@@ -24,7 +24,6 @@ import java.sql.SQLException;
  * @author maurice
  *
  */
-@ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/applicationContext-core.xml")
 public abstract class ServiceTestCaseSupport {
@@ -59,7 +58,7 @@ public abstract class ServiceTestCaseSupport {
 	 */
 	@Before
 	public void install() throws SQLException {
-		executeScript(dataSource.getConnection(), "classpath:data/cleanup-data.sql", "classpath:data/insert-data.sql");
+		//executeScript(dataSource.getConnection(), "classpath:data/cleanup-data.sql", "classpath:data/insert-data.sql");
 	}
 	
 	/**
