@@ -1,22 +1,3 @@
-<div class="container-fluid">
-	<div class="row">
-		<div class="col-sm-3 col-md-2 sidebar">
-			<ul class="nav nav-sidebar">
-                <li><a href="/c3/api/type/BUG_SR_TIME">BUG_SR</a></li>
-	            <li><a href="/c3/api/type/CLOSE_SR_TIME">CLOSE_SR</a></li>
-	            <li><a href="/c3/api/type/OPEN_SR_TIME">OPEN_SR</a></li>
-	            <li><a href="/c3/api/type/OUTSTANDING_SR_TIME">OUTSTANDING_SR</a></li>
-	            <li><a href="/c3/api/type/RMA_SR_TIME">RMA_SR</a></li>
-				<li><a href="/c3/api/type/SEVPCT_SR_TIME">SEVPCT_SR</a></li>
-				<li><a href="/c3/api/type/CMPLXPCT_SR_TIME">CMPLXPCT_SR</a></li>
-				<li><a href="/c3/api/type/TTR_SR_TIME">TTR_SR</a></li>
-				<li><a href="/c3/api/type/IST_SR_TIME">IST_SR</a></li>
-				<li><a href="/c3/api/type/FST_SR_TIME">FST_SR</a></li>
-				<li><a href="/c3/api/type/IRT_SR_TIME">IRT_SR</a></li>
-			</ul>
-		</div>
-		<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-			$!content
-		</div>
-	</div>
+<div class="containerPx clearfix">
+  $!content
 </div>

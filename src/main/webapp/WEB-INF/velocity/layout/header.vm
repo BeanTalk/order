@@ -1,13 +1,24 @@
- <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-	<div class="container-fluid">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-	        	<span class="sr-only">Toggle navigation</span>
-	        	<span class="icon-bar"></span>
-	        	<span class="icon-bar"></span>
-	        	<span class="icon-bar"></span>
-      		</button>
-      		<a class="navbar-brand" href="#">C3 KPI Analysis</a>
-    	</div>
-	</div>
+<div class="topBar">
+  <div class="container clearfix">
+    <div class="fr"><a href="login.html">免费注册</a>&nbsp;&nbsp;<a href="login.html">请登录</a></div>
+    <div class="fl">你好,客户1</div>
+  </div>
+</div>
+<div class="header">
+  <div class="container">
+    <div class="header_fr">
+      <ul class="topnav">
+        <li><a href="myOrders.html"><div class="fl icon icon_user"></div>个人中心</a></li>
+        <li><a href="cart.html"><div class="fl icon icon_cart"></div>购物车<span class="fontred">&nbsp;</span></a></li>
+      </ul>
+      <p><img src="#springUrl('/resource/images/hotfont.gif')"/></p>
+    </div>
+    <div class="schBox">
+      <input name="" type="text" class="sch_text"/>
+      <input name="" type="button"  class="sch_btn fb" value="搜索" onclick="window.location.href='schProduct.html'"/>
+    </div>
+    <div class="logoBar">
+      <div class="logo"></div>
+    </div>
+  </div>
 </div>

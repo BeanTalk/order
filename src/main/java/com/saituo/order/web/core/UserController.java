@@ -1,8 +1,7 @@
-package com.saituo.order.web.account;
+package com.saituo.order.web.core;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,7 +34,7 @@ import com.saituo.order.service.account.AccountService;
  */
 @Controller
 @SessionAttributes(SessionVariable.DEFAULT_SESSION_KEY)
-@RequestMapping("order/user")
+@RequestMapping("core/user")
 public class UserController {
 
 	@Autowired
@@ -43,14 +42,14 @@ public class UserController {
 
 	/**
 	 * 用户列表
-	 *
+	 * 
 	 * @param pageRequest
 	 *            分页请求实体
 	 * @param filter
 	 *            查询条件
 	 * @param model
 	 *            spring mvc 的 Model 接口，主要是将 http servlet request 的属性返回到页面中
-	 *
+	 * 
 	 * @return 响应页面:WEB-INF/page/account/user/list.html
 	 */
 	@RequestMapping("list")
@@ -62,21 +61,20 @@ public class UserController {
 
 	/**
 	 * 保存用户
-	 *
+	 * 
 	 * @param entity
 	 *            用户实体 Map
 	 * @param groupIds
 	 *            关联的组主键 ID 集合
 	 * @param redirectAttributes
 	 *            spring mvc 重定向属性
-	 *
+	 * 
 	 * @return 响应页面:WEB-INF/page/account/user/list.html
 	 */
 	@RequestMapping("save")
-	public String insert(@RequestParam Map<String, Object> entity, @RequestParam(required = false) List<Long> groupIds,
-			RedirectAttributes redirectAttributes) {
+	public String insert(@RequestParam Map<String, Object> entity, RedirectAttributes redirectAttributes) {
 
-		accountService.saveUser(entity, groupIds == null ? Lists.<Long> newArrayList() : groupIds);
+		accountService.saveUser(entity);
 		redirectAttributes.addFlashAttribute("success", "保存成功");
 
 		return "redirect:/account/user/list";
@@ -84,10 +82,10 @@ public class UserController {
 
 	/**
 	 * 判断登录帐号是否唯一
-	 *
+	 * 
 	 * @param username
 	 *            用户登录帐号
-	 *
+	 * 
 	 * @return true 表示唯一，否则 false
 	 */
 	@ResponseBody
@@ -98,15 +96,15 @@ public class UserController {
 
 	/**
 	 * 编辑用户，响应页面 WEB-INF/page/account/user/edit.html
-	 *
+	 * 
 	 * @param id
 	 *            主键id
 	 * @param model
 	 *            spring mvc 的 Model 接口，主要是将 http servlet request 的属性返回到页面中
-	 *
+	 * 
 	 */
 	@RequestMapping("edit")
-	public void edit(@RequestParam(required = false) Long id, Model model) {
+	public void edit(@RequestParam(required = false) String id, Model model) {
 
 		model.addAttribute("states", VariableUtils.getVariables(State.class, State.DELETE.getValue()));
 		model.addAttribute("groups", accountService.findGroups(new HashMap<String, Object>()));
@@ -116,18 +114,17 @@ public class UserController {
 
 		if (id != null) {
 			model.addAttribute("entity", accountService.getUser(id));
-			model.addAttribute("hasGroups", accountService.getUserGroups(id));
 		}
 
 	}
 
 	/**
 	 * 获取当前用户头像
-	 *
+	 * 
 	 * @throws java.io.IOException
-	 *
+	 * 
 	 * @return 用户头像的 byte 数组
-	 *
+	 * 
 	 */
 	@RequestMapping("get-portrait")
 	public ResponseEntity<byte[]> getCurrentUserPortrait(@RequestParam(required = false) String name)
@@ -145,13 +142,13 @@ public class UserController {
 
 	/**
 	 * 修改用户头像
-	 *
+	 * 
 	 * @param request
 	 *            HttpServletRequest http servlet request 对象，用于获取 FaustCplus
 	 *            上穿上来的头像
-	 *
+	 * 
 	 * @throws IOException
-	 *
+	 * 
 	 * @return 上传成功返回 json: {status:"success"}，否则抛出异常。
 	 */
 	@ResponseBody
@@ -170,12 +167,12 @@ public class UserController {
 
 	/**
 	 * 当前用户修改密码
-	 *
+	 * 
 	 * @param oldPassword
 	 *            旧密码
 	 * @param newPassword
 	 *            新密码
-	 *
+	 * 
 	 * @return 响应页面:系统首页
 	 */
 	@ResponseBody
@@ -196,12 +193,12 @@ public class UserController {
 
 	/**
 	 * 修改用户信息
-	 *
+	 * 
 	 * @param entity
 	 *            用户实体 Map
-	 *
+	 * 
 	 * @throws IOException
-	 *
+	 * 
 	 * @return 修改后的用户实体 json
 	 */
 	@ResponseBody
@@ -209,7 +206,7 @@ public class UserController {
 	public Map<String, Object> updateProfile(@RequestParam Map<String, Object> entity) throws IOException {
 		Map<String, Object> user = SessionVariable.getCurrentSessionVariable().getUser();
 		user.putAll(entity);
-		accountService.saveUser(user, null);
+		accountService.saveUser(user);
 		SessionVariable.getCurrentSessionVariable().setUser(user);
 		entity.put("message", "修改个人信息成功过");
 		return entity;

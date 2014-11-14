@@ -12,10 +12,10 @@ public class OrderCacheService {
 
 	private static final String SYS_CACHE = "orderBussionss";
 
-	private static final String ROLES = "roles";
-	private static final String PERMISSIONS = "perms";
-	private static final String GROUPS = "group";
-	private static final String USER = "user";
+//	private static final String ROLES = "roles";
+//	private static final String PERMISSIONS = "perms";
+//	private static final String GROUPS = "group";
+//	private static final String USER = "user";
 
 	@Autowired
 	private CacheManager cacheManager;

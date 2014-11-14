@@ -12,13 +12,11 @@ import java.util.Map;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.common.collect.Lists;
 import com.saituo.order.commons.enumeration.entity.State;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.service.ServiceException;
 import com.saituo.order.service.ServiceTestCaseSupport;
-import com.saituo.order.service.account.AccountService;
 
 /**
  * 用户业务逻辑测试类
@@ -30,18 +28,18 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 
 	@Test
 	public void testGetUser() {
-		Map<String, Object> user = accountService.getUser(5L);
+		Map<String, Object> user = accountService.getUser("5");
 
 		assertEquals(user.get("id"), 5L);
 		assertEquals(user.get("username"), "admin");
 
-		user = accountService.getUser(10L);
+		user = accountService.getUser("10");
 		assertNull(user);
 	}
 
 	@Test(expected = ServiceException.class)
 	public void testSaveUser() {
-		Map<String, Object> user = accountService.getUser(5L);
+		Map<String, Object> user = accountService.getUser("5");
 
 		user.put("username", "chenxiaobo");
 		user.put("email", "dci.maurice@gmail.com");
@@ -49,7 +47,7 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 
 		int before = countRowsInTable("tb_user");
 
-		accountService.saveUser(user, null);
+		accountService.saveUser(user);
 
 		int after = countRowsInTable("tb_user");
 
@@ -61,7 +59,7 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 
 		int beforeAssociation = countRowsInTable("tb_group_user");
 
-		accountService.saveUser(user, Lists.newArrayList(1L));
+		accountService.saveUser(user);
 
 		int afterAssociation = countRowsInTable("tb_group_user");
 
@@ -71,13 +69,13 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 		user.put("username", "chenxiaobo");
 		user.remove("id");
 
-		accountService.saveUser(user, null);
+		accountService.saveUser(user);
 
 	}
 
 	@Test
 	public void testUpdateUser() {
-		Map<String, Object> user = accountService.getUser(5L);
+		Map<String, Object> user = accountService.getUser("5");
 
 		String password = user.get("password").toString();
 		String username = user.get("username").toString();
@@ -86,9 +84,9 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 		user.put("nickname", "小苹果");
 		user.put("username", "chenxiaobo");
 
-		accountService.saveUser(user, Lists.newArrayList(1L));
+		accountService.saveUser(user);
 
-		user = accountService.getUser(5L);
+		user = accountService.getUser("5");
 
 		assertEquals(user.get("nickname"), "小苹果");
 		assertEquals(user.get("username"), username);
@@ -98,12 +96,10 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 
 	@Test(expected = ServiceException.class)
 	public void testUpdateUserPassword() {
-		Map<String, Object> user = accountService.getUser(5L);
+		Map<String, Object> user = accountService.getUser("5");
 
 		accountService.updateUserPassword(user, "123456", "admin");
-
-		user = accountService.getUser(5L);
-
+		user = accountService.getUser("5");
 		assertEquals(user.get("password"), "21232f297a57a5a743894a0e4a801fc3");
 
 		accountService.updateUserPassword(user, "admin", null);
@@ -113,12 +109,10 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 	@Test
 	public void testGetUserByUsernameOrEmail() {
 
-		Map<String, Object> user = accountService
-				.getUserByUsernameOrEmail("admin");
+		Map<String, Object> user = accountService.getUserByUsernameOrEmail("admin");
 		assertEquals(user.get("id"), 5L);
 
-		user = accountService
-				.getUserByUsernameOrEmail("administrator@baseframework.com");
+		user = accountService.getUserByUsernameOrEmail("administrator@baseframework.com");
 		assertEquals(user.get("id"), 5L);
 
 		user = accountService.getUserByUsernameOrEmail("XXXXX");
@@ -134,10 +128,8 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 
 	@Test
 	public void testIsEmailUnique() {
-		assertFalse(accountService
-				.isUserEmailUnique("administrator@baseframework.com"));
-		assertTrue(accountService
-				.isUserEmailUnique("maurice@baseframework.com"));
+		assertFalse(accountService.isUserEmailUnique("administrator@baseframework.com"));
+		assertTrue(accountService.isUserEmailUnique("maurice@baseframework.com"));
 	}
 
 	@Test
@@ -173,8 +165,7 @@ public class UserServiceTest extends ServiceTestCaseSupport {
 		filter.put("email", "admin");
 		filter.put("nickname", "超级");
 
-		Page<Map<String, Object>> page = accountService.findUsers(
-				new PageRequest(0, 2), filter);
+		Page<Map<String, Object>> page = accountService.findUsers(new PageRequest(0, 2), filter);
 
 		assertEquals(page.getTotalElements(), 1);
 		assertEquals(page.hasNext(), false);

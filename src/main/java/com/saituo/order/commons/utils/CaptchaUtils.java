@@ -137,7 +137,6 @@ public class CaptchaUtils {
 			itmp = Math.round(Math.random() * 9);
 			return String.valueOf(itmp);
 		}
-
 	}
 	
 }

@@ -1,25 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>$!page_title</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        
-        <!-- Core CSS - Include with every page -->
-        <link href="#springUrl('/resources/css/bootstrap.min.css')" rel="stylesheet" />
-        <link href="#springUrl('/resources/css/bootstrap-theme.css')" rel="stylesheet" />
-        <link href="#springUrl('/resources/font-awesome/css/font-awesome.css')" rel="stylesheet" />
-        <link href="#springUrl('/resources/css/c3.css')" rel="stylesheet" />
+		
+		<!-- Core css - Include with every page -->
+        <link href="#springUrl('/resource/css/style.css')" rel="stylesheet" type="text/css" />
+		<link href="#springUrl('/resource/css/reset.css')" rel="stylesheet" type="text/css" />
 		
 		<!-- Core Scripts - Include with every page -->
-        <script src="#springUrl('/resources/script/jquery-2.1.0.js')"></script>
-        <script src="#springUrl('/resources/script/bootstrap.min.js')"></script>
-        <script src="#springUrl('/resources/script/jquery.mCustomScrollbar.js')"></script>
-		<script src="http://code.highcharts.com/highcharts.js"></script>
-		<script src="http://code.highcharts.com/modules/exporting.js"></script>
+        <script type="text/javascript" src="#springUrl('/resource/js/jquery-1.8.2.js')"></script>
+        <script type="text/javascript" src="#springUrl('/resource/js/init.js')"></script>
+        <script type="text/javascript" src="#springUrl('/resource/js/jquery.ui.core.js')"></script>
+        <script type="text/javascript" src="#springUrl('/resource/js/jquery.ui.widget.js')"></script>
+        <script type="text/javascript" src="#springUrl('/resource/js/jquery.ui.datepicker.js')"></script>
     </head>
     <body>
         <header>#parse('/layout/header.vm')</header>
-        #parse('/layout/content.vm')
+		#parse('/layout/content.vm')
         <footer>#parse('/layout/footer.vm')</footer>
     </body>
 </html>
