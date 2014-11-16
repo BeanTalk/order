@@ -17,8 +17,8 @@ public class CustomerBeanTestUnit extends ServiceTestCaseSupport {
 		CustomerBean customerBean = new CustomerBean();
 		customerBean.setBean(200);
 		customerBean.setUserId("mine");
-		CustomerBean customerBeans = customerBeanDao.insert(customerBean);
-		System.out.println("id:" + customerBeans.getId());
+		customerBeanDao.insert(customerBean);
+		System.out.println("id:" + customerBean.getId());
 	}
 
 	// @Test

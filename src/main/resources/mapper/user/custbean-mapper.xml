@@ -5,7 +5,7 @@
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.user.CustomerBeanDao" >
 
-	<insert id="insert" parameterType="customerBean">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into st_cust_beans(
           id,
           cust_id,
