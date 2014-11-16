@@ -1,9 +1,9 @@
 package com.saituo.order.dao.account;
 
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 资源数据访问
@@ -48,7 +48,7 @@ public interface MenuDao {
 	 * 
 	 * @return 资源实体 Map 集合
 	 */
-	public List<Map<String, Object>> getUserResources(@Param("userId") String userId);
+	public List<Map<String, Object>> getUserMenus(@Param("userId") String userId);
 
 	/**
 	 * 统计资源数量

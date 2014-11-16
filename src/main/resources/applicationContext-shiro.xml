@@ -8,8 +8,7 @@
 	<description>apache shiro 配置</description>
 
 	<!-- 自定义shiro的realm数据库身份验证 -->
-	<bean id="jdbcAuthenticationRealm"
-		class="com.saituo.order.service.account.JdbcAuthenticationRealm">
+	<bean id="jdbcAuthenticationRealm" class="com.saituo.order.service.account.JdbcAuthenticationRealm">
 		<property name="name" value="jdbcAuthentication" />
 		<property name="credentialsMatcher">
 			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
@@ -24,14 +23,32 @@
 		<!-- 认证缓存名称 -->
 		<property name="authenticationCacheName" value="shiroAuthenticationCache" />
 	</bean>
+	
+	<!-- shiro 的缓存管理,使用spring的ehCacheManagerFactory, 操作spring缓存工厂来及时更新shiro的缓存管理 
+		ehCacheManagerFactory对象在applicationContext-core.xml中配置 -->
+	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManager" ref="ehCacheManagerFactory" />
+	</bean>
+
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
+		<property name="activeSessionsCacheName" value="shiro-activeSessionCache" />
+		<!-- 1115 <property name="cacheManager" ref="cacheManager" /> -->
+	</bean>
+	
+	<bean id="sessionManager"
+		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="globalSessionTimeout" value="3600000" />
+		<property name="sessionDAO" ref="sessionDAO" />
+	</bean>
 
 	<!-- 使用默认的WebSecurityManager -->
 	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
-		<property name="sessionManager" ref="sessionManager" />
 		<!-- realm认证和授权,从数据库读取资源 -->
 		<property name="realm" ref="jdbcAuthenticationRealm" />
 		<!-- cacheManager,集合spring缓存工厂 -->
 		<property name="cacheManager" ref="cacheManager" />
+		<!-- 考虑到集群，使用DefaultWebSessionManager来做sessionManager -->
+		<property name="sessionManager" ref="sessionManager" />
 		<!-- 记住我，当用户登录后 30 天不在登录，但执行某些动作时，需要再次认证 -->
 		<!-- <property name="rememberMeManager"> <bean class="org.apache.shiro.web.mgt.CookieRememberMeManager"> 
 			<property name="cookie"> <bean class="org.apache.shiro.web.servlet.SimpleCookie"> 
@@ -39,26 +56,7 @@
 			value="2592000"/> </bean> </property> </bean> </property> -->
 	</bean>
 
-	<bean id="sessionManager"
-		class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
-		<property name="globalSessionTimeout" value="3600000" />
-		<property name="sessionDAO" ref="sessionDAO" />
-	</bean>
-
-	<bean id="sessionDAO"
-		class="org.apache.shiro.session.mgt.eis.EnterpriseCacheSessionDAO">
-		<property name="activeSessionsCacheName" value="shiro-activeSessionCache" />
-		<property name="cacheManager" ref="cacheManager" />
-	</bean>
-
-	<!-- shiro 的缓存管理,使用spring的ehCacheManagerFactory, 操作spring缓存工厂来及时更新shiro的缓存管理 
-		ehCacheManagerFactory对象在applicationContext-core.xml中配置 -->
-	<bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
-		<property name="cacheManager" ref="ehCacheManagerFactory" />
-	</bean>
-
-	<bean id="filterChainDefinitionMap"
-		class="com.saituo.order.service.account.ChainDefinitionSectionMetaSource">
+	<bean id="filterChainDefinitionMap" class="com.saituo.order.service.account.ChainDefinitionSectionMetaSource">
 		<!-- 默认的连接配置 -->
 		<property name="filterChainDefinitions">
 			<value>
@@ -68,7 +66,7 @@
 			</value>
 		</property>
 	</bean>
-
+	
 	<!-- 将shiro与spring集合 -->
 	<bean id="shiroSecurityFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
 		<property name="filters">

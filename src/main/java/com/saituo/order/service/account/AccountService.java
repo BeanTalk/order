@@ -359,8 +359,8 @@ public class AccountService {
 	 * 
 	 * @return 资源实体 Map 集合
 	 */
-	public List<Map<String, Object>> getUserResources(String userId) {
-		return menuDao.getUserResources(userId);
+	public List<Map<String, Object>> getUserMenus(String userId) {
+		return menuDao.getUserMenus(userId);
 	}
 
 	/**
@@ -373,7 +373,7 @@ public class AccountService {
 	 * @return 合并好的树形资源实体 Map 集合
 	 */
 	public List<Map<String, Object>> mergeResources(List<Map<String, Object>> resources) {
-		return mergeResources(resources, null);
+		return mergeMenus(resources, null);
 	}
 
 	/**
@@ -387,7 +387,7 @@ public class AccountService {
 	 * 
 	 * @return 合并好的树形资源实体 Map 集合
 	 */
-	public List<Map<String, Object>> mergeResources(List<Map<String, Object>> resources, ResourceType ignoreType) {
+	public List<Map<String, Object>> mergeMenus(List<Map<String, Object>> resources, ResourceType ignoreType) {
 
 		List<Map<String, Object>> result = Lists.newArrayList();
 		for (Map<String, Object> entity : resources) {
@@ -396,7 +396,7 @@ public class AccountService {
 			Integer type = VariableUtils.typeCast(entity.get("type"));
 
 			if (parentId == null && (ignoreType == null || !ignoreType.getValue().equals(type))) {
-				recursionRessource(entity, resources, ignoreType);
+				recursionMenu(entity, resources, ignoreType);
 				result.add(entity);
 			}
 
@@ -415,7 +415,7 @@ public class AccountService {
 	 * @param ignoreType
 	 *            要忽略不合并的资源类型
 	 */
-	private void recursionRessource(Map<String, Object> parent, List<Map<String, Object>> resources,
+	private void recursionMenu(Map<String, Object> parent, List<Map<String, Object>> resources,
 			ResourceType ignoreType) {
 
 		parent.put("children", Lists.newArrayList());
@@ -430,7 +430,7 @@ public class AccountService {
 			String id = VariableUtils.typeCast(parent.get("id"));
 
 			if ((ignoreType == null || !ignoreType.getValue().equals(type)) && StringUtils.equals(parentId, id)) {
-				recursionRessource(entity, resources, ignoreType);
+				recursionMenu(entity, resources, ignoreType);
 				List<Map<String, Object>> children = VariableUtils.typeCast(parent.get("children"));
 				entity.put("parent", parent);
 				children.add(entity);

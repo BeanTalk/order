@@ -2,9 +2,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:context="http://www.springframework.org/schema/context"
-    xmlns:aop="http://www.springframework.org/schema/aop"
-    xmlns:tx="http://www.springframework.org/schema/tx"
-    xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans 
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context 
@@ -29,55 +29,58 @@
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
 	</context:component-scan>
 
-    <!-- map 验证的 bean -->
-    <bean id="mapValidationBeanFactory" class="net.coding.chenxiaobo.map.validation.spring.MapValidationBeanFactory" >
-        <property name="mapperLocations" value="classpath*:valid/**/*.xml" />
-    </bean>
+	<!-- map 验证的 bean -->
+	<!--
+		<bean id="mapValidationBeanFactory" class="net.coding.chenxiaobo.map.validation.spring.MapValidationBeanFactory" >
+			<property name="mapperLocations" value="classpath*:valid/**/*.xml" />
+		</bean>
+		-->
 
-    <!-- spring 对 ehcache 的缓存工厂支持 -->
-    <bean id="ehCacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
-        <property name="configLocation" value="classpath:ehcache.xml" />
-    </bean>
+	<!-- spring 对 ehcache 的缓存工厂支持 -->
+	<bean id="ehCacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation" value="classpath:ehcache.xml" />
+	</bean>
 
-    <!-- spring 对 ehcache 的缓存管理 -->
-    <bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
-        <property name="cacheManager" ref="ehCacheManagerFactory"></property>
-    </bean>
+	<!-- spring 对 ehcache 的缓存管理 -->
+	<bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+		<property name="cacheManager" ref="ehCacheManagerFactory"></property>
+	</bean>
 
-    <!-- 使用缓存 annotation 配置 -->
-    <cache:annotation-driven cache-manager="ehCacheManager" proxy-target-class="true" />
+	<!-- 使用缓存 annotation 配置 -->
+	<cache:annotation-driven cache-manager="ehCacheManager" proxy-target-class="true" />
 
-    <!-- 数据源配置 -->
-    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
-        <property name="url" value="${jdbc.url}" />
-        <property name="username" value="${jdbc.username}" />
-        <property name="password" value="${jdbc.password}" />
-        <property name="driverClassName" value="${jdbc.driver}" />
-        <property name="initialSize" value="${jdbc.initial.size}" />
-        <property name="minIdle" value="${jdbc.min.idle}" />
-        <property name="maxActive" value="${jdbc.max.active}" />
-        <property name="maxWait" value="60000" />
-        <property name="timeBetweenEvictionRunsMillis" value="60000" />
-        <property name="minEvictableIdleTimeMillis" value="300000" />
-    </bean>
+	<!-- 数据源配置 -->
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+		<property name="url" value="${jdbc.url}" />
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<property name="driverClassName" value="${jdbc.driver}" />
+		<property name="initialSize" value="${jdbc.initial.size}" />
+		<property name="minIdle" value="${jdbc.min.idle}" />
+		<property name="maxActive" value="${jdbc.max.active}" />
+		<property name="maxWait" value="60000" />
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+	</bean>
 
-    <!-- mybatis 配置 -->
-    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="dataSource" />
-        <property name="mapperLocations" value="classpath*:mapper/**/*.xml"/>
-    </bean>
+	<!-- mybatis 配置 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="typeAliasesPackage" value="com.saituo.order.entity" />
+		<property name="mapperLocations" value="classpath*:mapper/**/*.xml"/>
+	</bean>
 
-    <!-- mybatis 扫描 mapper 对应类的配置 -->
-    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.saituo.order.dao" />
-    </bean>
+	<!-- mybatis 扫描 mapper 对应类的配置 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.saituo.order.dao" />
+	</bean>
 
-    <!-- 事务配置 -->
-    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-        <property name="dataSource" ref="dataSource" />
-    </bean>
+	<!-- 事务配置 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
 
-    <!-- 使用 annotation 定义事务 -->
-    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
+	<!-- 使用 annotation 定义事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 
 </beans>

@@ -34,7 +34,7 @@ import com.saituo.order.service.account.AccountService;
  */
 @Controller
 @SessionAttributes(SessionVariable.DEFAULT_SESSION_KEY)
-@RequestMapping("core/user")
+@RequestMapping("order/user")
 public class UserController {
 
 	@Autowired
