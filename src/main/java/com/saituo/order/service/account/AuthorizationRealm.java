@@ -64,17 +64,17 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		}
 
 		Map<String, Object> currentUser = sv.getUser();
-		String id = VariableUtils.typeCast(currentUser.get("id"), String.class);
+		String userId = VariableUtils.typeCast(currentUser.get("id"));
 
 		// 加载用户资源信息
-		List<Map<String, Object>> authorizationInfo = accountService.getUserMenus(id);
+		List<Map<String, Object>> authorizationInfo = accountService.getUserMenus(userId);
 		List<Map<String, Object>> menuList = accountService.mergeMenus(authorizationInfo, ResourceType.SECURITY);
-		List<Map<String, Object>> roleList = accountService.getUserMenus(id);
+		List<String> roleList = accountService.getUserRoles(userId);
 
 		// 添加用户拥有的permission
 		addPermissions(info, authorizationInfo);
 		// 添加用户拥有的role
-		addRoles(info, roleList);
+		info.addRoles(roleList);
 
 		sv.setAuthorizationInfo(authorizationInfo);
 		sv.setMenusList(menuList);
@@ -116,32 +116,4 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		// 将当前用户拥有的permissions设置到SimpleAuthorizationInfo中
 		info.addStringPermissions(permissions);
 	}
-
-	/**
-	 * 通过角色集合，将集合中的 role 字段内容解析后添加到 SimpleAuthorizationInfo 授权信息中
-	 * 
-	 * @param info
-	 *            current userInfo
-	 * @param authorizationInfo
-	 *            roles
-	 */
-	private void addRoles(SimpleAuthorizationInfo info, List<Map<String, Object>> roleAuthorizationInfo) {
-
-		List<String> roleList = Lists.newArrayList();
-		// 解析当前用户所拥有的roles
-		for (Map<String, Object> m : roleAuthorizationInfo) {
-			Object roles = m.get("role");
-
-			if (roles == null || StringUtils.isEmpty(roles.toString())) {
-				continue;
-			}
-
-			for (String role : StringUtils.split(roles.toString(), ",")) {
-				roleList.add(role);
-			}
-		}
-		// 将当前用户拥有的role设置到SimpleAuthorizationInfo中
-		info.addRoles(roleList);
-	}
-
 }

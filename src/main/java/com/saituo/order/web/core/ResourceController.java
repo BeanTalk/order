@@ -26,6 +26,6 @@ public class ResourceController {
 	 */
 	@RequestMapping("list")
 	public List<Map<String, Object>> list() {
-		return accountService.mergeResources(accountService.getMenus());
+		return accountService.mergeMenus(accountService.getMenus());
 	}
 }

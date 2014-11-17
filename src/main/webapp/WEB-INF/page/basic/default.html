@@ -25,7 +25,15 @@
 </head>
 <body>
     <#include "header.html" />
-    <@body/>
+    <@shiro.notAuthenticated>
+		<@body/>
+	</@shiro.notAuthenticated>
+    <@shiro.user>
+    	<div class="containerPx clearfix">
+			<@body/>
+			<#include "navbar.html" />
+		</div>
+	</@shiro.user>
     <#if head?exists>
         <@head/>
     </#if>
@@ -34,10 +42,9 @@
 
 <#macro recursionMenu menu id=false>
     <#if menu.children?size gt 0>
-    <ul class="dropdown-menu">
-
+    <ul class="subnav-body">
         <#list menu.children as c>
-            <li <#if c.children?size gt 0>class="dropdown-submenu"</#if>>
+            <li <#if c.children?size gt 0>class="subnav-title"</#if>>
                 <a <#if id>id="${c.id}"</#if> href="<#if c.value?has_content>${base}/${c.value?substring(1,c.value?length - 3)}<#else>javascript:;</#if>">
                     <span class="${c.icon!'glyphicon glyphicon-file'}"> </span> ${c.name}
                 </a>

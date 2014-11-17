@@ -16,12 +16,12 @@ import javax.imageio.ImageIO;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
@@ -33,6 +33,7 @@ import com.saituo.order.commons.utils.HexPassword;
 import com.saituo.order.commons.valid.annotation.MapValid;
 import com.saituo.order.dao.account.GroupDao;
 import com.saituo.order.dao.account.MenuDao;
+import com.saituo.order.dao.account.RoleDao;
 import com.saituo.order.dao.account.UserDao;
 import com.saituo.order.service.ServiceException;
 
@@ -51,6 +52,9 @@ public class AccountService {
 
 	@Autowired
 	private MenuDao menuDao;
+
+	@Autowired
+	private RoleDao roleDao;
 
 	/**
 	 * 默认的用户上传头像的文件夹路径
@@ -372,7 +376,7 @@ public class AccountService {
 	 * 
 	 * @return 合并好的树形资源实体 Map 集合
 	 */
-	public List<Map<String, Object>> mergeResources(List<Map<String, Object>> resources) {
+	public List<Map<String, Object>> mergeMenus(List<Map<String, Object>> resources) {
 		return mergeMenus(resources, null);
 	}
 
@@ -392,16 +396,14 @@ public class AccountService {
 		List<Map<String, Object>> result = Lists.newArrayList();
 		for (Map<String, Object> entity : resources) {
 
-			Long parentId = VariableUtils.typeCast(entity.get("parent_id"));
-			Integer type = VariableUtils.typeCast(entity.get("type"));
+			String parentId = VariableUtils.typeCast(entity.get("parent_id"), String.class);
+			Integer type = VariableUtils.typeCast(entity.get("type"), Integer.class);
 
-			if (parentId == null && (ignoreType == null || !ignoreType.getValue().equals(type))) {
+			if (StringUtils.isEmpty(parentId) && (ignoreType == null || !ignoreType.getValue().equals(type))) {
 				recursionMenu(entity, resources, ignoreType);
 				result.add(entity);
 			}
-
 		}
-
 		return result;
 	}
 
@@ -415,19 +417,18 @@ public class AccountService {
 	 * @param ignoreType
 	 *            要忽略不合并的资源类型
 	 */
-	private void recursionMenu(Map<String, Object> parent, List<Map<String, Object>> resources,
-			ResourceType ignoreType) {
+	private void recursionMenu(Map<String, Object> parent, List<Map<String, Object>> resources, ResourceType ignoreType) {
 
 		parent.put("children", Lists.newArrayList());
 
 		for (Map<String, Object> entity : resources) {
 
-			String parentId = VariableUtils.typeCast(entity.get("parent_id"));
+			String parentId = VariableUtils.typeCast(entity.get("parent_id"), String.class);
 			if (StringUtils.isEmpty(parentId)) {
 				continue;
 			}
-			Integer type = VariableUtils.typeCast(entity.get("type"));
-			String id = VariableUtils.typeCast(parent.get("id"));
+			Integer type = VariableUtils.typeCast(entity.get("type"), Integer.class);
+			String id = VariableUtils.typeCast(parent.get("id"), String.class);
 
 			if ((ignoreType == null || !ignoreType.getValue().equals(type)) && StringUtils.equals(parentId, id)) {
 				recursionMenu(entity, resources, ignoreType);
@@ -436,5 +437,15 @@ public class AccountService {
 				children.add(entity);
 			}
 		}
+	}
+
+	/**
+	 * 获取所有权限
+	 * 
+	 * @return 资源实体 Map 集合
+	 * @return
+	 */
+	public List<String> getUserRoles(String userId) {
+		return roleDao.getUserRole(userId);
 	}
 }

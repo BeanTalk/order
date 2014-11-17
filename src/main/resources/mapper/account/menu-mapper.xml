@@ -15,25 +15,29 @@
           sort AS "sort",
           type AS "type",
           value AS "value",
-          fk_parent_id AS "fk_parent_id"
+          parent_id AS "parent_id"
         FROM
-          tb_resource
+          sys_menu
         WHERE
-          fk_parent_id = #{id}
+          parent_id = #{id}
     </select>
     
     <select id="getAll" resultType="hashmap">
         SELECT 
           id AS "id",
+          parent_id AS "parent_id",
           icon AS "icon",
           name AS "name",
           permission AS "permission",
-          remarks AS "remark",
           sort AS "sort",
-          href AS "value"
+          remarks AS "remark",
+          is_show AS "isShow",
+          href AS "value",
+          type AS "type"
         FROM
           sys_menu
         WHERE module = 2
+        AND del_flag = 0
         <if test="ignore != null and ignore.length > 0">
             AND id NOT IN
             <foreach collection="ignore" item="id" index="index" open="(" separator="," close=")" >
@@ -52,14 +56,14 @@
     <select id="getUserMenus" resultType="hashmap">       
       SELECT
 	    r.id AS "id",
-	    r.parent_id AS "parentId",
 	    r.icon AS "icon",
 	    r.name AS "name",
 	    r.permission AS "permission",
 	    r.sort AS "sort",
 	    r.is_show AS "isShow", 
-	    r.href AS "href",
-	    r.type AS "type"
+	    r.href AS "value",
+	    r.type AS "type",
+	    r.parent_id AS "parent_id"
       FROM
 	    sys_menu r
       LEFT JOIN
@@ -78,31 +82,8 @@
 	  	r.is_show = 1
 	  AND 
 	  	r.del_flag = 0
-      GROUP BY
-        r.id
       ORDER BY
         r.sort
-    </select>
-
-    <select id="getGroupResources" resultType="hashmap">
-        SELECT
-	    r.id AS "id",
-	    r.icon AS "icon",
-	    r.name AS "name",
-	    r.permission AS "permission",
-	    r.remark AS "remark",
-	    r.sort AS "sort",
-	    r.type AS "type",
-	    r.value AS "value",
-	    r.fk_parent_id AS "fk_parent_id"
-      FROM
-	    tb_resource r
-      LEFT JOIN
-	    tb_group_resource gr ON gr.fk_resource_id = r.id
-      LEFT JOIN
-	    tb_group g ON gr.fk_group_id = g.id
-	  WHERE
-	    g.id = #{groupId}
     </select>
 
 </mapper>
