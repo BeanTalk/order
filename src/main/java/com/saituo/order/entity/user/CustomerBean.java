@@ -1,6 +1,5 @@
 package com.saituo.order.entity.user;
 
-
 public class CustomerBean {
 
 	private Integer id;
@@ -8,6 +7,8 @@ public class CustomerBean {
 	private String userId;
 
 	private Integer bean;
+
+	private Integer flag;
 
 	public Integer getId() {
 		return id;
@@ -32,5 +33,15 @@ public class CustomerBean {
 	public void setBean(Integer bean) {
 		this.bean = bean;
 	}
+
+	public Integer getFlag() {
+		return flag;
+	}
+
+	public void setFlag(Integer flag) {
+		this.flag = flag;
+	}
+	
+	
 
 }

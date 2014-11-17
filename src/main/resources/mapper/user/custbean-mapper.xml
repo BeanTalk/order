@@ -16,5 +16,29 @@
           #{bean}
         )
 	</insert>
-
+	
+	<update id="modifiedCustomerBean">  
+        update st_cust_beans  
+		<trim prefix="set" suffixOverrides=",">  
+			<if test="bean != null">  
+                  beans_num = #{bean},  
+			</if>  
+			<if test="flag != null">  
+                   flag = #{flag},  
+			</if>
+		</trim>
+        where cust_id = #{userId}  
+	</update>  
+    
+	<select id="getCustomerBean" resultType="customerBean">  
+		select id, cust_id userId, beans_num bean, flag
+        from st_cust_beans
+        where cust_id = #{userId}  
+	</select> 
+	
+	<delete id="removedCustomerBean">
+		delete from st_cust_beans
+		where cust_id = #{userId}  	
+	</delete>
+			
 </mapper>
