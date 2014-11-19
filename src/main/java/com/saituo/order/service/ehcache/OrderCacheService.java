@@ -12,13 +12,13 @@ public class OrderCacheService {
 
 	private static final String SYS_CACHE = "orderBussionss";
 
-//	private static final String ROLES = "roles";
-//	private static final String PERMISSIONS = "perms";
-//	private static final String GROUPS = "group";
-//	private static final String USER = "user";
+	// private static final String ROLES = "roles";
+	// private static final String PERMISSIONS = "perms";
+	// private static final String GROUPS = "group";
+	// private static final String USER = "user";
 
 	@Autowired
-	private CacheManager cacheManager;
+	private CacheManager ehCacheManager;
 
 	public Object get(String key) {
 		return get(SYS_CACHE, key);
@@ -50,10 +50,10 @@ public class OrderCacheService {
 	 * 获得Cache，没有则创建
 	 */
 	private Cache getCache(String cacheName) {
-		Cache cache = cacheManager.getCache(cacheName);
+		Cache cache = ehCacheManager.getCache(cacheName);
 		if (cache == null) {
-			cacheManager.addCache(cacheName);
-			cache = cacheManager.getCache(cacheName);
+			ehCacheManager.addCache(cacheName);
+			cache = ehCacheManager.getCache(cacheName);
 			cache.getCacheConfiguration().setEternal(true);
 		}
 		return cache;

@@ -82,6 +82,8 @@
 	  	r.is_show = 1
 	  AND 
 	  	r.del_flag = 0
+	  GROUP BY
+	  	r.id
       ORDER BY
         r.sort
     </select>

@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * 用户数据访问
@@ -67,4 +69,24 @@ public interface UserDao {
 	 * @return 用户实体 Map集合
 	 */
 	public List<Map<String, Object>> find(@Param("filter") Map<String, Object> filter);
+
+	/**
+	 * 是否存在该用户
+	 * 
+	 * @param loginName
+	 * @param email
+	 * @return
+	 */
+	@Select("select count(*) from sys_user where email = #{email} and login_name = #{login_name}")
+	public int isExistsUser(@Param(value = "login_name") String loginName, @Param(value = "email") String email);
+
+	/**
+	 * 重设password 通过loginName
+	 * 
+	 * @param loginName
+	 * @param newpasswordHex
+	 */
+	@Update("update sys_user set password=#{newpasswordHex} where login_name = #{login_name}")
+	public void resetPassword(@Param(value = "login_name") String loginName,
+			@Param(value = "newpasswordHex") String newpasswordHex);
 }

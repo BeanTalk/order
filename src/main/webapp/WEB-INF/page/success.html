@@ -1,0 +1,15 @@
+<#include "*/basic/default.html"/>
+
+<#macro body>
+<div class="container clearfix">
+	<div class="banner"><img src="${base}/resource/images/pic01.jpg"></div>
+		<div>
+			<#if successinfo??>
+				${successinfo}
+			<#else>
+				操作成功!
+			</#if>
+		</div>
+	</div>
+</div>
+</#macro>

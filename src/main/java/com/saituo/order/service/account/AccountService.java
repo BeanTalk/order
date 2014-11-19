@@ -36,6 +36,7 @@ import com.saituo.order.dao.account.MenuDao;
 import com.saituo.order.dao.account.RoleDao;
 import com.saituo.order.dao.account.UserDao;
 import com.saituo.order.service.ServiceException;
+import com.saituo.order.service.cache.RedisCacheService;
 
 /**
  * 账户业务逻辑
@@ -55,6 +56,9 @@ public class AccountService {
 
 	@Autowired
 	private RoleDao roleDao;
+
+	@Autowired
+	private RedisCacheService redisCacheService;
 
 	/**
 	 * 默认的用户上传头像的文件夹路径
@@ -137,7 +141,7 @@ public class AccountService {
 	 * @param newPassword
 	 *            新imia
 	 */
-	@CacheEvict(value = "shiroAuthenticationCache", key = "#entity.get('username')")
+	@CacheEvict(value = "shiroAuthenticationCache", key = "#entity.get('loginName')")
 	public void updateUserPassword(Map<String, Object> entity, String oldPassword, String newPassword) {
 
 		String oldPasswordEntrypt = HexPassword.entryptPassword(oldPassword);
@@ -155,6 +159,22 @@ public class AccountService {
 		userDao.updatePassword(id, newPasswordEntrypt);
 	}
 
+	/**
+	 * 重设用户密码
+	 * 
+	 * @param entity
+	 *            用户实体 Map
+	 * @param oldPassword
+	 *            当前密码
+	 * @param newPassword
+	 *            新imia
+	 */
+	@CacheEvict(value = "shiroAuthenticationCache", key = "#loginname")
+	public void resetPassword(String loginname, String newPassword) {
+		String newpasswordHex = HexPassword.entryptPassword(newPassword);
+		userDao.resetPassword(loginname, newpasswordHex);
+
+	}
 	/**
 	 * 更新用户头像
 	 * 
@@ -281,6 +301,21 @@ public class AccountService {
 	/**
 	 * 查询用户
 	 * 
+	 * @param filter
+	 *            查询条件
+	 * 
+	 * @return 用户实体 Map 集合
+	 */
+	public boolean isExistsUsers(String loginName, String email) {
+
+		if (userDao.isExistsUser(loginName, email) > 0) {
+			return true;
+		}
+		return false;
+	}
+	/**
+	 * 查询用户
+	 * 
 	 * @param pageRequest
 	 *            分页请求参数
 	 * @param filter
@@ -399,7 +434,7 @@ public class AccountService {
 			String parentId = VariableUtils.typeCast(entity.get("parent_id"), String.class);
 			Integer type = VariableUtils.typeCast(entity.get("type"), Integer.class);
 
-			if (StringUtils.isEmpty(parentId) && (ignoreType == null || !ignoreType.getValue().equals(type))) {
+			if (StringUtils.equals(parentId, "1") && (ignoreType == null || !ignoreType.getValue().equals(type))) {
 				recursionMenu(entity, resources, ignoreType);
 				result.add(entity);
 			}
@@ -424,7 +459,7 @@ public class AccountService {
 		for (Map<String, Object> entity : resources) {
 
 			String parentId = VariableUtils.typeCast(entity.get("parent_id"), String.class);
-			if (StringUtils.isEmpty(parentId)) {
+			if (StringUtils.equals(parentId, "1")) {
 				continue;
 			}
 			Integer type = VariableUtils.typeCast(entity.get("type"), Integer.class);
@@ -447,5 +482,20 @@ public class AccountService {
 	 */
 	public List<String> getUserRoles(String userId) {
 		return roleDao.getUserRole(userId);
+	}
+
+	/**
+	 * 判断PIN是否与Cache中一致
+	 * 
+	 * @param loginName
+	 * @param md5
+	 * @return
+	 */
+	public boolean isValidPinByLoginName(String loginName, String md5) {
+		String md5Temp = redisCacheService.getPasswordFromRedisCache(loginName);
+		if (StringUtils.equals(md5, md5Temp)) {
+			return true;
+		}
+		return false;
 	}
 }

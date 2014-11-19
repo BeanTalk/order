@@ -472,3 +472,8 @@ input.text {
 .tableEdit td{
 	padding:5px;
 }
+
+.error { 
+    color: #ff0000; 
+    font-weight: bold; 
+} 

@@ -14,7 +14,7 @@ public class CustomerBeanTestUnit extends ServiceTestCaseSupport {
 	@Autowired
 	private CustomerBeanDao customerBeanDao;
 
-	//@Test
+	@Test
 	public void addUser() {
 		CustomerBean customerBean = new CustomerBean();
 		customerBean.setBean(200);
@@ -23,7 +23,7 @@ public class CustomerBeanTestUnit extends ServiceTestCaseSupport {
 		System.out.println("id:" + customerBean.getId());
 	}
 
-	//@Test
+	@Test
 	public void getCustomerBean() {
 
 		List<CustomerBean> customerBeanList = customerBeanDao.getCustomerBean("gg");
@@ -32,7 +32,7 @@ public class CustomerBeanTestUnit extends ServiceTestCaseSupport {
 		}
 	}
 
-	//@Test
+	@Test
 	public void modifiedCustomerBean() {
 
 		CustomerBean customerBean = new CustomerBean();

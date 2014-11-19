@@ -17,6 +17,10 @@
 	http://www.springframework.org/schema/cache/spring-cache.xsd ">
 
 	<description>Spring公共配置 </description>
+	
+	<!-- import redis -->
+	<import resource="classpath:applicationContext-redis.xml"/>
+	<import resource="classpath:applicationContext-mail.xml"/>
 
 	<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
@@ -45,7 +49,7 @@
 	<bean id="ehCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
 		<property name="cacheManager" ref="ehCacheManagerFactory"></property>
 	</bean>
-
+	
 	<!-- 使用缓存 annotation 配置 -->
 	<cache:annotation-driven cache-manager="ehCacheManager" proxy-target-class="true" />
 
