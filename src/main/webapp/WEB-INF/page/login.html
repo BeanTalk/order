@@ -10,10 +10,14 @@
         $("#captchaImg").attr("src", "get-captcha?date = " + new Date() + Math.floor(Math.random() * 24));
     }
 	
-	$("#login_button").click(function(){
-	    $("form").submit();
-	});
+	$("#reloadCaptcha").click(function(){
+    	reloadCaptcha();
+    });
 	
+	$("#login_button").click(function(){
+	    $("#login_form").submit();
+	});
+
 </script>
 </#macro>
 
@@ -27,7 +31,7 @@
 	        	<p>已经注册的用户从这里登录</p>
 	      	</div>
 			<div class="panel_body">
-				<form action="${base}/login" method="post">
+				<form id="login_form" action="${base}/login" method="post">
 		        	<table class="table_login m_t">
 		          		<tbody>
 			          		<tr>
@@ -43,20 +47,13 @@
 			          		</tr>
 			          		
 			          		<#if Session.incorrectNumber?? && Session.incorrectNumber gt 0>
-			                    <div class="form-group">
-			                        <label for="captcha">验证码:</label>
-			                        <div class="input-group">
-			                            <input type="text" class="text width_input_login" title="请输入验证码" name="captcha" id="captcha">
-			                            <span class="input-group-addon no-padding">
-			                                <img id="captchaImg" src="get-captcha"/>
-			                            </span>
-			                            <span class="input-group-btn">
-			                                <button class="btn btn-default" type="button" onclick="reloadCaptcha();">
-			                                    <span class="glyphicon glyphicon-refresh"></span>
-			                                </button>
-			                            </span>
-			                        </div>
-			                    </div>
+			                    <tr>
+				            		<td nowrap="nowrap" align="right">验证码：</td>
+				            		<td>
+				            			<input type="text" class="text width_input_chk" title="请输入验证码" name="captcha" id="captcha">
+				              			<img id="captchaImg" src="get-captcha"/><span id="reloadCaptcha">看不清</span>
+				              		</td>
+				          		</tr>
 		                    </#if>
 			          		
 			          		<tr>

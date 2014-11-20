@@ -33,13 +33,14 @@
 	
 	<#-- 已登录显示 -->
     <@shiro.user>
+		<@shiro.hasPermission name ="authc">
     	<#include "./header.html" />
     	<div class="containerPx clearfix">
 			<#include "./navbar.html" />
 			<@body/>
 		</div>
+		</@shiro.hasPermission>
 	</@shiro.user>
-	
 	<#--每个页面对应的js或特殊处理-->
     <#if head?exists>
         <@head/>

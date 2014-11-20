@@ -1,12 +1,13 @@
 <div class="topBar">
 	<div class="container clearfix">
 		<@shiro.guest> 
-    		<div class="fr"><a href="login.html">免费注册</a>&nbsp;&nbsp;<a href="login.html">请登录</a></div>
+    		<div class="fl"><a href="login.html">免费注册</a>&nbsp;&nbsp;<a href="login.html">请登录</a></div>
     	</@shiro.guest>
     	<@shiro.authenticated>
-    	<div class="fr">
+    	<div class="fl">
     		<span>${Session["session_variable"].user.login_name!Session["session_variable"].user.name}，你好</span>
         </div>
+        <div class="fr"><a href="${base}/logout">退出系统</a></div>
         </@shiro.authenticated>
   </div>
 </div>
