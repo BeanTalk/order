@@ -115,6 +115,7 @@ public class UserController {
 		if (id != null) {
 			model.addAttribute("entity", accountService.getUser(id));
 		}
+
 	}
 
 	/**

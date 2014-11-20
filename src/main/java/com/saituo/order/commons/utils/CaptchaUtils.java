@@ -30,11 +30,11 @@ public class CaptchaUtils {
     /**
      * 默认字体大小
      */
-	public static final Integer FONT_SIZE = 12;
+	public static final Integer FONT_SIZE = 16;
     /**
      * 默认验证码图片宽度
      */
-    public static final Integer DEFAULT_CAPTCHA_WIDTH = 40;
+    public static final Integer DEFAULT_CAPTCHA_WIDTH = 60;
     /**
      * 默认验证码图片高度
      */
