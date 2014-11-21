@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.ProductOrderDao" >
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="registerNumber">
+        insert into st_product_order(
+			user_order_id,
+			area_id,
+			user_id,
+			product_id,
+			order_fee,
+			order_num,
+			audit_cd,
+			status_cd,
+			invoice_status,
+			accept_date,
+			change_date,
+			if_valid
+        ) values (
+          #{userOrderId},
+          #{areaId},
+          #{userId},
+          #{productId},
+          #{orderFee},
+          #{orderNum},
+          #{auditCd},
+          #{statusCd},
+          #{invoiceStatus},
+          #{acceptDate},
+          #{changeDate},
+          #{ifValid}
+        )
+	</insert>
+	
+	<update id="update">  
+        update st_product_order  
+		<trim prefix="set" suffixOverrides=",">  
+			<if test=" orderFee!= null">  
+                   order_fee= #{orderFee},  
+			</if>  
+			<if test=" orderNum!= null">  
+                    order_num= #{orderNum},  
+			</if>
+			<if test=" auditCd!= null">  
+                    audit_cd= #{auditCd},  
+			</if>
+			<if test=" statusCd!= null">  
+                    status_cd= #{statusCd},  
+			</if>
+			<if test=" invoiceStatus!= null">  
+                    invoice_status= #{invoiceStatus},  
+			</if>
+			<if test=" ifValid!= null">  
+                    if_valid= #{ifValid},  
+			</if>
+		</trim>
+		change_date= sysdate
+        where register_number = #{registerNumber}  
+	</update>  
+	
+	<select id="query"  resultType="productOrder">
+		select
+			register_number,
+			user_order_id,
+			area_id,
+			user_id,
+			product_id,
+			order_fee,
+			order_num,
+			audit_cd,
+			status_cd,
+			invoice_status,
+			accept_date,
+			change_date,
+			if_valid
+		from st_product_order
+		where
+		register_number = #{registerNumber}  
+	</select>
+
+	<select id="queryList" resultType="productOrder">
+		select
+			register_number,
+			user_order_id,
+			area_id,
+			user_id,
+			product_id,
+			order_fee,
+			order_num,
+			audit_cd,
+			status_cd,
+			invoice_status,
+			accept_date,
+			change_date,
+			if_valid
+		from st_product_order
+		where
+		user_order_id =#{userOrderId}
+	</select>
+	
+	<delete id="delete">
+		delete from st_product_order
+		where register_number = #{registerNumber}  
+	</delete> 
+</mapper>

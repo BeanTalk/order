@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.UserPeasHisDao" >
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="auditId">
+        insert into st_user_peas_his(
+          user_id,
+          peas_type,
+          peas_balance,
+          register_number,
+          accept_person,
+          accept_date
+        ) values (
+          #{userId},
+          #{peasType},
+          #{peasBalance},
+          #{registerNumber},
+          #{acceptPerson},
+          #{acceptDate}
+        )
+	</insert>
+	
+	<select id="queryList" resultType="userPeasHis">
+		select
+		  peas_id,
+		  user_id,
+          peas_type,
+          peas_balance,
+          register_number,
+          accept_person,
+          accept_date
+		from st_user_peas_his
+		where
+		user_id =#{userId}
+	</select>
+	
+			
+</mapper>

@@ -6,4 +6,7 @@
 .settings/
 
 target/*
+
 *.log
+/bin/
+

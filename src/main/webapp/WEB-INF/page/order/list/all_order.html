@@ -1,0 +1,120 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+        $("#selectAll").click(function () {
+            var checkbox = $(this),
+                    children = checkbox.parents("table").find("tbody input[type='checkbox']");
+            children.prop("checked", checkbox.is(":checked"));
+        });
+
+    });
+
+    function submitDeleteForm() {
+        var length = $("#data-dictionary-list-form").find("input[type='checkbox'][id!='selectAll']:checked").length;
+        if (length == 0) {
+            return ;
+        }
+        bootbox.confirm("确定要删除选中的" + length + "条记录吗？", function (result) {
+            if (result) {
+                $("#data-dictionary-list-form").submit();
+            }
+        });
+    }
+
+</script>
+</#macro>
+
+<#macro body>
+
+<div class="grid2 m_t">
+<div class="panel">
+      <div class="panel_header">
+        <div class="breadBar">您现在的位置:<a href="../../index.html">首页</a>--&gt;个人中心--&gt;所有订单</div>
+        <h3>所有订单</h3>
+      </div>
+      <div class="panel_body  clearfix">
+        <table width="100%">
+          <tbody><tr>
+            <td width="60" nowrap="nowrap">开始时间</td>
+            <td width="70" nowrap="nowrap"><input type="text" size="12" class="datepicker hasDatepicker" name="" id="dp1416272731881"></td>
+            <td width="60" nowrap="nowrap">结束时间</td>
+            <td width="70" nowrap="nowrap"><input type="text" size="12" class="datepicker hasDatepicker" name="" id="dp1416272731882"></td>
+            <td width="58" nowrap="nowrap"><div class="button white medium">检索</div></td>
+            <td width="398" nowrap="nowrap"></td>
+            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
+          </tr>
+        </tbody></table>
+        <br>
+        result: ${result}
+        <table width="100%" class="table_pro_header">
+          <tbody><tr>
+            <th width="30" align="center"><input type="checkbox" id="checkbox2" name="item"></th>
+            <th width="248" align="left">产品</th>
+            <th width="80" align="left">规格</th>
+            <th width="60" align="left">单位</th>
+            <th width="100" align="left">目录价</th>
+            <th width="100" align="left">订购价</th>
+            <th width="80" align="left">数量</th>
+            <th width="140" align="left">操作</th>
+          </tr>
+        </tbody></table>
+        <table width="100%" class="table_pro_body_t">
+          <tbody><tr>
+            <th width="30"><input type="checkbox" id="checkbox2" name="item"></th>
+            <th align="left">订单号：code123456789</th>
+            <th align="left" colspan="2">收货人：李学</th>
+            <th align="left" colspan="2">审批人：XXX</th>
+            <th align="left" colspan="2">状态：待审批</th>
+          </tr>
+          <tr>
+            <td width="30"><input type="checkbox" id="checkbox2" name="item"></td>
+            <td width="248" align="left" class="table_pro_body">
+              <p><span class="pro_name">PageRuler Prestained Protein Ladder</span></p>
+              <p><b>货号：</b>26617 </p>
+              <p><b>品牌：</b>fermentas</p></td>
+            <td width="80" align="center" class="table_pro_body">10*250ul</td>
+            <td width="60" align="center" class="table_pro_body">瓶</td>
+            <td width="100" align="center" class="table_pro_body">3837</td>
+            <td width="100" align="center" class="table_pro_body">2877</td>
+            <td width="80" align="center"><label for="textfield"></label>
+              <input type="text" class="right" value="1" size="2" id="textfield" name="textfield"></td>
+            <td width="140" align="center"><div class="button blue medium fl">收货</div>
+              <a href="myRaty.html">
+              <div class="button green medium fl">评价</div>
+              </a>
+              <div class="button orange medium fl">退货</div></td>
+          </tr>
+          <tr>
+            <td width="30"><input type="checkbox" id="checkbox2" name="item"></td>
+            <td align="left" class="table_pro_body">
+              <p><span class="pro_name">β-Actin (8H10D10) Mouse mAb</span> </p>
+              <p><b>货号</b>：KT201-02</p>
+              <p><b>品牌</b>：CST</p></td>
+            <td align="center" class="table_pro_body">100 tests</td>
+            <td align="center" class="table_pro_body">支</td>
+            <td align="center" class="table_pro_body">2938.4</td>
+            <td align="center" class="table_pro_body">100.00</td>
+            <td width="80" align="center"><label for="textfield"></label>
+              <input type="text" class="right" value="1" size="2" id="textfield" name="textfield"></td>
+            <td width="140" align="center"><div class="button blue medium fl">收货</div>
+              <a href="myRaty.html">
+              <div class="button green medium fl">评价</div>
+              </a>
+              <div class="button orange medium fl">退货</div></td>
+          </tr>
+        </tbody></table>
+        <div class="actionBar">
+          <div class="button white">收货选中的产品</div>
+          <div class="button white">评价选中的产品</div>
+          <div class="button white">退换选中的产品</div>
+        </div>
+      </div>
+    </div>
+</div>
+</#macro>
+
+

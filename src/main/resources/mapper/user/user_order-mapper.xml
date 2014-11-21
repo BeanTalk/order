@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.UserOrderDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="registerNumber">
+		insert into st_user_order(
+		user_id,
+		area_id,
+		group_id,
+		address_id,
+		accept_date,
+		status_cd
+		) values (
+		#{userId},
+		#{areaId},
+		#{addressId},
+		#{acceptDate},
+		#{statusCd}
+		)
+	</insert>
+
+	<update id="update">
+		update st_user_order
+		<trim prefix="set" suffixOverrides=",">
+			<if test=" orderFee!= null">
+				address_id= #{orderFee},
+			</if>
+			<if test=" orderNum!= null">
+				order_num= #{orderNum},
+			</if>
+		</trim>
+		change_date= sysdate
+		where register_number = #{registerNumber}
+	</update>
+
+	<select id="query" resultType="userOrder">
+		select
+		user_order_id,
+		user_id,
+		area_id,
+		group_id,
+		address_id,
+		accept_date,
+		status_cd
+		from st_user_order
+		where
+		user_order_id = #{userOrderId}
+	</select>
+
+	<select id="queryList" resultType="userOrder">
+		select
+		user_order_id,
+		user_id,
+		area_id,
+		group_id,
+		address_id,
+		accept_date,
+		status_cd
+		from st_user_order
+		where
+		where
+		user_id =#{userId}
+	</select>
+
+	<delete id="delete">
+		delete from st_user_order
+		where user_order_id =
+		#{userOrderId}
+	</delete>
+</mapper>

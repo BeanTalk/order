@@ -1,6 +1,5 @@
 $(document).ready(function() {
 	
-	
 	//行点击样式
 	$(".table_pro_body tr >td:not(:last-child)").click(function() {
 			if($(this).parent().hasClass('selected')){
@@ -17,10 +16,6 @@ $(document).ready(function() {
 	//奇偶数行不同颜色
 	$(".table_pro_body tr:odd").addClass("odd");
 	$(".table_pro_body tr:even").addClass("even");
-
-		
 	$(".addressBar").hide();
-
-
    
 });

@@ -9,14 +9,16 @@
           SELECT
             id AS "id",
             email AS "email",
-            nickname AS "nickname",
+            name AS "name",
             password AS "password",
-            state AS "state",
-            username AS "username"
+            login_name AS "loginName",
+  			company_id AS "companyId",
+  			office_id AS "officeId",
+  			mobile AS "mobile"
           FROM
-            tb_user
+            sys_user
           WHERE
-              id = #{id}
+            id = #{id}
     </select>
 
     <select id="getByUsernameOrEmail" resultType="hashmap">
@@ -43,18 +45,15 @@
           sys_user
         WHERE
           del_flag = 0 
-        <if test="filter.username != null and filter.username != ''">
-            <bind name="filter.username" value=" '%' + filter.username + '%' " />
+        <if test="filter.login_name != null and filter.login_name != ''">
             AND login_name LIKE #{filter.login_name}
         </if>
 
         <if test="filter.name != null and filter.name != ''">
-            <bind name="filter.name" value=" '%' + filter.name + '%' " />
-            AND nickname LIKE #{filter.name}
+            AND name LIKE #{filter.name}
         </if>
 
         <if test="filter.email != null and filter.email != ''">
-            <bind name="filter.email" value=" '%' + filter.email + '%' " />
             AND email LIKE #{filter.email}
         </if>
         ORDER BY id DESC
@@ -71,12 +70,10 @@
         WHERE
           del_flag = 0
         <if test="filter.login_name != null and filter.login_name != ''">
-          <bind name="filter.login_name" value=" '%' + filter.login_name + '%' " />
-          AND login_name LIKE #{filter.username}
+          AND login_name LIKE #{filter.login_name}
         </if>
 
         <if test="filter.email != null and filter.email != ''">
-          <bind name="filter.email" value=" '%' + filter.email + '%' " />
           AND email LIKE #{filter.email}
         </if>
     </select>
@@ -84,18 +81,19 @@
     <update id="update">
         <trim prefix="SET" suffixOverrides="," />
         UPDATE
-          tb_user
+          sys_user
         SET
           email=#{entity.email},
-          nickname=#{entity.nickname},
-          state=#{entity.state}
+          name=#{entity.name},
+          phone=#{entity.phone},
+          mobile=#{entity.mobile}
         WHERE
           id = #{entity.id}
     </update>
 
     <update id="updatePassword">
         UPDATE
-          tb_user
+          sys_user
         SET
           password = #{password}
         WHERE

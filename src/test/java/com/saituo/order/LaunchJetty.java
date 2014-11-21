@@ -19,7 +19,7 @@ public class LaunchJetty {
     /**
      * 启动 jetty 时，默认访问的项目的端口
      */
-    public static final int DEFAULT_PORT = 8080;
+    public static final int DEFAULT_PORT = 8282;
     /**
      * 启动 jetty 时，默认服务的Web项目路径
      */
@@ -27,14 +27,14 @@ public class LaunchJetty {
     /**
      * 启动jetty时，默认方法的项目名称
      */
-    public static final String DEFAULT_CONTEXT_PATH = "/base-framework";
+    public static final String DEFAULT_CONTEXT_PATH = "/order";
     /**
      * spring 环境属性
      */
     public static final String ACTIVE_PROFILE = "spring.profiles.active";
 
     public static void main(String[] args) {
-        System.setProperty(ACTIVE_PROFILE, "development");
+    	
         Server server = new Server();
         // 设置在JVM退出时关闭Jetty
         server.setStopAtShutdown(true);

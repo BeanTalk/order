@@ -54,28 +54,42 @@
 		<property name="securityManager" ref="securityManager" />
 	</bean>
 	
-	<!-- velocity的格式和其他配置 -->
-	<bean id="velocityConfig"
-		class="org.springframework.web.servlet.view.velocity.VelocityConfigurer">
-		<property name="configLocation">
-			<value>/WEB-INF/velocity/velocity.properties</value>
-		</property>
+	<!-- setting validation implementor,actually HibernateValidator is java validation interface default implementor-->
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean"> 
+		<!--<property name="providerClass" value="org.hibernate.validator.HibernateValidator"/> -->
+		<property name="validationMessageSource" ref="messageSource"/> 
+	</bean>
+	
+	<!-- bind i18n messages properties,this just setting zh_CN message -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"> 
+		<property name="useCodeAsDefaultMessage" value="false"/> 
+		<property name="defaultEncoding" value="UTF-8"/> 
+		<property name="fallbackToSystemLocale" value="true"/> 
+		<property name="basenames"> 
+			<list> 
+				<value>bundle/messages</value>    
+				<value>bundle/ValidationMessages</value>
+			</list> 
+		</property> 
 	</bean>
 
-	<!-- Velocity视图解析,在这里配置后缀名vm和视图解析器 -->
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.velocity.VelocityLayoutViewResolver">
-		<!-- 设置为true以忽略对Accept Header的支持 -->
-		<property name="cache" value="${velocity.html.cache}" />
-		<property name="layoutUrl" value="/layout/main.vm" />
-		<property name="prefix" value="/templates/" />
-		<property name="suffix" value=".vm" />
+	<!-- freemarker的格式和其他配置 -->
+	<bean id="freemarkerConfigurer" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="templateLoaderPath" value="/WEB-INF/page/" />
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="freemarkerSettings" ref="freemarkerConfiguration" />
+	</bean>
+	
+	<bean id="freemarkerConfiguration"  
+		class="org.springframework.beans.factory.config.PropertiesFactoryBean">  
+		<property name="location" value="classpath:freemarker.properties" />  
+	</bean>  
+
+	<!-- FreeMarker视图解析,在这里配置后缀名ftl和视图解析器 -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="suffix" value=".html" />
+		<property name="requestContextAttribute" value="request" />
 		<property name="contentType" value="text/html;charset=UTF-8" />
-		<property name="viewClass" value="org.springframework.web.servlet.view.velocity.VelocityLayoutView" />
-		<property name="exposeSpringMacroHelpers" value="true" />
-		<property name="toolboxConfigLocation" value="/WEB-INF/velocity/velocity-tools.xml" />
-		<!-- <property name="exposeRequestAttributes" value="true" /> <property 
-			name="exposeSessionAttributes" value="true" /> -->
 	</bean>
-
+	
 </beans>

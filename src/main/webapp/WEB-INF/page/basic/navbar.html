@@ -1,0 +1,11 @@
+<div class="grid1 m_t">
+	<div class="subnav">
+		<p class="subnav-header">个人中心</p>
+		<ul>
+			<#list Session["session_variable"].menusList as m>
+				<li class="subnav-title"><span>${m.name}</span></li>
+            	<@recursionMenu m true/>
+            </#list>
+		</ul>
+	</div>
+</div>

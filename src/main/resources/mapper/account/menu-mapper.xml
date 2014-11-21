@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 资源数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.account.MenuDao" >
+
+    <select id="getChildren" resultType="hashmap">
+        SELECT
+          id AS "id",
+          icon AS "icon",
+          name AS "name",
+          permission AS "permission",
+          remark AS "remark",
+          sort AS "sort",
+          type AS "type",
+          value AS "value",
+          parent_id AS "parent_id"
+        FROM
+          sys_menu
+        WHERE
+          parent_id = #{id}
+    </select>
+    
+    <select id="getAll" resultType="hashmap">
+        SELECT 
+          id AS "id",
+          parent_id AS "parent_id",
+          icon AS "icon",
+          name AS "name",
+          permission AS "permission",
+          sort AS "sort",
+          remarks AS "remark",
+          is_show AS "isShow",
+          href AS "value",
+          type AS "type"
+        FROM
+          sys_menu
+        WHERE module = 2
+        AND del_flag = 0
+        <if test="ignore != null and ignore.length > 0">
+            AND id NOT IN
+            <foreach collection="ignore" item="id" index="index" open="(" separator="," close=")" >
+                #{id}
+            </foreach>
+        </if>
+    </select>
+
+    <select id="count" resultType="long">
+        SELECT
+          COUNT(id)
+        FROM
+          sys_menu
+    </select>
+    
+    <select id="getUserMenus" resultType="hashmap">       
+      SELECT
+	    r.id AS "id",
+	    r.icon AS "icon",
+	    r.name AS "name",
+	    r.permission AS "permission",
+	    r.sort AS "sort",
+	    r.is_show AS "isShow", 
+	    r.href AS "value",
+	    r.type AS "type",
+	    r.parent_id AS "parent_id"
+      FROM
+	    sys_menu r
+      LEFT JOIN
+	    sys_role_menu gr ON gr.menu_id = r.id
+      LEFT JOIN
+	    sys_role g ON gr.role_id = g.id
+      LEFT JOIN
+	    sys_user_role gu ON gu.role_id = g.id
+      LEFT JOIN
+	    sys_user u ON gu.user_id = u.id
+      WHERE
+	    u.id = #{userId}
+	  AND
+	  	r.module = 2 
+	  AND 
+	  	r.is_show = 1
+	  AND 
+	  	r.del_flag = 0
+	  GROUP BY
+	  	r.id
+      ORDER BY
+        r.sort
+    </select>
+
+</mapper>

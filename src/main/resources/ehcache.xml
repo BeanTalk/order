@@ -67,12 +67,7 @@
 
 	<!-- <cacheManagerPeerListenerFactory class="net.sf.ehcache.distribution.RMICacheManagerPeerListenerFactory" /> -->
 	
-    <defaultCache maxElementsInMemory="10000" eternal="false" timeToIdleSeconds="300" timeToLiveSeconds="600" overflowToDisk="true"/>
-
-    <!-- 通过字典类别代码查询所有数据字典的缓存名称 -->
-    <cache name="dataDictionaryCache" maxElementsInMemory="3000" timeToLiveSeconds="86400">
-        <!-- <cacheEventListenerFactory class="net.sf.ehcache.distribution.RMICacheReplicatorFactory" properties="replicatePuts=false,replicateUpdatesViaCopy=false"/> -->
-    </cache>
+    <defaultCache maxElementsInMemory="10000" eternal="false" timeToIdleSeconds="3000" timeToLiveSeconds="6000" overflowToDisk="true"/>
 
     <!-- shiro授权的缓存名称 -->
     <cache name="shiroAuthorizationCache" maxElementsInMemory="10000" timeToLiveSeconds="1200">

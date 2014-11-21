@@ -64,18 +64,21 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		}
 
 		Map<String, Object> currentUser = sv.getUser();
-		String id = VariableUtils.typeCast(currentUser.get("id"), String.class);
+		String userId = VariableUtils.typeCast(currentUser.get("id"));
 
 		// 加载用户资源信息
-		List<Map<String, Object>> authorizationInfo = accountService.getUserResources(id);
-		List<Map<String, Object>> menuList = accountService.mergeResources(authorizationInfo, ResourceType.SECURITY);
+		List<Map<String, Object>> authorizationInfo = accountService.getUserMenus(userId);
+		List<Map<String, Object>> menuList = accountService.mergeMenus(authorizationInfo, ResourceType.SECURITY);
+		List<String> roleList = accountService.getUserRoles(userId);
 
 		// 添加用户拥有的permission
 		addPermissions(info, authorizationInfo);
+		// 添加用户拥有的role
+		info.addRoles(roleList);
 
 		sv.setAuthorizationInfo(authorizationInfo);
 		sv.setMenusList(menuList);
-		
+
 		SecurityUtils.getSubject().getSession().setAttribute(SessionVariable.DEFAULT_SESSION_KEY, sv);
 
 		return info;
@@ -113,5 +116,4 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		// 将当前用户拥有的permissions设置到SimpleAuthorizationInfo中
 		info.addStringPermissions(permissions);
 	}
-
 }
