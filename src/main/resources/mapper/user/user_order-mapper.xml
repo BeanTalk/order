@@ -36,7 +36,7 @@
 		where register_number = #{registerNumber}
 	</update>
 
-	<select id="query" resultType="userOrderDao">
+	<select id="query" resultType="userOrder">
 		select
 		user_order_id,
 		user_id,
@@ -50,7 +50,7 @@
 		user_order_id = #{userOrderId}
 	</select>
 
-	<select id="queryList" resultType="userOrderDao">
+	<select id="queryList" resultType="userOrder">
 		select
 		user_order_id,
 		user_id,

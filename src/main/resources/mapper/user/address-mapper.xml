@@ -52,7 +52,7 @@
 	
 
 
-	<select id="query"  resultType="addressDao">
+	<select id="query"  resultType="address">
 		select
 			address_id ,
 			user_id,
@@ -67,7 +67,7 @@
 		address_id = #{addressId}
 	</select>
 
-	<select id="queryList" resultType="addressDao">
+	<select id="queryList" resultType="address">
 		select
 			address_id ,
 			user_id,

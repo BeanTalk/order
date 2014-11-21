@@ -25,7 +25,7 @@
         )
 	</insert>
 	
-	<select id="queryList" resultType="auditHisDao">
+	<select id="queryList" resultType="auditHis">
 		select
 		  audit_id,
 		  register_number,

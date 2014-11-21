@@ -2,6 +2,10 @@ package com.saituo.order.service.user;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.saituo.order.dao.user.AddressDao;
 import com.saituo.order.entity.user.Address;
 
@@ -19,7 +23,7 @@ public class AddressService {
 	 * @param Address
 	 *            地址实体
 	 */
-	public void insert(Address address){
+	public void insert(Address address) {
 		addressDao.insert(address);
 	}
 	/**
@@ -28,7 +32,7 @@ public class AddressService {
 	 * @param Address
 	 *            地址实体
 	 */
-	public void update(Address address){
+	public void update(Address address) {
 		addressDao.update(address);
 	}
 	/**
@@ -37,28 +41,34 @@ public class AddressService {
 	 * @param Address
 	 *            地址实体
 	 */
-	public void delete(Address address){
+	public void delete(Address address) {
 		addressDao.delete(address);
 	}
 	/**
-	 * <p>Description: 查询数据:根据地址ID查询</p>
+	 * <p>
+	 * Description: 查询数据:根据地址ID查询
+	 * </p>
+	 * 
 	 * @Method: query
 	 * @param Address
-	 * @return Address 
-	 * @throws 
-	*/
-	public Address query (Address address){
+	 * @return Address
+	 * @throws
+	 */
+	public Address query(Address address) {
 		return addressDao.query(address);
 	}
 	/**
-	 * <p>Description: 查询数据:根据客户ID查询地址信息集合</p>
+	 * <p>
+	 * Description: 查询数据:根据客户ID查询地址信息集合
+	 * </p>
+	 * 
 	 * @Method: query
 	 * @param Address
-	 * @return List<Address> 
-	 * @throws 
-	*/
-	public List<Address> queryList (Address address){
+	 * @return List<Address>
+	 * @throws
+	 */
+	public List<Address> queryList(Address address) {
 		return addressDao.queryList(address);
 	}
-	
+
 }

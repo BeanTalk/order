@@ -23,7 +23,7 @@
         )
 	</insert>
 	
-	<select id="queryList" resultType="userPeasHisDao">
+	<select id="queryList" resultType="userPeasHis">
 		select
 		  peas_id,
 		  user_id,

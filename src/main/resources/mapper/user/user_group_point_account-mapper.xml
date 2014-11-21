@@ -30,7 +30,7 @@
 
 
 
-	<select id="query" resultType="userGroupPointAccountDao">
+	<select id="query" resultType="userGroupPointAccount">
 		SELECT
 		user_group_id,
 		point_balance,

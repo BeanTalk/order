@@ -19,7 +19,7 @@
         )
 	</insert>
 	
-	<select id="queryList" resultType="productOrderHisDao">
+	<select id="queryList" resultType="productOrderHis">
 		select
 			id,
 			register_number,

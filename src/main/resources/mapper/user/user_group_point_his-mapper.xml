@@ -23,7 +23,7 @@
         )
 	</insert>
 	
-	<select id="queryList" resultType="userGroupPointHisDao">
+	<select id="queryList" resultType="userGroupPointHis">
 		select
 			point_id,
 			group_id,
