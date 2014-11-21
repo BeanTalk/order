@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.AuditHisDao" >
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="auditId">
+        insert into st_audit_his(
+          register_number,
+          audit_person,
+          audit_date,
+          audit_result,
+          turn_down_reason,
+          turn_down_note,
+          status_cd
+        ) values (
+          #{registerNumber},
+          #{auditPerson},
+          #{acceptDate},
+          #{auditResult},
+          #{turnDownReason},
+          #{turnDownNote},
+          #{statusCd}
+        )
+	</insert>
+	
+	<select id="queryList" resultType="auditHisDao">
+		select
+		  audit_id,
+		  register_number,
+          audit_person,
+          audit_date,
+          audit_result,
+          turn_down_reason,
+          turn_down_note,
+          status_cd
+		from st_audit_his
+		where
+		register_number =#{registerNumber}
+	</select>
+	
+			
+</mapper>

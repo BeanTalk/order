@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.UserGroupPointHisDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="pointId">
+        insert into st_user_group_point_his(
+			group_id,
+			point_type ,
+			point_balance ,
+			register_number,
+			accept_person,
+			accept_date 
+        ) values (
+          #{groupId},
+          #{pointType},
+          #{pointBalance},
+          #{registerNumber},
+          #{acceptPerson},
+          #{acceptDate}
+        )
+	</insert>
+	
+	<select id="queryList" resultType="userGroupPointHisDao">
+		select
+			point_id,
+			group_id,
+			point_type ,
+			point_balance ,
+			register_number,
+			accept_person,
+			accept_date 
+		from st_user_group_point_his
+		where
+		group_id =#{groupId}
+	</select>
+
+</mapper>

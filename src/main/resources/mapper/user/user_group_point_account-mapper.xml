@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.UserGroupPointAccountDao">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="userGroupId">
+		insert into st_user_group_point_account(
+		user_group_id,
+		point_balance,
+		account_fee
+		) values (
+		#{userGroupId},
+		#{pointBalance},
+		#{accountFee}
+		)
+	</insert>
+	<update id="update">  
+        update st_user_group_point_account  
+		<trim prefix="set" suffixOverrides=",">  
+			<if test="pointBalance != null">  
+                  point_balance = #{pointBalance},  
+			</if>  
+			<if test="accountFee != null">  
+                   account_fee = #{accountFee},  
+			</if>
+		</trim>
+        where user_group_id = #{userGroupId}  
+	</update>  
+
+
+
+	<select id="query" resultType="userGroupPointAccountDao">
+		SELECT
+		user_group_id,
+		point_balance,
+		account_fee
+		FROM
+		st_user_group_point_account
+		WHERE
+		user_group_id = #{userGroupId}
+	</select>
+
+	<delete id="delete">
+		delete from st_user_group_point_account
+		where user_group_id = #{userGroupId}
+	</delete> 
+
+
+</mapper>

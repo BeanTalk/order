@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.ProductOrderHisDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into st_product_order_his(
+			register_number,
+			order_result ,
+			accept_person ,
+			accept_date 
+        ) values (
+          #{registerNumber},
+          #{orderResult},
+          #{acceptPerson},
+          #{acceptDate}
+        )
+	</insert>
+	
+	<select id="queryList" resultType="productOrderHisDao">
+		select
+			id,
+			register_number,
+			order_result ,
+			accept_person ,
+			accept_date
+		from st_product_order_his
+		where
+		register_number =#{registerNumber}
+	</select>
+
+</mapper>
