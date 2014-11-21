@@ -5,7 +5,7 @@ import java.util.Date;
 /**
  * 字段类型枚举
  */
-public enum FieldType implements ValueEnum<Class<?>> {
+public enum FieldType implements ValueEnum<Class<?>> { 
 
     /**
      * String 类型
