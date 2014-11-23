@@ -1,0 +1,87 @@
+<#include "*/basic/default.html"/>
+<#macro head>
+<script type="text/javascript">
+	//全选
+	var isCheckAll=true;
+	$("#checkboxAll").click(function(){
+		if(isCheckAll){
+			$(".table_pro_body input[type=checkbox][name=item]").attr("checked",true);
+			$(".table_pro_body input[type=checkbox][name=item]").parent().parent().addClass('selected');
+			isCheckAll=false;	
+		
+		}else{
+			$(".table_pro_body input[type=checkbox][name=item]").attr("checked",false);
+			$(".table_pro_body input[type=checkbox][name=item]").parent().parent().removeClass('selected');
+			isCheckAll=true;
+		}
+	});
+</script>
+</#macro>
+
+<#macro body>
+<div class="containerPx clearfix">
+	<div class="grid1 m_t">
+		<div class="subnav">
+			<p class="subnav-header">产品中心</p>
+		</div>
+	</div>
+	<div class="grid2 m_t">
+		<div class="panel_body clearfix">
+        	<table width="100%" class="table_pro_header">
+          		<tbody>
+	          		<tr>
+		            	<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
+		            	<th width="308">产品</th>
+			            <th width="100">规格</th>
+			            <th width="60">单位</th>
+			            <th width="100">目录价</th>
+			            <th width="100">订购价</th>
+			            <th width="130">操作</th>
+			        </tr>
+		    	</tbody>
+			</table>
+        	<table width="100%" class="table_pro_body">
+				<tbody>
+					<#if page.content?size == 0>
+	                    <tr>
+	                        <td colspan="6"> 没有记录</td>
+	                    </tr>
+                    <#else>
+                        <#list page.content as r>
+                        <tr>
+                            <td><input type="checkbox" name="item" value="${r.productId}"></td>
+	                        <td width="308" align="left">
+								<p><span class="pro_name">${r.productName}</span></p>
+								<p><b>货号：</b>${r.productNum}</p>
+								<p><b>品牌：</b>${r.brandId}</p>
+							</td>
+                            <td width="100" align="center">${r.specValue}</td>
+				            <td width="60" align="center">${r.unitValue}</td>
+				            <td width="100" align="center">${r.catalogFee}</td>
+				            <td width="100" align="center">${r.catalogFee}</td>
+				            
+				            <@shiro.hasPermission name="authc">
+	                            <td width="130" align="center">
+					            	<div id="buy_card_btn" class="button green medium fl">加入购物车</div>
+		          					<div id="record_btn" class="button orange medium fl">记录</div>
+		          				</td>
+                            </@shiro.hasPermission>
+                        </tr>
+                        </#list>
+                    </#if>
+				</tbody>
+			</table>
+        	<p class="pageBar"></p>
+        	<#assign parameterMap = { "searchContext":"${searchContext}"}>
+			<@pager page "/order/views/search/productlist" parameterMap />
+        	<!--
+        	<div class="page">
+        		<span class="disabled"> &lt;  Prev</span>
+        		<span class="current">1</span><a href="#">2</a><a href="#">3</a><a href="#">4</a><a href="#">5</a><a href="#">6</a><a href="#">7</a>...<a href="#">199</a><a href="#">200</a><a href="#">Next  &gt; </a>
+        	</div>
+        	<p></p>
+        	-->
+		</div>
+	</div>
+</div>
+</#macro>

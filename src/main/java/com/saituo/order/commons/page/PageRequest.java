@@ -13,19 +13,21 @@ import java.util.Map;
 public class PageRequest implements Serializable {
 
 	private static final long serialVersionUID = -4042216993738779536L;
+
 	/**
 	 * 分页范围开始参数
 	 */
 	public static final String FIRST_RESULT = "first";
+
 	/**
 	 * 分页范围结束参数
 	 */
 	public static final String LAST_RESULT = "last";
 
 	// 页号
-	private int page = 0;
+	private int pageNumber = 1;
 	// 每页大小
-	private int size = 10;
+	private int pageSize = 10;
 
 	/**
 	 * 分页请求对象，用于在分页查询时，通过该对象得知要查询的页数。
@@ -42,9 +44,9 @@ public class PageRequest implements Serializable {
 	 * @param size
 	 *            内容大小
 	 */
-	public PageRequest(int page, int size) {
-		this.page = page;
-		this.size = size;
+	public PageRequest(int pageNumber, int pageSize) {
+		this.pageNumber = pageNumber;
+		this.pageSize = pageSize;
 	}
 
 	/**
@@ -53,7 +55,7 @@ public class PageRequest implements Serializable {
 	 * @return 内容数量
 	 */
 	public int getPageSize() {
-		return size;
+		return pageSize;
 	}
 
 	/**
@@ -62,7 +64,7 @@ public class PageRequest implements Serializable {
 	 * @return 页号
 	 */
 	public int getPageNumber() {
-		return page;
+		return pageNumber;
 	}
 
 	/**
@@ -71,8 +73,8 @@ public class PageRequest implements Serializable {
 	 * @param page
 	 *            页号
 	 */
-	public void setPageNumber(int page) {
-		this.page = page;
+	public void setPageNumber(int pageNumber) {
+		this.pageNumber = pageNumber;
 	}
 
 	/**
@@ -81,17 +83,20 @@ public class PageRequest implements Serializable {
 	 * @param size
 	 *            内容数量
 	 */
-	public void setPageSize(int size) {
-		this.size = size;
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
 	}
 
 	/**
 	 * 获取指定第一个返回记录行的偏移量
-	 *
+	 * 
+	 * indexNum
+	 * 
 	 * @return 偏移量
 	 */
+	// indexNum
 	public int getOffset() {
-		return page * size;
+		return (pageNumber - 1) * pageSize;
 	}
 
 	/**

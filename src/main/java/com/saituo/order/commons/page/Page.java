@@ -38,7 +38,7 @@ public class Page<T> implements Serializable{
      *
      * @return 页号
      */
-    public int getNumber() {
+    public int getPageNumber() {
         return pageRequest == null ? 0 : pageRequest.getPageNumber();
     }
 
@@ -47,7 +47,7 @@ public class Page<T> implements Serializable{
      *
      * @return 内容数量
      */
-    public int getSize() {
+    public int getPageSize() {
         return pageRequest == null ? 0 : pageRequest.getPageSize();
     }
 
@@ -66,7 +66,7 @@ public class Page<T> implements Serializable{
      * @return true 表示存在，否则 false
      */
     public boolean hasPrevious() {
-        return getNumber() > 0;
+        return getPageNumber() > 0;
     }
 
     /**
@@ -75,7 +75,7 @@ public class Page<T> implements Serializable{
      * @return true 表示存在，否则 false
      */
     public boolean hasNext() {
-        return getNumber() + 1 < getTotalPages();
+        return getPageNumber() + 1 < getTotalPages();
     }
 
     /**
@@ -120,7 +120,7 @@ public class Page<T> implements Serializable{
      * @return 总页数
      */
     public int getTotalPages() {
-        return getSize() == 0 ? 1 : (int) Math.ceil((double) total / (double) getSize());
+        return getPageSize() == 0 ? 1 : (int) Math.ceil((double) total / (double) getPageSize());
     }
 
     /**
