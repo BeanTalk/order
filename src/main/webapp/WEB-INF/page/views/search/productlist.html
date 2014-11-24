@@ -15,6 +15,15 @@
 			isCheckAll=true;
 		}
 	});
+	
+	$('#buy_card_btn').click(function(){
+		alert($('#productId').val());
+	});
+	
+	$(function(){
+		$('.Q-buy-btn').shoping();
+	});
+	
 </script>
 </#macro>
 
@@ -60,12 +69,16 @@
 				            <td width="100" align="center">${r.catalogFee}</td>
 				            <td width="100" align="center">${r.catalogFee}</td>
 				            
-				            <@shiro.hasPermission name="authc">
-	                            <td width="130" align="center">
-					            	<div id="buy_card_btn" class="button green medium fl">加入购物车</div>
-		          					<div id="record_btn" class="button orange medium fl">记录</div>
-		          				</td>
-                            </@shiro.hasPermission>
+				            <input type="hidden" id="productId" value="${r.productId}">
+				            
+                            <td width="130" align="center">
+                            	<a href="###">
+				            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
+				            	</a>
+				            	<a href="${base}/record/addinfo?productId=${r.productId}">
+	          						<div id="record_btn" class="button orange medium fl">记录</div>
+	          					</a>
+	          				</td>
                         </tr>
                         </#list>
                     </#if>

@@ -5,7 +5,8 @@ body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, /* structural elements 结构�
 }
 /* 设置默认字体 */
 body, button, input, select, textarea {
-	font: 12px/1 Tahoma, "宋体", Helvetica, Arial, sans-serif; /* 用 ascii 字符表示，使得在任何编码下都无问题 */
+	font-family:"宋体",Arial, Helvetica, sans-serif;
+	font-size:12px;
 }
 h1 {
 	font-size: 18px; /* 18px / 12px = 1.5 */
