@@ -145,79 +145,51 @@
 	</#if>
 
 	<#if (pageCount > 1)>
-	<div class="pager_area">
-		<ul class="pager">
-			<li class="pageInfo">
-				共 ${pageCount} 页
-			</li>
+	<div class="page">
 			<#-- 首页 -->
 			<#if (pageNumber > 1)>
-				<li class="firstPage">
-					<a href="${firstPageUrl}">首页</a>
-				</li>
+				<a href="${firstPageUrl}">首页</a>
 			<#else>
-				<li class="firstPage">
-					<span>首页</span>
-				</li>
+				<span>首页</span>
 			</#if>
 			
 			<#-- 上一页 -->
 			<#if (pageNumber > 1)>
-				<li class="prePage">
-					<a href="${prePageUrl}">上一页</a>
-				</li>
+				<a href="${prePageUrl}">上一页</a>
 			<#else>
-				<li class="prePage">
-					<span>上一页</span>
-				</li>
+				<span>上一页</span>
 			</#if>
 			
 			<#if (startPageNumber > 1)>
-				<li>
-					<a href="${baseUrl + "pageNumber=" + (pageNumber - 2) + parameter}">...</a>
-				</li>
+				<a href="${baseUrl + "pageNumber=" + (pageNumber - 2) + parameter}">...</a>
 			</#if>
 			
 			<#list startPageNumber .. endPageNumber as index>
 				<#if pageNumber != index>
-					<li>
-						<a href="${baseUrl + "pageNumber=" + index + parameter}">${index}</a>
-					</li>
+					<a href="${baseUrl + "pageNumber=" + index + parameter}">${index}</a>
 				<#else>
-					<li class="currentPage">
-						<span>${index}</span>
-					</li>
+					<span>${index}</span>
 				</#if>
 			</#list>
 			
 			<#if (endPageNumber < pageCount)>
-				<li>
-					<a href="${baseUrl + "pageNumber=" + (pageNumber + 2) + parameter}">...</a>
-				</li>
+				<a href="${baseUrl + "pageNumber=" + (pageNumber + 2) + parameter}">...</a>
 			</#if>
 		    
 			<#-- 下一页 -->
 			<#if (pageNumber < pageCount)>
-				<li class="nextPage">
-					<a href="${nextPageUrl}">下一页</a>
-				</li>
+				<a href="${nextPageUrl}">下一页</a>
 			<#else>
-				<li class="nextPage">
-					<span>下一页</span>
-				</li>
+				<span>下一页</span>
 			</#if>
 			
 			<#-- 末页 -->
 			<#if (pageNumber < pageCount)>
-				<li class="lastPage">
-					<a href="${lastPageUrl}">末页</a>
-				</li>
+				<a href="${lastPageUrl}">末页</a>
 			<#else>
-				<li class="lastPage">
-					<span>末页</span>
-				</li>
+				<span>末页</span>
 			</#if>
-		</ul>
+			共 ${pageCount} 页
 		</div>
 	</#if>
 
