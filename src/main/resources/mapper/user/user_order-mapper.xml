@@ -5,7 +5,7 @@
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.user.UserOrderDao">
 
-	<insert id="insert" useGeneratedKeys="true" keyProperty="userOrderId">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="registerNumber">
 		insert into st_user_order(
 		user_id,
 		area_id,
@@ -15,29 +15,36 @@
 		status_cd
 		) values (
 		#{userId},
-		#{groupId},
 		#{areaId},
 		#{addressId},
-		now(),
+		#{acceptDate},
 		#{statusCd}
 		)
 	</insert>
 
 	<update id="update">
-		update st_user_order set
-		status_Cd = #{statusCd}
-		where user_order_id = #{userOrderId}
+		update st_user_order
+		<trim prefix="set" suffixOverrides=",">
+			<if test=" orderFee!= null">
+				address_id= #{orderFee},
+			</if>
+			<if test=" orderNum!= null">
+				order_num= #{orderNum},
+			</if>
+		</trim>
+		change_date= sysdate
+		where register_number = #{registerNumber}
 	</update>
 
 	<select id="query" resultType="userOrder">
 		select
-		user_order_id as userOrderId,
-		user_id as userId,
-		area_id as areaId,
-		group_id as groupId,
-		address_id as addressId,
-		accept_date as acceptDate,
-		status_cd as statusCd
+		user_order_id,
+		user_id,
+		area_id,
+		group_id,
+		address_id,
+		accept_date,
+		status_cd
 		from st_user_order
 		where
 		user_order_id = #{userOrderId}
@@ -45,32 +52,17 @@
 
 	<select id="queryList" resultType="userOrder">
 		select
-		user_order_id as userOrderId,
-		user_id as userId,
-		area_id as areaId,
-		group_id as groupId,
-		address_id as addressId,
-		accept_date as acceptDate,
-		status_cd as statusCd
+		user_order_id,
+		user_id,
+		area_id,
+		group_id,
+		address_id,
+		accept_date,
+		status_cd
 		from st_user_order
-		<where>
-			<if test="areaId!=null and areaId!=''">
-			     area_id =#{areaId}
-			</if>
-			<if test="userOrderId!=null and userOrderId!=''">
-			   and   user_order_id =#{userOrderId}
-			</if>
-			<if test="groupId!=null and groupId!=''">
-			 	and    group_id =#{groupId}
-			</if>
-			<if test=" userId!=null and userId!=''">
-			    and user_id =#{userId}
-			</if>
-			<if test="statusCd!=null and statusCd!=''">
-			     and status_cd =#{statusCd}
-			</if>
-		</where>
-
+		where
+		where
+		user_id =#{userId}
 	</select>
 
 	<delete id="delete">

@@ -1,11 +1,10 @@
-package com.saituo.order.web.user;
+package com.saituo.order.web.ordering;
 
 import java.util.List;
 
 import javax.validation.Valid;
 
 import org.apache.commons.beanutils.BeanUtils;
-import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,34 +20,22 @@ import com.saituo.order.entity.user.Address;
 import com.saituo.order.service.user.AddressService;
 import com.saituo.order.web.form.AddressForm;
 
-@Controller
-@RequiresAuthentication
-@RequestMapping("order/address")
+@Controller("account/address")
 public class AddressController {
 
 	@Autowired
 	private AddressService addressService;
 
-	/**
-	 * 获取使用地址列表 根据userId
-	 * 
-	 * @return
-	 */
 	@RequestMapping(value = "list", method = RequestMethod.GET)
 	public List<Address> getAddressList() {
+
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
-		return addressService.queryList(userId);
+		Address address = new Address();
+		address.setUserId(userId);
+		return addressService.queryList(address);
 	}
 
-	/**
-	 * 地址保存
-	 * 
-	 * @param form
-	 * @param result
-	 * @param model
-	 * @return
-	 */
 	@RequestMapping(value = "save", method = RequestMethod.GET)
 	public String save(@Valid @ModelAttribute AddressForm form, BindingResult result, Model model) {
 
@@ -70,32 +57,23 @@ public class AddressController {
 		return "account/address/list";
 	}
 
-	/**
-	 * 地址视图与修改
-	 * 
-	 * @param id
-	 * @param model
-	 * @return
-	 */
 	@RequestMapping(value = "edit", method = RequestMethod.POST)
 	public String edit(@RequestParam(required = false) Long id, Model model) {
 		if (id != null) {
-			model.addAttribute("entity", addressService.query(id));
+			Address address = new Address();
+			address.setAddressId(id);
+			model.addAttribute("entity", addressService.query(address));
 		}
 		return "account/address/edit";
 	}
 
-	/**
-	 * 地址删除根据addressId
-	 * 
-	 * @param id
-	 * @param model
-	 * @return
-	 */
 	@RequestMapping(value = "delete", method = RequestMethod.POST)
 	public String delete(@RequestParam(required = true) Long id, Model model) {
-		addressService.delete(id);
+		if (id != null) {
+			Address address = new Address();
+			address.setAddressId(id);
+			addressService.delete(address);
+		}
 		return "account/address/list";
 	}
-
 }

@@ -26,10 +26,6 @@ public class SessionVariable implements Serializable {
 	private List<Map<String, Object>> authorizationInfo;
 	// 当前用户的菜单集合
 	private List<Map<String, Object>> menusList;
-	// 当前用户所在组
-	private String groupId;
-	// 当前用户所在地市
-	private String areaId;
 
 	/**
 	 * session 变量对象
@@ -39,22 +35,6 @@ public class SessionVariable implements Serializable {
 	 */
 	public SessionVariable(Map<String, Object> user) {
 		this.user = user;
-	}
-
-	public String getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(String groupId) {
-		this.groupId = groupId;
-	}
-
-	public String getAreaId() {
-		return areaId;
-	}
-
-	public void setAreaId(String areaId) {
-		this.areaId = areaId;
 	}
 
 	/**

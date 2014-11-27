@@ -15,7 +15,7 @@ public interface AddressDao {
 	 * @return void 
 	 * @throws 
 	*/
-	public void  insert (Address address);
+	public void insert (Address address);
 	
 	/**
 	 * <p>Description: 更新数据</p>

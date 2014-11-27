@@ -5,7 +5,7 @@
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.user.UserPeasHisDao" >
 
-	<insert id="insert" useGeneratedKeys="true" keyProperty="peasId">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="auditId">
         insert into st_user_peas_his(
           user_id,
           peas_type,
@@ -19,19 +19,19 @@
           #{peasBalance},
           #{registerNumber},
           #{acceptPerson},
-         now()
+          #{acceptDate}
         )
 	</insert>
 	
 	<select id="queryList" resultType="userPeasHis">
 		select
-		  peas_id as peasId,
-		  user_id as userId,
-          peas_type as peasType,
-          peas_balance as peasBalance,
-          register_number as registerNumber,
-          accept_person as acceptPerson,
-          accept_date as acceptDate
+		  peas_id,
+		  user_id,
+          peas_type,
+          peas_balance,
+          register_number,
+          accept_person,
+          accept_date
 		from st_user_peas_his
 		where
 		user_id =#{userId}

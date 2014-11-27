@@ -16,18 +16,17 @@
           id = #{id}
     </select>
 
-    <select id="getUserGroup" resultType="hashmap">
+    <select id="getUserGroups" resultType="hashmap">
         SELECT
-          g.id as "groupId",
-          g.name as "groupName",
-          a.name as "areaName",
-          a.id as "areaId"
+          g.id as "id",
+          g.name as "name",
+          g.remark as "remark"
         FROM
-          sys_office g
+          tb_group g
         LEFT JOIN
-          sys_user u ON g.id = u.company_id
+          tb_group_user gu ON g.id = gu.fk_group_id
         LEFT JOIN
-          sys_area a ON a.id = g.area_id
+          tb_user u ON u.id = gu.fk_user_id
         WHERE
           u.id = #{userId}
     </select>

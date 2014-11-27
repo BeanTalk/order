@@ -1,4 +1,4 @@
-package com.saituo.order.web.user;
+package com.saituo.order.web.ordering;
 
 import java.util.List;
 

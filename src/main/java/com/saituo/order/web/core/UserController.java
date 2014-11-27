@@ -1,6 +1,7 @@
 package com.saituo.order.web.core;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
@@ -90,6 +92,30 @@ public class UserController {
 	@RequestMapping("is-username-unique")
 	public boolean isUsernameUnique(String username) {
 		return accountService.isUsernameUnique(username);
+	}
+
+	/**
+	 * 编辑用户，响应页面 WEB-INF/page/account/user/edit.html
+	 * 
+	 * @param id
+	 *            主键id
+	 * @param model
+	 *            spring mvc 的 Model 接口，主要是将 http servlet request 的属性返回到页面中
+	 * 
+	 */
+	@RequestMapping("edit")
+	public void edit(@RequestParam(required = false) String id, Model model) {
+
+		model.addAttribute("states", VariableUtils.getVariables(State.class, State.DELETE.getValue()));
+		model.addAttribute("groups", accountService.findGroups(new HashMap<String, Object>()));
+
+		model.addAttribute("entity", Maps.newHashMap());
+		model.addAttribute("hasGroups", Lists.newArrayList());
+
+		if (id != null) {
+			model.addAttribute("entity", accountService.getUser(id));
+		}
+
 	}
 
 	/**

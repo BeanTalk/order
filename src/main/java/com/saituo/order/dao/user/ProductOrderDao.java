@@ -3,6 +3,7 @@ package com.saituo.order.dao.user;
 import java.util.List;
 
 import com.saituo.order.entity.user.ProductOrder;
+import com.saituo.order.entity.user.UserOrder;
 
 
 /**
@@ -35,7 +36,7 @@ public interface ProductOrderDao {
 	 * @return UserOrder 
 	 * @throws 
 	*/
-	public ProductOrder query (ProductOrder productOrder);
+	public UserOrder query (ProductOrder productOrder);
 	
 	/**
 	 * <p>Description: 查询数据:根据客户订单编码查询</p>

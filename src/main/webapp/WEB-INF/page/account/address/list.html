@@ -2,7 +2,7 @@
 <#macro head>
 <script type="text/javascript">
 	$('add_addr_btn').click(function(){
-		window.location.href='order/order/address/edit';
+		window.location.href='order/account/address/edit';
 	});
 </script>
 </#macro>
@@ -11,25 +11,31 @@
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
+	    	<div class="breadBar">您现在的位置:<a href="../../index.html">首页</a>--&gt;个人中心--&gt;地址管理</div>
 	    	<h3>地址管理</h3>
 	    </div>
 	    <div class="panel_body">
 	    	<div class="msg_Div clearfix">
-	    		<#if addressList?size == 0>
-                    <p class="font_address">
-                        没有记录
-                    </p>
-                <#else>
-		    		<#list addressList as r>
-		    			<p class="font_address">
-			        		<input type="radio" checked="checked" value="${r.addressId!""}" name="addressId">
-			        		<span>${r.receiptAddress!""}</span>
-			        		(<span>${r.receiptPerson!""}</span>收)
-			        		<span style="color:#666">${r.contactPhone!""}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-			        		<a href="${base}/account/address/edit?addressId=${r.addressId!""}">[修改]</a>
-			        	</p>
-		    		</#list>
-		    	</#if>
+	    		<p class="font_address">
+	        		<input type="radio" checked="checked" value="" name="address">
+	        		<span>辽宁省</span>&nbsp;
+	        		<span>大连市</span>&nbsp;
+	        		<span>甘井子区</span>&nbsp;
+	        		<span>高新园区大连银行</span>
+	        		(<span>李学</span>收)
+	        		<span style="color:#666">13945674256</span>&nbsp;&nbsp;&nbsp;&nbsp;
+	        		<a href="myAddress_edit.html">[修改]</a>
+	        	</p>
+	      		<p class="font_address">
+	      			<input type="radio" value="" name="radio">
+	        		<span>辽宁省</span>&nbsp;
+	        		<span>大连市</span>&nbsp;
+	        		<span>中山区</span>&nbsp;
+	        		<span>人民广场1号</span>
+	        		(<span>李学</span>收)
+	        		<span style="color:#666">13945674256</span>&nbsp;&nbsp;&nbsp;&nbsp;
+	        		<a href="myAddress_edit.html">[修改]</a>
+	        	</p>
 	        </div>
 	    	<div id="add_addr_btn" class="button blue fr">添加地址</div>
 		</div>

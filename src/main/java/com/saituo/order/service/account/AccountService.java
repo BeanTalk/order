@@ -353,8 +353,20 @@ public class AccountService {
 	 * 
 	 * @return 组实体 Map 集合
 	 */
-	public Map<String, Object> getUserGroup(String userId) {
-		return groupDao.getUserGroup(userId);
+	public List<Map<String, Object>> getUserGroups(String userId) {
+		return groupDao.getUserGroups(userId);
+	}
+
+	/**
+	 * 查询组
+	 * 
+	 * @param filter
+	 *            查询条件
+	 * 
+	 * @return 组实体 Map 集合
+	 */
+	public List<Map<String, Object>> findGroups(Map<String, Object> filter) {
+		return groupDao.find(filter);
 	}
 
 	/**
@@ -418,7 +430,7 @@ public class AccountService {
 
 		List<Map<String, Object>> result = Lists.newArrayList();
 		for (Map<String, Object> entity : resources) {
-			
+
 			String parentId = VariableUtils.typeCast(entity.get("parent_id"), String.class);
 			Integer type = VariableUtils.typeCast(entity.get("type"), Integer.class);
 
