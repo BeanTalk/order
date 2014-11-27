@@ -1,51 +1,34 @@
 <#include "*/basic/default.html"/>
 <#macro head>
 <script type="text/javascript">
-	//全选
-	var isCheckAll=true;
-	$("#checkboxAll").click(function(){
-		if(isCheckAll){
-			$(".table_pro_body input[type=checkbox][name=item]").attr("checked",true);
-			$(".table_pro_body input[type=checkbox][name=item]").parent().parent().addClass('selected');
-			isCheckAll=false;	
-		
-		}else{
-			$(".table_pro_body input[type=checkbox][name=item]").attr("checked",false);
-			$(".table_pro_body input[type=checkbox][name=item]").parent().parent().removeClass('selected');
-			isCheckAll=true;
-		}
-	});
-	
-	$('#buy_card_btn').click(function(){
-		alert($('#productId').val());
-	});
-	
 	$(function(){
 		$('.Q-buy-btn').shoping();
 	});
-	
 </script>
 </#macro>
 
 <#macro body>
 <div class="containerPx clearfix">
+	<@shiro.guest>
 	<div class="grid1 m_t">
 		<div class="subnav">
 			<p class="subnav-header">产品中心</p>
 		</div>
 	</div>
+	</@shiro.guest>
 	<div class="grid2 m_t">
 		<div class="panel_body clearfix">
         	<table width="100%" class="table_pro_header">
           		<tbody>
 	          		<tr>
-		            	<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
 		            	<th width="308">产品</th>
 			            <th width="100">规格</th>
 			            <th width="60">单位</th>
 			            <th width="100">目录价</th>
 			            <th width="100">订购价</th>
-			            <th width="130">操作</th>
+			            <@shiro.authenticated>
+			            	<th width="130">操作</th>
+			            </@shiro.authenticated>
 			        </tr>
 		    	</tbody>
 			</table>
@@ -58,7 +41,6 @@
                     <#else>
                         <#list page.content as r>
                         <tr>
-                            <td><input type="checkbox" name="item" value="${r.productId}"></td>
 	                        <td width="308" align="left">
 								<p><span class="pro_name">${r.productName}</span></p>
 								<p><b>货号：</b>${r.productNum}</p>
@@ -70,7 +52,7 @@
 				            <td width="100" align="center">${r.catalogFee}</td>
 				            
 				            <input type="hidden" id="productId" value="${r.productId}">
-				            
+				            <@shiro.authenticated>
                             <td width="130" align="center">
                             	<a href="###">
 				            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
@@ -79,6 +61,7 @@
 	          						<div id="record_btn" class="button orange medium fl">记录</div>
 	          					</a>
 	          				</td>
+	          				</@shiro.authenticated>
                         </tr>
                         </#list>
                     </#if>

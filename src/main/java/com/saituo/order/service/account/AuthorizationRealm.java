@@ -80,7 +80,6 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		sv.setMenusList(menuList);
 
 		SecurityUtils.getSubject().getSession().setAttribute(SessionVariable.DEFAULT_SESSION_KEY, sv);
-
 		return info;
 	}
 

@@ -13,4 +13,6 @@ public interface ProductDao {
 
 	public int count(@Param(value = "filter") Map<String, ?> filter);
 
+	public List<Product> getProductListByProductIds(@Param(value = "productIds") List<Integer> productIds);
+
 }

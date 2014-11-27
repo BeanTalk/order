@@ -2,18 +2,25 @@ package com.saituo.order.entity.order;
 
 public class Product {
 
+	// 产品编码
 	private Integer productId;
 
+	// 产品名称
 	private String productName;
 
+	// 货号
 	private String productNum;
 
+	// 产品品牌编码
 	private String brandId;
 
+	// 规格
 	private String specValue;
 
+	// 单位
 	private String unitValue;
 
+	// 目录价
 	private Double catalogFee;
 
 	public Integer getProductId() {

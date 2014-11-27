@@ -492,7 +492,7 @@ public class AccountService {
 	 * @return
 	 */
 	public boolean isValidPinByLoginName(String loginName, String md5) {
-		String md5Temp = redisCacheService.getPasswordFromRedisCache(loginName);
+		String md5Temp = redisCacheService.getPinFromRedisCache(loginName);
 		if (StringUtils.equals(md5, md5Temp)) {
 			return true;
 		}

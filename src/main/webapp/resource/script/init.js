@@ -29,5 +29,4 @@ $(document).ready(function() {
 		window.location.href='/order/views/search/productlist?searchContext='+search_context;
 	});
 	
-   
 });

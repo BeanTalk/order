@@ -135,9 +135,7 @@ public class UserController {
 		}
 
 		PortraitSize size = PortraitSize.getPortraitSize(temp);
-
 		return new ResponseEntity<byte[]>(accountService.getCurrentUserPortrait(size), HttpStatus.OK);
-
 	}
 
 	/**
