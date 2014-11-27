@@ -32,9 +32,9 @@
 
 	<select id="query" resultType="userGroupPointAccount">
 		SELECT
-		user_group_id,
-		point_balance,
-		account_fee
+		user_group_id as userGroupId,
+		point_balance as pointBalance,
+		account_fee as accountFee
 		FROM
 		st_user_group_point_account
 		WHERE
