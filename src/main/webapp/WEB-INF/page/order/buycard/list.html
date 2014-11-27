@@ -4,12 +4,12 @@
 	var isCheckAll=true;
 	$("#checkboxAll").click(function(){
 		if(isCheckAll){
-			$(".table_pro_body input[type=checkbox][name=items]").attr("checked",true);
-			$(".table_pro_body input[type=checkbox][name=items]").parent().parent().addClass('selected');
+			$(".table_pro_body input[type=checkbox][name=productIds]").attr("checked",true);
+			$(".table_pro_body input[type=checkbox][name=productIds]").parent().parent().addClass('selected');
 			isCheckAll=false;	
 		}else{
-			$(".table_pro_body input[type=checkbox][name=items]").attr("checked",false);
-			$(".table_pro_body input[type=checkbox][name=items]").parent().parent().removeClass('selected');
+			$(".table_pro_body input[type=checkbox][name=productIds]").attr("checked",false);
+			$(".table_pro_body input[type=checkbox][name=productIds]").parent().parent().removeClass('selected');
 			isCheckAll=true;
 		}
 	});
@@ -20,7 +20,7 @@
 	});
 	
 	$('#save_btn').click(function(){
-		$("#buycard-list-form").attr("action", "/order/ordering/save");
+		$("#buycard-list-form").attr("action", "/order/customerOrder/save");
 		$('#buycard-list-form').submit();
 	});
 	
@@ -34,10 +34,27 @@
 
 <#macro body>
 <div class="grid2 m_t">
+	<div class="panel">	
+		<div class="panel_header">
+        	<h3>收货地址</h3>
+		</div>
+		<div class="panel_body">
+        	<div id="address_content" class="msg_Div">
+          		<p class="font_address">
+	            	<input type="radio" value="${addressId!''}" name="address">
+	            	<span>辽宁省</span>&nbsp;<span>大连市</span>&nbsp;<span>甘井子区</span>&nbsp;<span>高新园区大连银行</span>(<span>李学</span>收)<span style="color:#666">13945674256</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            	</p>
+          		<p class="font_address">
+	            	<input type="radio" value="${addressId!''}" name="address">
+	            	<span>辽宁省</span>&nbsp;<span>大连市</span>&nbsp;<span>中山区</span>&nbsp;<span>人民广场1号</span>(<span>李学</span>收)<span style="color:#666">13945674256</span>&nbsp;&nbsp;&nbsp;&nbsp;
+            	</p>
+			</div>
+			<div onclick="window.location.href='myAddress_add.html'" class="button blue fr">添加地址</div>
+		</div>
+	</div>
 	<div class="panel">
 		<div class="panel_header">
-	        <div class="breadBar">您现在的位置：<a href="../../index.html">首页</a>--&gt;购物车</div>
-	        <h3>购物车</h3>
+	        <h3>选购产品</h3>
 	     </div>
 	    <form id="buycard-list-form" action="" method="post">
 			<div class="panel_body clearfix">
@@ -66,7 +83,7 @@
 		                    <#list customerOrderingList as r>
 		                    <tr>
 								<td width="30">
-									<input type="checkbox" name="items" value="${r.productId}">
+									<input type="checkbox" name="productIds" value="${r.productId}">
 								</td>
 		                        <td width="258" align="left">
 									<p><span class="pro_name">${r.productName}</span></p>
@@ -99,8 +116,7 @@
 		            		<span class="fb">${customerOrderingList?size}</span>&nbsp;件产品&nbsp;
 		            		&nbsp;总价: <span class="font16 fb"></span>元</div>
 		            	<br>
-		            		<div id="save_btn" class="button orange">保存</div>
-		            		<div id="next_step_btn" class="button blue">下一步</div>
+		            	<div id="save_btn" class="button orange">保存</div>
 	            	</div>
 	        	</div>
 			</div>

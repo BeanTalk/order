@@ -15,7 +15,6 @@ import com.saituo.order.entity.user.Address;
 @Service
 @Transactional
 public class AddressService {
-
 	@Autowired
 	private AddressDao addressDao;
 	/**
@@ -42,7 +41,9 @@ public class AddressService {
 	 * @param Address
 	 *            地址实体
 	 */
-	public void delete(Address address) {
+	public void delete(Long addressId) {
+		Address address = new Address();
+		address.setAddressId(addressId);
 		addressDao.delete(address);
 	}
 	/**
@@ -55,7 +56,9 @@ public class AddressService {
 	 * @return Address
 	 * @throws
 	 */
-	public Address query(Address address) {
+	public Address query(Long addressId) {
+		Address address = new Address();
+		address.setAddressId(addressId);
 		return addressDao.query(address);
 	}
 	/**
@@ -68,7 +71,9 @@ public class AddressService {
 	 * @return List<Address>
 	 * @throws
 	 */
-	public List<Address> queryList(Address address) {
+	public List<Address> queryList(String userId) {
+		Address address = new Address();
+		address.setUserId(userId);
 		return addressDao.queryList(address);
 	}
 

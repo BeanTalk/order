@@ -19,19 +19,19 @@
           #{pointBalance},
           #{registerNumber},
           #{acceptPerson},
-          #{acceptDate}
+          now()
         )
 	</insert>
 	
 	<select id="queryList" resultType="userGroupPointHis">
 		select
-			point_id,
-			group_id,
-			point_type ,
-			point_balance ,
-			register_number,
-			accept_person,
-			accept_date 
+			point_id as  pointId,
+			group_id as groupId,
+			point_type  as pointType,
+			point_balance  as pointBalance,
+			register_number as registerNumber,
+			accept_person as acceptPerson,
+			accept_date as acceptDate
 		from st_user_group_point_his
 		where
 		group_id =#{groupId}

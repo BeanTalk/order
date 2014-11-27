@@ -47,21 +47,21 @@
                    other_require = #{otherRequire},  
 			</if>
 		</trim>
-        where address_id = #{address_id}  
+        where address_id = #{addressId}  
 	</update>  
 	
 
 
 	<select id="query"  resultType="address">
 		select
-			address_id ,
-			user_id,
-			receipt_address ,
-			receipt_person ,
-			contact_phone ,
-			invoice_caput ,
-			invoice_require ,
-			other_require 
+			address_id as addressId ,
+			user_id as userId,
+			receipt_address as receiptAddress ,
+			receipt_person as receiptPerson ,
+			contact_phone  as contactPhone,
+			invoice_caput as invoiceCaput ,
+			invoice_require  as invoiceRequire,
+			other_require as otherRequire
 		from st_address
 		where
 		address_id = #{addressId}
@@ -69,14 +69,14 @@
 
 	<select id="queryList" resultType="address">
 		select
-			address_id ,
-			user_id,
-			receipt_address ,
-			receipt_person ,
-			contact_phone ,
-			invoice_caput ,
-			invoice_require ,
-			other_require 
+			address_id as addressId ,
+			user_id as userId,
+			receipt_address as receiptAddress ,
+			receipt_person as receiptPerson ,
+			contact_phone  as contactPhone,
+			invoice_caput as invoiceCaput ,
+			invoice_require  as invoiceRequire,
+			other_require as otherRequire
 		from st_address
 		where
 		user_id =#{userId}
