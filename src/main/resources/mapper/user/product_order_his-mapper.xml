@@ -15,29 +15,17 @@
           #{registerNumber},
           #{orderResult},
           #{acceptPerson},
-<<<<<<< HEAD
           #{acceptDate}
-=======
-          now()
->>>>>>> liurong-base
         )
 	</insert>
 	
 	<select id="queryList" resultType="productOrderHis">
 		select
-<<<<<<< HEAD
 			id,
 			register_number,
 			order_result ,
 			accept_person ,
 			accept_date
-=======
-			id as id,
-			register_number as registerNumber,
-			order_result as orderResult ,
-			accept_person as acceptPerson ,
-			accept_date as acceptDate
->>>>>>> liurong-base
 		from st_product_order_his
 		where
 		register_number =#{registerNumber}

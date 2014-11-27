@@ -29,13 +29,8 @@
           #{auditCd},
           #{statusCd},
           #{invoiceStatus},
-<<<<<<< HEAD
           #{acceptDate},
           #{changeDate},
-=======
-          now(),
-          now(),
->>>>>>> liurong-base
           #{ifValid}
         )
 	</insert>
@@ -62,17 +57,12 @@
                     if_valid= #{ifValid},  
 			</if>
 		</trim>
-<<<<<<< HEAD
 		change_date= sysdate
-=======
-		,change_date= now()
->>>>>>> liurong-base
         where register_number = #{registerNumber}  
 	</update>  
 	
 	<select id="query"  resultType="productOrder">
 		select
-<<<<<<< HEAD
 			register_number,
 			user_order_id,
 			area_id,
@@ -86,27 +76,11 @@
 			accept_date,
 			change_date,
 			if_valid
-=======
-			register_number as registerNumber,
-			user_order_id as userOrderId,
-			area_id as areaId,
-			user_id as userId,
-			product_id as productId,
-			order_fee as orderFee,
-			order_num as orderNum,
-			audit_cd as auditCd,
-			status_cd as statusCd,
-			invoice_status as invoiceStatus,
-			accept_date as acceptDate,
-			change_date as changeDate,
-			if_valid as ifValid
->>>>>>> liurong-base
 		from st_product_order
 		where
 		register_number = #{registerNumber}  
 	</select>
 
-<<<<<<< HEAD
 	<select id="queryList" resultType="productOrder">
 		select
 			register_number,
@@ -122,23 +96,6 @@
 			accept_date,
 			change_date,
 			if_valid
-=======
-	<select id="queryListByUserOrderId" resultType="productOrder">
-		select
-			register_number as registerNumber,
-			user_order_id as userOrderId,
-			area_id as areaId,
-			user_id as userId,
-			product_id as productId,
-			order_fee as orderFee,
-			order_num as orderNum,
-			audit_cd as auditCd,
-			status_cd as statusCd,
-			invoice_status as invoiceStatus,
-			accept_date as acceptDate,
-			change_date as changeDate,
-			if_valid as ifValid
->>>>>>> liurong-base
 		from st_product_order
 		where
 		user_order_id =#{userOrderId}

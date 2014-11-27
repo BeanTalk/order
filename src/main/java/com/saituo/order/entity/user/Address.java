@@ -1,21 +1,21 @@
 package com.saituo.order.entity.user;
 
 public class Address {
-	//地址编码
+	// 地址编码
 	private Long addressId;
-	//客户编码
+	// 客户编码
 	private String userId;
-	//收货地址
-	private String receiptAddress;	
-	//收货人
+	// 收货地址
+	private String receiptAddress;
+	// 收货人
 	private String receiptPerson;
-	//联系电话
-	private String	contactPhone;
-	//发票抬头
-	private String	invoiceCaput;
-	//发票要求
-	private String	invoiceRequire;
-	//发票要求
+	// 联系电话
+	private String contactPhone;
+	// 发票抬头
+	private String invoiceCaput;
+	// 发票要求
+	private String invoiceRequire;
+	// 发票要求
 	private String otherRequire;
 
 	public Long getAddressId() {
@@ -66,4 +66,5 @@ public class Address {
 	public void setOtherRequire(String otherRequire) {
 		this.otherRequire = otherRequire;
 	}
+
 }
