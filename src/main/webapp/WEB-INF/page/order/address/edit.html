@@ -1,0 +1,63 @@
+<#include "*/basic/default.html"/>
+<#macro head>
+<script type="text/javascript">
+	$('#address_save_btn').click(function(){
+		$('#address_form').submit();
+	});
+</script>
+</#macro>
+
+<#macro body>
+<div class="grid2 m_t">
+    <div class="panel">
+		<div class="panel_header">
+			<h3>添加地址</h3>
+      	</div>
+      	<div class="panel_body c">
+      		<@form.form id="address_form" action="${base}/order/address/save" commandName="addressForm" method="post">
+      			<#if entity.addressId??>
+	            	<input type="hidden" name="addressId" value="${entity.addressId}">
+	            </#if>
+	        	<table width="100%" class="table_none">
+	          		<tbody>
+						<tr>
+				        	<td nowrap="nowrap"><label>详细地址:</label></td>
+				            <td align="left"><textarea rows="3" cols="80" name="receiptAddress">${entity.receiptAddress!""}</textarea></td>
+				            <td><@form.errors path="receiptAddress" cssClass="error" /></td>
+				        </tr>
+	          			<tr>
+	            			<td nowrap="nowrap"><label>收货人:</label></td>
+	            			<td align="left"><input type="text" name="receiptPerson" value="${entity.receiptPerson!""}"></td>
+	            			<td><@form.errors path="receiptPerson" cssClass="error" /></td>
+	          			</tr>
+	          			<tr>
+	            			<td nowrap="nowrap"><label>联系电话:</label></td>
+							<td align="left"><input type="text" name="contactPhone" value="${entity.contactPhone!""}"></td>
+							<td><@form.errors path="contactPhone" cssClass="error" /></td>
+	          			</tr>
+	          			<tr>
+	            			<td nowrap="nowrap"><label>发票抬头:</label></td>
+	            			<td align="left"><input type="text" size="80" name="invoiceCaput" value="${entity.invoiceCaput!""}"></td>
+	            			<td><@form.errors path="invoiceCaput" cssClass="error" /></td>
+	          			</tr>
+	          			<tr>
+	            			<td nowrap="nowrap"><label>发票要求:</label></td>
+							<td align="left"><input type="text" size="80" name="invoiceRequire" value="${entity.invoiceRequire!""}"></td>
+							<td><@form.errors path="invoiceRequire" cssClass="error" /></td>
+	          			</tr>
+	          			<tr>
+							<td nowrap="nowrap"><label>其他要求:</label></td>
+							<td align="left"><input type="text" size="80" name="otherRequire" value="${entity.otherRequire!""}"></td>
+							<td><@form.errors path="otherRequire" cssClass="error" /></td>
+						</tr>
+	          			<tr>
+	            			<td nowrap="nowrap"></td>
+	            			<td align="left"><div id="address_save_btn" class="button orange">保存</div></td>
+	            		</tr>
+					</tbody>
+				</table>
+			</@form.form>
+		</div>
+	</div>
+</div>
+</#macro>

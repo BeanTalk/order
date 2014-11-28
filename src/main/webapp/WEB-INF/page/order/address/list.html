@@ -1,8 +1,8 @@
 <#include "*/basic/default.html"/>
 <#macro head>
 <script type="text/javascript">
-	$('add_addr_btn').click(function(){
-		window.location.href='order/order/address/edit';
+	$('#add_addr_btn').click(function(){
+		window.location.href='/order/order/address/edit';
 	});
 </script>
 </#macro>
@@ -26,7 +26,8 @@
 			        		<span>${r.receiptAddress!""}</span>
 			        		(<span>${r.receiptPerson!""}</span>收)
 			        		<span style="color:#666">${r.contactPhone!""}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-			        		<a href="${base}/account/address/edit?addressId=${r.addressId!""}">[修改]</a>
+			        		<a href="${base}/order/address/edit?addressId=${r.addressId!""}">[修改]</a>
+			        		<a href="${base}/order/address/delete?addressId=${r.addressId!""}">[删除]</a>
 			        	</p>
 		    		</#list>
 		    	</#if>

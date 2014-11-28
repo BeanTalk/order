@@ -41,8 +41,9 @@ public class AddressService {
 	 * @param Address
 	 *            地址实体
 	 */
-	public void delete(Long addressId) {
+	public void delete(Long addressId, String UserId) {
 		Address address = new Address();
+		address.setUserId(UserId);
 		address.setAddressId(addressId);
 		addressDao.delete(address);
 	}
