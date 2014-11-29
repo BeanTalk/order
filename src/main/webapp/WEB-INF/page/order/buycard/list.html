@@ -14,18 +14,15 @@
 		}
 	});
 	
+	//批量删除
 	$('#batch_remove_btn').click(function(){
 		$("#buycard-list-form").attr("action", "/order/order/buycard/batchremove");
 		$('#buycard-list-form').submit();
 	});
 	
+	//保存
 	$('#save_btn').click(function(){
-		$("#buycard-list-form").attr("action", "/order/customerOrder/save");
-		$('#buycard-list-form').submit();
-	});
-	
-	$('#next_step_btn').click(function(){
-		$("#buycard-list-form").attr("action", "/order/order/buycard/nextstep");
+		$("#buycard-list-form").attr("action", "/order/order/customerOrder/save");
 		$('#buycard-list-form').submit();
 	});
 	
@@ -34,29 +31,31 @@
 
 <#macro body>
 <div class="grid2 m_t">
-	<div class="panel">	
-		<div class="panel_header">
-        	<h3>收货地址</h3>
-		</div>
-		<div class="panel_body">
-        	<div id="address_content" class="msg_Div">
-          		<p class="font_address">
-	            	<input type="radio" value="${addressId!''}" name="address">
-	            	<span>辽宁省</span>&nbsp;<span>大连市</span>&nbsp;<span>甘井子区</span>&nbsp;<span>高新园区大连银行</span>(<span>李学</span>收)<span style="color:#666">13945674256</span>&nbsp;&nbsp;&nbsp;&nbsp;
-            	</p>
-          		<p class="font_address">
-	            	<input type="radio" value="${addressId!''}" name="address">
-	            	<span>辽宁省</span>&nbsp;<span>大连市</span>&nbsp;<span>中山区</span>&nbsp;<span>人民广场1号</span>(<span>李学</span>收)<span style="color:#666">13945674256</span>&nbsp;&nbsp;&nbsp;&nbsp;
-            	</p>
+	<form id="buycard-list-form" action="" method="post">
+		<div class="panel">	
+			<div class="panel_header">
+	        	<h3>收货地址</h3>
 			</div>
-			<div onclick="window.location.href='myAddress_add.html'" class="button blue fr">添加地址</div>
+			<div class="panel_body">
+	        	<div id="address_content" class="msg_Div">
+	        		<#if addressList?size == 0>
+	                	没有地址记录
+	                <#else>
+		        		<#list addressList as r>
+			          		<p class="font_address">
+				            	<input type="radio" value="${r.addressId!''}" id="addressId" name="addressId">
+				            	<span>${r.receiptAddress}</span>(<span>${r.receiptPerson}</span>收)<span style="color:#666">${r.contactPhone}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+			            	</p>
+		            	</#list>
+		            </#if>
+				</div>
+				<div onclick="window.location.href='/order/order/address/edit'" class="button blue fr">添加地址</div>
+			</div>
 		</div>
-	</div>
-	<div class="panel">
-		<div class="panel_header">
-	        <h3>选购产品</h3>
-	     </div>
-	    <form id="buycard-list-form" action="" method="post">
+		<div class="panel">
+			<div class="panel_header">
+		        <h3>选购产品</h3>
+		     </div>
 			<div class="panel_body clearfix">
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
@@ -96,7 +95,7 @@
 					            <td width="80" align="center">${r.discountPrice}</td>
 								<td width="80" align="center">
 									<label for="textfield"></label>
-									<input type="text" class="right" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!2}">
+									<input type="text" class="right" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
 								</td>
 								<td width="80">大连赛拓</td>
 								<td width="50" align="center">
@@ -120,7 +119,7 @@
 	            	</div>
 	        	</div>
 			</div>
-		</form>
-	</div>
+		</div>
+	</form>
 </div>
 </#macro>

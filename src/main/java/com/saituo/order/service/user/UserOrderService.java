@@ -55,7 +55,7 @@ public class UserOrderService {
 		// 地址编码
 		Long addressId = 0l;
 		if (filter.get("addressId") != null && !filter.get("addressId").equals("")) {
-			addressId = (Long) filter.get("addressId");
+			addressId = Long.valueOf(String.valueOf(filter.get("addressId")));
 		}
 
 		UserOrder userOrder = new UserOrder();

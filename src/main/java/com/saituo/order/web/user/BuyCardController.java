@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -14,8 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
-import com.saituo.order.entity.order.CustomerOrdering;
 import com.saituo.order.service.order.BuyCardService;
+import com.saituo.order.service.user.AddressService;
 
 @Controller
 @RequiresAuthentication
@@ -24,6 +25,9 @@ public class BuyCardController {
 
 	@Autowired
 	private BuyCardService buyCardService;
+
+	@Autowired
+	private AddressService addressService;
 
 	@RequestMapping(value = "addProductToBag/{productId}", method = RequestMethod.POST)
 	public @ResponseBody Object addProductToBag(@PathVariable("productId") String productId) {
@@ -70,10 +74,13 @@ public class BuyCardController {
 	}
 
 	@RequestMapping(value = "list", method = RequestMethod.GET)
-	public List<CustomerOrdering> getProductList() {
+	public void getProductList(Model model) {
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
-		return buyCardService.getProductListFromBag(userId);
+
+		model.addAttribute("customerOrderingList", buyCardService.getProductListFromBag(userId));
+		model.addAttribute("addressList", addressService.queryList(userId));
+		return;
 	}
 
 }
