@@ -42,23 +42,9 @@
 <div class="grid2 m_t">
 <div class="panel">
 	<div class="panel_header">
-		<h3>所有订单</h3>
+		<h3>待审批订单</h3>
 	</div>
 	<div class="panel_body  clearfix">
-		<table width="100%">
-			<tbody>
-				<tr>
-		            <td width="60" nowrap="nowrap">开始时间</td>
-		            <td width="70" nowrap="nowrap"><input type="text" size="12" class="datepicker hasDatepicker" name="" id="dp1417333187322"></td>
-		            <td width="60" nowrap="nowrap">结束时间</td>
-		            <td width="70" nowrap="nowrap"><input type="text" size="12" class="datepicker hasDatepicker" name="" id="dp1417333187323"></td>
-		            <td width="58" nowrap="nowrap"><div class="button white medium">检索</div></td>
-		            <td width="398" nowrap="nowrap"></td>
-		            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
-				</tr>
-			</tbody>
-		</table>
-		<br>
         <table width="100%" class="table_pro_header">
 			<tbody>
 				<tr>
@@ -91,9 +77,7 @@
 						<#list r.productOrderReturn as productOrderInfo>
 		                    <tr>
 								<td width="30">
-								<!--
 									<input type="checkbox" name="productOrders" id="u_${r.userOrderReturn.userOrderId}_p_${productOrderInfo.product.productId}" value="${productOrderInfo.product.productId}">
-								-->
 								</td>
 		                        <td width="248" align="left">
 									<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
@@ -104,11 +88,11 @@
 		                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
 					            <td width="100" align="center">${productOrderInfo.orderFee}</td>
 					            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-								<td width="80" align="center"><input type="text" size="2" name="" value=${productOrderInfo.orderNum!1}></td>
-								<td width="140" align="center">
-					            	<div class="button orange medium fl D-buy-btn">删除</div>
-					            	<div class="button blue medium fl D-buy-btn">修改</div>
-								</td>
+								<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+								<td width="100" align="center">
+									<div class="button green medium fl">批准</div>
+              						<div class="button orange medium fl">驳回</div>
+              					</td>
 		                    </tr>
 	                    </#list>
 	                    <tr>
@@ -118,9 +102,11 @@
                 </#if>
 			</tbody>
 		</table>
-		<div class="actionBar">
-			<div id="submit_order_btn" class="button blue fr">提交订单</div>
-		</div>
+		<div class="clearfix m_t">
+			<div class="button green fl">批准选中的产品</div>&nbsp;&nbsp;
+			<div class="button orange fl">驳回选中的产品</div>
+			<div class="font14 fr">共&nbsp;<span class="fb">XXX</span>&nbsp;件产品&nbsp;&nbsp;总价:<span class="font16 fb">XXX</span>元</div>
+        </div>
  	</div>
 </div>
 </div>

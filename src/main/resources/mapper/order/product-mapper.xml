@@ -72,5 +72,21 @@
 			</if>
 		</trim>
 	</select>
+	
+	<select id="getProductByProductId" resultType="product">
+        SELECT
+          product_id AS "productId",
+          product_name AS "productName",
+          product_num AS "productNum",
+          brand_id AS "brandId",
+          spec_value AS "specValue",
+          unit_value AS "unitValue",
+          catalog_fee AS "catalogFee",
+          del_flag AS "delFlag"
+        FROM
+          st_product
+		WHERE
+		  product_id = #{productId}
+	</select>
 
 </mapper>

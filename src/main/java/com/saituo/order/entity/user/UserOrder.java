@@ -72,5 +72,4 @@ public class UserOrder {
 	public void setGroupId(String groupId) {
 		this.groupId = groupId;
 	}
-
 }

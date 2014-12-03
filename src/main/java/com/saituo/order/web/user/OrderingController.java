@@ -10,17 +10,27 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.UserOrderingState;
+import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.service.user.AddressService;
 import com.saituo.order.service.user.UserOrderService;
 
 @Controller
+@SessionAttributes(SessionVariable.DEFAULT_SESSION_KEY)
 @RequestMapping("order")
 public class OrderingController {
 
 	@Autowired
 	private UserOrderService userOrderService;
+
+	@Autowired
+	private AddressService addressService;
 
 	/**
 	 * 购物车中保存订单
@@ -49,11 +59,30 @@ public class OrderingController {
 		return "redirect:/order/list/all_order";
 	}
 
+	/**
+	 * 查看所有的订单
+	 * 
+	 * @param filter
+	 * @param model
+	 */
 	@RequestMapping(value = "list/all_order", method = RequestMethod.GET)
 	public void getAllOrderingList(@RequestParam Map<String, Object> filter, Model model) {
+
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
-		
-		model.addAttribute("result", "result");
+		filter.put("userId", userId);
+
+		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
+		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+
+		for (UserOrder userOrder : userOrderList) {
+			String userOrderId = String.valueOf(userOrder.getUserOrderId());
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+		}
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("userOrderAndDetailInfoResultList", userOrderAndDetailInfoResultList);
+		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
 	}
 }

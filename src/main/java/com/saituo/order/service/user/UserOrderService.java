@@ -10,11 +10,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.dao.order.ProductDao;
 import com.saituo.order.dao.user.AddressDao;
 import com.saituo.order.dao.user.AuditHisDao;
 import com.saituo.order.dao.user.ProductOrderDao;
 import com.saituo.order.dao.user.ProductOrderHisDao;
 import com.saituo.order.dao.user.UserOrderDao;
+import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.Address;
 import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.ProductOrder;
@@ -38,6 +40,8 @@ public class UserOrderService {
 	private ProductOrderHisDao productOrderHisDao;
 	@Autowired
 	private AddressDao addressDao;
+	@Autowired
+	private ProductDao productDao;
 
 	/**
 	 * 学生订单保存方法
@@ -129,11 +133,8 @@ public class UserOrderService {
 			statusCd = (String) filter.get("statusCd");
 			userOrderQuery.setStatusCd(statusCd);
 		}
-		// 受理地市----------------------------------------------------如何获取???????????????????????????????????????????????????????????????????????????????????????
-		// userOrderQuery.setAreaId(VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class));
-		userOrderQuery.setAreaId("888");
+		userOrderQuery.setAreaId(SessionVariable.getCurrentSessionVariable().getAreaId());
 		return userOrderDao.queryList(userOrderQuery);
-
 	}
 
 	/**
@@ -146,9 +147,10 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
 			userOrderQuery.setUserOrderId(userOrderId);
 		}
+
 		// 根据客户订单编号查询客户订单信息
 		UserOrder userOrderReturn = userOrderDao.query(userOrderQuery);
 
@@ -160,14 +162,21 @@ public class UserOrderService {
 		// 根据客户订单编码查询产品订单项信息列表
 		ProductOrder productOrder = new ProductOrder();
 		productOrder.setUserOrderId(userOrderId);
-		List<ProductOrder> productOrderReturn = productOrderDao.queryListByUserOrderId(productOrder);
+		// 审批状态:1.待审批,2已驳回,3审批通过
+		String auditCd = null;
+		if (filter.get("auditCd") != null && !filter.get("auditCd").equals("")) {
+			auditCd = (String) filter.get("auditCd");
+			productOrder.setAuditCd(auditCd);
+		}
+
+		List<ProductOrder> productOrderReturn = this.combineProductInfo(productOrderDao
+				.queryListByUserOrderId(productOrder));
 
 		returnMap.put("userOrderReturn", userOrderReturn);
 		returnMap.put("addressReturn", addressReturn);
 		returnMap.put("productOrderReturn", productOrderReturn);
 		return returnMap;
 	}
-
 	/**
 	 * 根据产品订单编号更新订购价格
 	 */
@@ -299,7 +308,6 @@ public class UserOrderService {
 				productOrderHis.setOrderResult(orderResult);
 				productOrderHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
 				productOrderHisDao.insert(productOrderHis);
-
 			}
 		}
 
@@ -765,4 +773,12 @@ public class UserOrderService {
 		}
 	}
 
+	private List<ProductOrder> combineProductInfo(List<ProductOrder> productOrderList) {
+		for (ProductOrder productOrder : productOrderList) {
+			Integer productId = VariableUtils.typeCast(productOrder.getProductId(), Integer.class);
+			Product product = productDao.getProductByProductId(productId);
+			productOrder.setProduct(product);
+		}
+		return productOrderList;
+	}
 }

@@ -1,33 +1,38 @@
 package com.saituo.order.entity.user;
 
+import com.saituo.order.entity.order.Product;
+
 public class ProductOrder {
 
-	//产品订单编码
-	private Long  registerNumber;
-	//客户订单编码
+	// 产品订单编码
+	private Long registerNumber;
+	// 客户订单编码
 	private Long userOrderId;
-	//受理地市
+	// 受理地市
 	private String areaId;
-	//客户编码
+	// 客户编码
 	private String userId;
-	//产品编码
-	private Long  productId;
-	//目录价
+	// 产品编码
+	private Long productId;
+	// 目录价
 	private Double orderFee;
-	//订购数量
-	private Long  orderNum;
-	//审批状态:0未处理 1.待审批;2.已驳回;3.审批通过;
+	// 订购数量
+	private Long orderNum;
+	// 审批状态:0未处理 1.待审批;2.已驳回;3.审批通过;
 	private String auditCd;
-	//状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+	// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
 	private String statusCd;
-	//状态:0.初始 1.未开具发票 2.已开具发票3.已送发票
+	// 状态:0.初始 1.未开具发票 2.已开具发票3.已送发票
 	private String invoiceStatus;
-	//创建时间
+	// 创建时间
 	private String acceptDate;
-	//最后修改时间
+	// 最后修改时间
 	private String changeDate;
-	//是否有效 1是有效，0无效
+	// 是否有效 1是有效，0无效
 	private String ifValid;
+	// 产品项
+	private Product product;
+
 	public Long getRegisterNumber() {
 		return registerNumber;
 	}
@@ -106,7 +111,11 @@ public class ProductOrder {
 	public void setIfValid(String ifValid) {
 		this.ifValid = ifValid;
 	}
-	
-	
-	
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
+
 }

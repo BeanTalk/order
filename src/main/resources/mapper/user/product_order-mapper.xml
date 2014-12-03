@@ -4,7 +4,7 @@
 
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.user.ProductOrderDao" >
-
+	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="registerNumber">
         insert into st_product_order(
 			user_order_id,
@@ -61,7 +61,7 @@
         where register_number = #{registerNumber}  
 	</update>  
 	
-	<select id="query"  resultType="productOrder">
+	<select id="query" resultType="productOrder">
 		select
 			register_number as registerNumber,
 			user_order_id as userOrderId,
@@ -98,7 +98,10 @@
 			if_valid as ifValid
 		from st_product_order
 		where
-		user_order_id =#{userOrderId}
+		user_order_id = #{userOrderId}
+		<if test=" auditCd!= null">  
+            and audit_cd= #{auditCd}
+		</if>
 	</select>
 	
 	<delete id="delete">
