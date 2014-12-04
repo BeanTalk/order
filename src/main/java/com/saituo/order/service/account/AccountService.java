@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.enumeration.entity.PortraitSize;
@@ -173,8 +174,25 @@ public class AccountService {
 	public void resetPassword(String loginname, String newPassword) {
 		String newpasswordHex = HexPassword.entryptPassword(newPassword);
 		userDao.resetPassword(loginname, newpasswordHex);
-
 	}
+
+	/**
+	 * 通过areaid和roleSign获取人员
+	 * 
+	 * @param areaId
+	 * @param roleSign
+	 * @return
+	 */
+	public Map<String, String> findUserByAreaIdAndRole(String areaId, String roleSign) {
+
+		List<Map<String, Object>> list = userDao.findUserByAreaIdAndRole(areaId, roleSign);
+		Map<String, String> mapDataRes = Maps.newHashMap();
+		for (Map<String, Object> mapData : list) {
+			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
+		}
+		return mapDataRes;
+	}
+
 	/**
 	 * 更新用户头像
 	 * 

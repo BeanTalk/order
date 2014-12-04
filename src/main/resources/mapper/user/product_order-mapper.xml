@@ -99,8 +99,14 @@
 		from st_product_order
 		where
 		user_order_id = #{userOrderId}
-		<if test=" auditCd!= null">  
+		<if test=" auditCd != null">  
             and audit_cd= #{auditCd}
+		</if>
+		<if test=" statusCd != null">  
+            and status_cd= #{statusCd}
+		</if>
+		<if test=" invoiceStatus != null">  
+            and invoice_status= #{invoiceStatus}
 		</if>
 	</select>
 	

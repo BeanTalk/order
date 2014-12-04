@@ -7,15 +7,23 @@ import com.saituo.order.commons.enumeration.ValueEnum;
  */
 public enum RoleSign implements ValueEnum<Integer> {
 
-	STUDENT(1, "学生"), 
+	STUDENT(1, "学生"),
+
 	TEACHER(2, "导师"),
+
 	PI(3, "PI"),
+
 	BUYER(4, "采购"),
+
 	SALE(5, "销售"),
-	FINANCE(6,"财务"),
+
+	FINANCE(6, "财务"),
+
 	COMPANY_ADMIN(7, "公司级管理员"),
+
 	SYS_ADMIN(8, "系统管理员"),
-	内勤(9, "内勤");
+
+	INSIDE(9, "内勤");
 
 	// 值
 	private Integer value;

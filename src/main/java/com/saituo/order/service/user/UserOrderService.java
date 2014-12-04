@@ -202,6 +202,19 @@ public class UserOrderService {
 			auditCd = (String) filter.get("auditCd");
 			productOrder.setAuditCd(auditCd);
 		}
+		// 订单状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+		String productStatusCd = null;
+		if (filter.get("productStatusCd") != null && !filter.get("productStatusCd").equals("")) {
+			productStatusCd = String.valueOf(filter.get("productStatusCd"));
+			productOrder.setStatusCd(productStatusCd);
+		}
+
+		// 订单状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+		String invoiceStatus = null;
+		if (filter.get("invoiceStatus") != null && !filter.get("invoiceStatus").equals("")) {
+			invoiceStatus = String.valueOf(filter.get("invoiceStatus"));
+			productOrder.setInvoiceStatus(invoiceStatus);
+		}
 
 		List<ProductOrder> productOrderReturn = this.combineProductInfo(productOrderDao
 				.queryListByUserOrderId(productOrder));
@@ -400,9 +413,8 @@ public class UserOrderService {
 	public void doUpdateUserOrderStatusFive(Map<String, Object> filter) {
 		UserOrder userOrderQuery = new UserOrder();
 		// 客户订单编号
-		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			Long userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
 			userOrderQuery.setUserOrderId(userOrderId);
 			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1已取消
 			userOrderQuery.setStatusCd("5");
@@ -545,7 +557,7 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
 			userOrderQuery.setUserOrderId(userOrderId);
 			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
 			userOrderQuery.setStatusCd("6");

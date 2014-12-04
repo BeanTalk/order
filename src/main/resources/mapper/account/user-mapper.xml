@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.account.UserDao" >
 
-    <select id="get" resultType="hashmap">
+	<select id="get" resultType="hashmap">
           SELECT
             id AS "id",
             email AS "email",
@@ -20,9 +20,9 @@
             sys_user
           WHERE
             id = #{id}
-    </select>
+	</select>
 
-    <select id="getByUsernameOrEmail" resultType="hashmap">
+	<select id="getByUsernameOrEmail" resultType="hashmap">
           SELECT
             id AS "id",
             email AS "email",
@@ -33,9 +33,9 @@
             sys_user
           WHERE
             login_name = #{usernameOrEmail} OR email = #{usernameOrEmail}
-    </select>
+	</select>
 
-    <select id="find" resultType="hashmap">
+	<select id="find" resultType="hashmap">
         SELECT
           id AS "id",
           email AS "email",
@@ -47,42 +47,42 @@
           sys_user
         WHERE
           del_flag = 0
-        <if test="filter.login_name != null and filter.login_name != ''">
+		<if test="filter.login_name != null and filter.login_name != ''">
             AND login_name LIKE #{filter.login_name}
-        </if>
+		</if>
 
-        <if test="filter.name != null and filter.name != ''">
+		<if test="filter.name != null and filter.name != ''">
             AND name LIKE #{filter.name}
-        </if>
+		</if>
 
-        <if test="filter.email != null and filter.email != ''">
+		<if test="filter.email != null and filter.email != ''">
             AND email LIKE #{filter.email}
-        </if>
+		</if>
         
         ORDER BY id DESC
-        <if test="filter.first != null and filter.last != null">
+		<if test="filter.first != null and filter.last != null">
             LIMIT #{filter.first},#{filter.last}
-        </if>
-    </select>
+		</if>
+	</select>
 
-    <select id="count" resultType="long">
+	<select id="count" resultType="long">
         SELECT
           COUNT(id)
         FROM
           sys_user
         WHERE
           del_flag = 0
-        <if test="filter.login_name != null and filter.login_name != ''">
+		<if test="filter.login_name != null and filter.login_name != ''">
           AND login_name LIKE #{filter.login_name}
-        </if>
+		</if>
 
-        <if test="filter.email != null and filter.email != ''">
+		<if test="filter.email != null and filter.email != ''">
           AND email LIKE #{filter.email}
-        </if>
-    </select>
+		</if>
+	</select>
 
-    <update id="update">
-        <trim prefix="SET" suffixOverrides="," />
+	<update id="update">
+		<trim prefix="SET" suffixOverrides="," />
         UPDATE
           sys_user
         SET
@@ -92,18 +92,18 @@
           mobile=#{entity.mobile}
         WHERE
           id = #{entity.id}
-    </update>
+	</update>
 
-    <update id="updatePassword">
+	<update id="updatePassword">
         UPDATE
           sys_user
         SET
           password = #{password}
         WHERE
           id = #{id}
-    </update>
+	</update>
     
-    <select id="findAllofUserByGroupId" resultType="hashmap">
+	<select id="findAllofUserByGroupId" resultType="hashmap">
     	SELECT
           id AS "id",
           name AS "name",
@@ -112,12 +112,12 @@
           sys_user
         WHERE
           del_flag = 0
-        <if test="officeId != null and officeId != ''">
+		<if test="officeId != null and officeId != ''">
           AND office_id = #{officeId}
-        </if>
-    </select>
+		</if>
+	</select>
     
-    <select id="findAllofUserByAreaId" resultType="hashmap">
+	<select id="findAllofUserByAreaId" resultType="hashmap">
     	SELECT
           u.id AS "id",
           u.name AS "name",
@@ -132,12 +132,38 @@
         	u.office_id = o.id
         AND 
         	u.user_catagory = 1
-       	<if test="areaId != null and areaId != ''">
+		<if test="areaId != null and areaId != ''">
           AND o.area_id = #{areaId}
-        </if>
-    </select>
+		</if>
+	</select>
     
-    
-    
+	<select id="findUserByAreaIdAndRole" resultType="hashmap">
+    	SELECT
+          u.id AS "id",
+          u.name AS "name"
+        FROM
+			sys_user u, sys_office o, sys_role r, sys_user_role ur
+        WHERE 
+        	u.del_flag = 0
+        AND 
+			o.del_flag = 0
+        AND 
+        	r.del_flag = 0
+        AND
+        	u.office_id = o.id
+        AND 
+        	ur.user_id = u.id
+        AND 
+        	ur.role_id = r.id
+        AND
+        	u.user_catagory = 2
+		<if test="areaId != null and areaId != ''">
+          AND o.area_id = #{areaId}
+		</if>
+		<if test="roleSign != null and roleSign != ''">
+          AND r.role_sign = #{roleSign}
+		</if>
+        
+	</select>
 
 </mapper>

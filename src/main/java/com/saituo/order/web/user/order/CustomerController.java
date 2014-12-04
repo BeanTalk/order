@@ -18,6 +18,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.ProductOrderState;
 import com.saituo.order.commons.enumeration.entity.RoleSign;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.commons.enumeration.entity.UserOrderingState;
@@ -253,33 +254,6 @@ public class CustomerController {
 	}
 
 	/**
-	 * 审批通过的订单查询
-	 * 
-	 * @param items
-	 *            :productId
-	 * @param subscripts
-	 *            :订购数量
-	 * @param addressId
-	 *            :地址Id
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value = "customer/pass", method = RequestMethod.GET)
-	public String customerPassOrdering(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
-			@RequestParam List<String> subscripts, Model model) {
-
-		List<String> productOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
-			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(99.99).append("~").append(subscripts.get(0));
-			productOrderList.add(sb.toString());
-		}
-		filter.put("productOrderList", productOrderList);
-		userOrderService.doUpdateUserOrderStatusCancel(filter);
-		return "redirect:/order/list/all_order";
-	}
-
-	/**
 	 * 审批未通过的订单查询
 	 * 
 	 * @param items
@@ -307,6 +281,47 @@ public class CustomerController {
 	}
 
 	/**
+	 * 查看导师需要的下单的订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:book]")
+	@RequestMapping(value = "customer/book_view", method = RequestMethod.GET)
+	public void customerBookViewOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+
+		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
+
+		filter.putAll(pageRequest.getMap());
+		// 客户订单状态必须为待审批状态
+		filter.put("statusCd", UserOrderingState.ACCEPTED.getValue());
+		// 导师和PI可以看到该组下面所有学生提交的数据
+		filter.put("groupId", groupId);
+
+		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
+		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+		int userOrderCount = userOrderService.getUserOrderCount(filter);
+
+		for (UserOrder userOrder : userOrderList) {
+			String userOrderId = String.valueOf(userOrder.getUserOrderId());
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+		}
+		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
+				userOrderCount);
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("page", page);
+		model.addAttribute("userIdAndNameMap", systemVariableService.getUserIdAndNameCache(groupId));
+	}
+
+	/**
 	 * 导师下单
 	 * 
 	 * @param items
@@ -318,19 +333,16 @@ public class CustomerController {
 	 * @param model
 	 * @return
 	 */
-	@RequestMapping(value = "customer/book", method = RequestMethod.GET)
-	public String customerBookOrdering(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
-			@RequestParam List<String> subscripts, Model model) {
+	@RequestMapping(value = "customer/book", method = RequestMethod.POST)
+	public String customerBookOrdering(@RequestParam Map<String, Object> filter,
+			@RequestParam List<String> userOrderIds, Model model) {
 
-		List<String> productOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
-			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(99.99).append("~").append(subscripts.get(0));
-			productOrderList.add(sb.toString());
+		for (String userOrderId : userOrderIds) {
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderService.doUpdateUserOrderStatusFive(mapData);
 		}
-		filter.put("productOrderList", productOrderList);
-		userOrderService.doUpdateUserOrderStatusFive(filter);
-		return "redirect:/order/list/all_order";
+		return "redirect:/order/list/customer/book_view";
 	}
 
 	/**
@@ -392,6 +404,7 @@ public class CustomerController {
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(SessionVariable
 				.getCurrentSessionVariable().getAreaId()));

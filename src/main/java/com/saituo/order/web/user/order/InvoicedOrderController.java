@@ -4,23 +4,81 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
+import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.ProductOrderState;
+import com.saituo.order.commons.enumeration.entity.UserCatagory;
+import com.saituo.order.commons.enumeration.entity.UserOrderingState;
+import com.saituo.order.commons.page.Page;
+import com.saituo.order.commons.page.PageRequest;
+import com.saituo.order.entity.user.UserOrder;
 import com.saituo.order.service.user.UserOrderService;
+import com.saituo.order.service.variable.SystemVariableService;
 
 @Controller
 @SessionAttributes(SessionVariable.DEFAULT_SESSION_KEY)
-@RequestMapping("order")
+@RequestMapping("order/list/finance")
 public class InvoicedOrderController {
 
 	@Autowired
 	private UserOrderService userOrderService;
+
+	@Autowired
+	private SystemVariableService systemVariableService;
+
+	/**
+	 * 财务查看未开具发票状态的订单
+	 * 
+	 * @param filter
+	 * @param productIds
+	 * @param subscripts
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:invoiced]")
+	@RequestMapping(value = "invoiced_view", method = RequestMethod.GET)
+	public void getReceivedViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+
+		Integer userCatagory = VariableUtils.typeCast(
+				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
+		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
+			return;
+		}
+		filter.putAll(pageRequest.getMap());
+		// 客户收货，客户订单状态必须为已接单状态
+		filter.put("statusCd", UserOrderingState.RECEIVED.getValue());
+
+		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
+		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+		int userOrderCount = userOrderService.getUserOrderCount(filter);
+
+		for (UserOrder userOrder : userOrderList) {
+			String userOrderId = String.valueOf(userOrder.getUserOrderId());
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			mapData.put("invoiceStatus", 1);
+			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+		}
+		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
+				userOrderCount);
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
+		model.addAttribute("page", page);
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
+		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+	}
 
 	/**
 	 * 财务开具发票
@@ -30,19 +88,26 @@ public class InvoicedOrderController {
 	 * @param subscripts
 	 * @return
 	 */
-	@RequestMapping(value = "finance/invoiced", method = RequestMethod.POST)
-	public String invoicedForOrder(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
-			@RequestParam List<String> subscripts) {
+	@RequestMapping(value = "invoiced", method = RequestMethod.POST)
+	public String invoicedForOrder(@RequestParam Map<String, Object> filter,
+			@RequestParam(required = false) List<String> productOrderIds) {
 
-		List<String> productOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
-			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(99.99).append("~").append(subscripts.get(0));
-			productOrderList.add(sb.toString());
+		String productOrderId = String.valueOf(filter.get("productOrderId"));
+		String saleId = String.valueOf(filter.get("saleId"));
+
+		if (StringUtils.isNotEmpty(productOrderId)) {
+			List<String> list = Lists.newArrayList();
+			list.add(productOrderId + "~" + saleId);
+			filter.put("productOrderList", list);
+		} else {
+			List<String> list = Lists.newArrayList();
+			for (String productOrderIdTemp : productOrderIds) {
+				list.add(productOrderIdTemp + "~" + saleId);
+			}
+			filter.put("productOrderList", list);
 		}
-		filter.put("productOrderList", productOrderList);
 		userOrderService.doProductOrderInvoiced(filter);
-		return "redirect:/order/list/all_order";
+		return "redirect:/order/list/finance/invoiced_view";
 	}
 
 	/**
@@ -53,7 +118,7 @@ public class InvoicedOrderController {
 	 * @param subscripts
 	 * @return
 	 */
-	@RequestMapping(value = "finance/invoiced_nopay", method = RequestMethod.POST)
+	@RequestMapping(value = "invoiced_nopay", method = RequestMethod.POST)
 	public String invoicedNopayForOrder(@RequestParam Map<String, Object> filter,
 			@RequestParam List<String> productIds, @RequestParam List<String> subscripts) {
 
@@ -76,7 +141,7 @@ public class InvoicedOrderController {
 	 * @param subscripts
 	 * @return
 	 */
-	@RequestMapping(value = "finance/pay", method = RequestMethod.POST)
+	@RequestMapping(value = "pay", method = RequestMethod.POST)
 	public String payForOrder(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
 			@RequestParam List<String> subscripts) {
 

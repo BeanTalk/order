@@ -2,7 +2,6 @@
 
 <#macro head>
 <script type="text/javascript">
-
     $(document).ready(function () {
 
 		// 全选与全不选
@@ -17,32 +16,9 @@
 			}
 		});
 		
-		// 选择用户订单
-		var isUserOrderCheckAll=true;
-		$(".userOrderClass").click(function(){
-			if(isUserOrderCheckAll){
-				var checked_id = "check_prodordid_" + $(this).val();
-				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",true);
-				isUserOrderCheckAll=false;	
-			}else{
-				var checked_id = "check_prodordid_" + $(this).val();
-				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",false);
-				isUserOrderCheckAll=true;
-			}
-		});
-		
-		//点击议价
-		$(".bargain").click(function(event){
-			event.preventDefault();
-			var id = $(event.target).attr('id');
-			var orderFee = $("#"+id+"_orderFees").val();
-			var disCountFee = $("#"+id+"_disCountFees").val();
-			$.post("/order/order/list/inside/bargain", {"productOrderId" : id, "modifiedFee": orderFee, "disCountFee": disCountFee});
-		});
-		
-		$("#batch_bargain_btn").click(function(){
-			$("#bargain-list-form").attr("action", "/order/order/list/inside/bargain");
-			$("#bargain-list-form").submit();
+		$("#batch_take_btn").click(function(){
+			$("#take-list-form").attr("action", "/order/order/list/inside/take");
+			$("#take-list-form").submit();
 		});
 		
     });
@@ -52,10 +28,11 @@
 
 <#macro body>
 <div class="grid2 m_t">
-	<form id="bargain-list-form" action="" method="post">
+	<input type="hidden" value="${userIdAndNameMap?size}">
+	<form id="take-list-form" action="" method="post">
 		<div class="panel">
 			<div class="panel_header">
-				<h3>订单议价</h3>
+				<h3>内勤接单</h3>
 			</div>
 			<div class="panel_body  clearfix">
 				<table width="100%">
@@ -96,7 +73,6 @@
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
 				            <th width="80" align="left">数量</th>
-				            <th width="140" align="left">操作</th>
 						</tr>
 					</tbody>
 				</table>
@@ -110,17 +86,16 @@
 		                    <#list page.content as r>
 			                    <tr>
 						            <th width="30">
-						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
+						            	<input type="checkbox" class="userOrderClass" name="userOrderIds" value="${r.userOrderReturn.userOrderId}">
 						            </th>
 						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${userName}</th>
+						            <th align="left" colspan="2">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
 						            <th align="left" colspan="2">审批人: XXX</th>
 						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr>
 										<td width="30">
-											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
 										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
@@ -130,14 +105,8 @@
 				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
-							            <td width="100" align="center">
-							            	<input type="text" class="right" size="8" id="${productOrderInfo.registerNumber}_orderFees" name="orderFees" value="${productOrderInfo.orderFee}">
-							            	<input type="hidden" id="${productOrderInfo.registerNumber}_disCountFees" name="disCountFees" value="${productOrderInfo.orderFee}">
-							            </td>
+							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
 										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
-										<td width="140" align="center">
-							            	<div id="${productOrderInfo.registerNumber}" class="button blue medium fl bargain">议价</div>
-										</td>
 				                    </tr>
 			                    </#list>
 		                    </#list>
@@ -145,9 +114,9 @@
 					</tbody>
 				</table>
 				<#assign parameterMap = { "searchContext":"${searchContext!}"}>
-				<@pager page "/order/order/list/inside/bargain_view" parameterMap />
+				<@pager page "/order/order/list/inside/take_view" parameterMap />
 				<div class="actionBar">
-					<div id="batch_bargain_btn" class="button white">批量议价更改</div>
+					<div id="batch_take_btn" class="button blue fr">所选的订单接单</div>
 		        </div>
 		 	</div>
 		</div>

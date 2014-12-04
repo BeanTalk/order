@@ -3,6 +3,7 @@
 <#macro head>
 
 <script type="text/javascript">
+
     $(document).ready(function() {
     
     	//时间插件
@@ -12,12 +13,10 @@
         var isCheckAll=true;
 		$("#all_checkbox").click(function(){
 			if(isCheckAll){
-				$("input[type=checkbox][name=userOrders]").prop("checked", true);
-				$("input[type=checkbox][name=productOrders]").prop("checked", true);
+				$("input[type=checkbox]").prop("checked", true);
 				isCheckAll=false;	
 			}else{
-				$("input[type=checkbox][name=userOrders]").prop("checked",false);
-				$("input[type=checkbox][name=productOrders]").prop("checked",false);
+				$("input[type=checkbox]").prop("checked",false);
 				isCheckAll=true;
 			}
 		});
@@ -26,11 +25,11 @@
 		var isUserOrderCheckAll=true;
 		$(".userOrderClass").click(function(){
 			if(isUserOrderCheckAll){
-				var checked_id = "u_" + $(this).val() + "_p_";
+				var checked_id = "check_prodorder_id_" + $(this).val();
 				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",true);
 				isUserOrderCheckAll=false;	
 			}else{
-				var checked_id = "u_" + $(this).val() + "_p_";
+				var checked_id = "check_prodorder_id_" + $(this).val();
 				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",false);
 				isUserOrderCheckAll=true;
 			}
@@ -56,9 +55,9 @@
 			$.post("/order/order/list/customer/upgrade", {"productOrderId" : productOrderId, "orderNum" : orderNum});
 		});
 		
-		$("#confirm_order_btn").click(function(){
-			$("#confirm-list-form").attr("action", "/order/order/list/customer/confirm");
-			$("#confirm-list-form").submit();
+		$("#book_order_btn").click(function(){
+			$("#book-list-form").attr("action", "/order/order/list/customer/book");
+			$("#book-list-form").submit();
 		});
     });
 
@@ -67,10 +66,10 @@
 
 <#macro body>
 <div class="grid2 m_t">
-	<form id="confirm-list-form" action="" method="post">
+	<form id="book-list-form" action="" method="post">
 		<div class="panel">
 			<div class="panel_header">
-				<h3>提交订单</h3>
+				<h3>客户下单</h3>
 			</div>
 			<div class="panel_body clearfix">
 				<table width="100%">
@@ -97,7 +96,6 @@
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
 				            <th width="80" align="left">数量</th>
-				            <th width="140" align="left">操作</th>
 						</tr>
 					</tbody>
 				</table>
@@ -110,17 +108,15 @@
 		                <#else>
 		                    <#list page.content as r>
 			                    <tr>
-						            <th width="30"><input type="checkbox" class="userOrderClass" name="userOrders" id="u_${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}"></th>
-						            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${userName}</th>
-						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
-						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
-						            
+						            <th width="30"><input type="checkbox" name="userOrderIds" value="${r.userOrderReturn.userOrderId}"></th>
+						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
+						            <th align="left" colspan="2">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
+						            <th align="left" colspan="2">下单时间:${r.userOrderReturn.acceptDate}</th>
+						            <th align="left" colspan="3">当前状态:${states[r.userOrderReturn.statusCd]}</th>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr>
-										<td width="30">
-										</td>
+				                    	<td width="30"></td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
 											<p><b>货号：</b>${productOrderInfo.product.productNum}</p>
@@ -128,27 +124,20 @@
 										</td>
 				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
-							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-										<td width="80" align="center"><input type="text" size="2" id="order_num_${productOrderInfo.registerNumber}" name="orderNums" value=${productOrderInfo.orderNum!1}></td>
-										<td width="140" align="center">
-							            	<div id="${productOrderInfo.registerNumber}" class="button orange medium fl D-buy-btn cancel">取消</div>
-							            	<div id="${productOrderInfo.registerNumber}" class="button blue medium fl D-buy-btn update">修改</div>
-										</td>
+							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
+										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
 				                    </tr>
 			                    </#list>
-			                    <tr>
-						            <td colspan="8" class="msg_Div" align="center">送货地址: ddd</td>
-								</tr>
 		                    </#list>
 		                </#if>
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-		    	<#assign parameterMap = {"searchContext":"${searchContext!}"}>
-				<@pager page "/order/order/list/customer/confirm_view" parameterMap />
+		    	<#assign parameterMap = { "searchContext":"${searchContext!}"}>
+				<@pager page "/order/order/list/customer/book_view" parameterMap />
 				<div class="actionBar">
-					<div id="confirm_order_btn" class="button blue fr">提交订单</div>
+					<div id="book_order_btn" class="button green fr">所有选择的订单下单</div>
 				</div>
 		 	</div>
 		</div>
