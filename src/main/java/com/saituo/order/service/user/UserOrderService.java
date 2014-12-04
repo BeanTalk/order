@@ -112,29 +112,63 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
+			userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
+			userOrderQuery.setUserOrderId(userOrderId);
+		}
+		// 客户组别编码
+		String groupId = null;
+		if (filter.get("groupId") != null && !filter.get("groupId").equals("")) {
+			groupId = String.valueOf(filter.get("groupId"));
+			userOrderQuery.setGroupId(groupId);
+		}
+		// 客户编码
+		String userId = null;
+		if (filter.get("userId") != null && !filter.get("userId").equals("")) {
+			userId = String.valueOf(filter.get("userId"));
+			userOrderQuery.setUserId(userId);
+		}
+		// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
+		String statusCd = null;
+		if (filter.get("statusCd") != null && !filter.get("statusCd").equals("")) {
+			statusCd = String.valueOf(filter.get("statusCd"));
+			userOrderQuery.setStatusCd(statusCd);
+		}
+		userOrderQuery.setAreaId(SessionVariable.getCurrentSessionVariable().getAreaId());
+		return userOrderDao.queryList(userOrderQuery, filter);
+	}
+
+	/**
+	 * 查询客户订单信息总数 分页使用
+	 */
+	public int getUserOrderCount(Map<String, Object> filter) {
+
+		UserOrder userOrderQuery = new UserOrder();
+		// 客户订单编号
+		Long userOrderId = null;
+		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
 			userOrderId = (Long) filter.get("userOrderId");
 			userOrderQuery.setUserOrderId(userOrderId);
 		}
 		// 客户组别编码
 		String groupId = null;
 		if (filter.get("groupId") != null && !filter.get("groupId").equals("")) {
-			groupId = (String) filter.get("groupId");
+			groupId = String.valueOf(filter.get("groupId"));
 			userOrderQuery.setGroupId(groupId);
 		}
 		// 客户编码
 		String userId = null;
 		if (filter.get("userId") != null && !filter.get("userId").equals("")) {
-			userId = (String) filter.get("userId");
+			userId = String.valueOf(filter.get("userId"));
 			userOrderQuery.setUserId(userId);
 		}
 		// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
 		String statusCd = null;
 		if (filter.get("statusCd") != null && !filter.get("statusCd").equals("")) {
-			statusCd = (String) filter.get("statusCd");
+			statusCd = String.valueOf(filter.get("statusCd"));
 			userOrderQuery.setStatusCd(statusCd);
 		}
 		userOrderQuery.setAreaId(SessionVariable.getCurrentSessionVariable().getAreaId());
-		return userOrderDao.queryList(userOrderQuery);
+		return userOrderDao.count(userOrderQuery);
 	}
 
 	/**
@@ -187,7 +221,8 @@ public class UserOrderService {
 		// 前台页面传的订购的产品订单串，格式：产品订单编号~订购价格新~订购价格旧
 		String prodcutString[];
 		// 客户编码
-		String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				String.class);
 
 		if (productOrderList != null && productOrderList.size() > 0) {
 			ProductOrder productOrder = null;
@@ -210,7 +245,6 @@ public class UserOrderService {
 				productOrderHisDao.insert(productOrderHis);
 			}
 		}
-
 	}
 
 	/**
@@ -221,10 +255,10 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
 			userOrderQuery.setUserOrderId(userOrderId);
-			userOrderQuery.setStatusCd("2");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-											// 已取消
+			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
+			userOrderQuery.setStatusCd("2");
 			// 更新客户订单的状态
 			userOrderDao.update(userOrderQuery);
 		}
@@ -238,18 +272,20 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "产品订单状态更改为待审批";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 
 			for (ProductOrder returnValue : productOrderReturn) {
 				productOrderUpdate = new ProductOrder();
 				productOrderUpdate.setRegisterNumber(returnValue.getRegisterNumber());
-				productOrderUpdate.setAuditCd("1");// 审批状态:0未处理
-													// 1.待审批;2.已驳回;3.审批通过;
+				// 审批状态:0未处理;1.待审批;2.已驳回;3.审批通过;
+				productOrderUpdate.setAuditCd("1");
 				// 更新产品订单项的订单状态
 				productOrderDao.update(productOrderUpdate);
 				// 记录产品订单项的操作历史
 				productOrderHis = new ProductOrderHis();
-				productOrderHis.setAcceptPerson(userId);// 当前操作人
+				// 当前操作人
+				productOrderHis.setAcceptPerson(userId);
 				productOrderHis.setOrderResult(orderResult);
 				productOrderHis.setRegisterNumber(returnValue.getRegisterNumber());
 				productOrderHisDao.insert(productOrderHis);
@@ -276,25 +312,26 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 
 			for (String productOrderString : productOrderList) {
 				prodcutString = productOrderString.split("~");
 				productOrder = new ProductOrder();
 				productOrder.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
-				productOrder.setAuditCd(VariableUtils.typeCast(prodcutString[1], String.class));// 审批状态:0未处理
-																								// 1.待审批;2.已驳回;3.审批通过;
+				// 审批状态:0未处理;1.待审批;2.已驳回;3.审批通过;
+				productOrder.setAuditCd(VariableUtils.typeCast(prodcutString[1], String.class));
 				// 根据产品订单编码更新审批结果
 				productOrderDao.update(productOrder);
 
 				// 记录审批结果记录表
 				auditHis = new AuditHis();
-				// auditHis.setAuditPerson(VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-				// String.class));// 审批人
-				auditHis.setAuditPerson("admin");
+				auditHis.setAuditPerson(VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
+						.get("id"), String.class));// 审批人
 				auditHis.setAuditResult(VariableUtils.typeCast(prodcutString[1], String.class));
 				auditHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
-				auditHis.setStatusCd("1");// 状态:1.代表当前最新审批结果。0代表旧版本审批结果
+				// 状态:1.代表当前最新审批结果。0代表旧版本审批结果
+				auditHis.setStatusCd("1");
 				if (prodcutString.length > 2) {
 					auditHis.setTurnDownReason(VariableUtils.typeCast(prodcutString[2], String.class));
 					auditHis.setTurnDownNote(VariableUtils.typeCast(prodcutString[3], String.class));
@@ -314,7 +351,7 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
 		}
 
 		// 根据客户订单编码查询产品订单项信息列表
@@ -344,11 +381,11 @@ public class UserOrderService {
 				// 如果flag=true 则代表所有单子都审批通过，如果=false则代表已驳回，更新客户订单信息
 				UserOrder userOrderQuery = new UserOrder();
 				if (flag) {
-					userOrderQuery.setStatusCd("4");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-													// 已取消
+					// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1已取消
+					userOrderQuery.setStatusCd("4");
 				} else {
-					userOrderQuery.setStatusCd("3");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-													// 已取消
+					// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1已取消
+					userOrderQuery.setStatusCd("3");
 				}
 				// 更新客户订单的状态
 				userOrderQuery.setUserOrderId(userOrderId);
@@ -367,8 +404,8 @@ public class UserOrderService {
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
 			userOrderId = (Long) filter.get("userOrderId");
 			userOrderQuery.setUserOrderId(userOrderId);
-			userOrderQuery.setStatusCd("5");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-											// 已取消
+			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1已取消
+			userOrderQuery.setStatusCd("5");
 			// 更新客户订单的状态
 			userOrderDao.update(userOrderQuery);
 		}
@@ -385,8 +422,8 @@ public class UserOrderService {
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
 			userOrderId = (Long) filter.get("userOrderId");
 			userOrderQuery.setUserOrderId(userOrderId);
-			userOrderQuery.setStatusCd("-1");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-												// 已取消
+			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消;
+			userOrderQuery.setStatusCd("-1");
 			// 更新客户订单的状态
 			userOrderDao.update(userOrderQuery);
 		}
@@ -400,11 +437,13 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			for (ProductOrder returnValue : productOrderReturn) {
 				productOrderUpdate = new ProductOrder();
 				productOrderUpdate.setRegisterNumber(returnValue.getRegisterNumber());
-				productOrderUpdate.setStatusCd("-1");// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				productOrderUpdate.setStatusCd("-1");
 				// 更新产品订单项的订单状态
 				productOrderDao.update(productOrderUpdate);
 
@@ -430,8 +469,8 @@ public class UserOrderService {
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
 			userOrderId = (Long) filter.get("userOrderId");
 			userOrderQuery.setUserOrderId(userOrderId);
-			userOrderQuery.setStatusCd("2");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-											// 已取消
+			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
+			userOrderQuery.setStatusCd("2");
 			// 更新客户订单的状态
 			userOrderDao.update(userOrderQuery);
 		}
@@ -448,19 +487,23 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			for (String productOrderString : productOrderModifyList) {
 				prodcutStringModify = productOrderString.split("~");
 				productOrder = new ProductOrder();
 				productOrder.setRegisterNumber(VariableUtils.typeCast(prodcutStringModify[0], Long.class));
 				productOrder.setOrderNum(VariableUtils.typeCast(prodcutStringModify[1], Long.class));
-				productOrder.setAuditCd("1");// 审批状态:0未处理 1.待审批;2.已驳回;3.审批通过;
+
+				// 审批状态:0未处理 1.待审批;2.已驳回;3.审批通过;
+				productOrder.setAuditCd("1");
 				productOrderDao.update(productOrder);
 
 				// 记录产品订单项的操作历史
 				orderResult = "修改产品订单项，将数量更改为：" + VariableUtils.typeCast(prodcutStringModify[1], String.class);
 				productOrderHis = new ProductOrderHis();
-				productOrderHis.setAcceptPerson(userId);// 当前操作人
+				// 当前操作人
+				productOrderHis.setAcceptPerson(userId);
 				productOrderHis.setOrderResult(orderResult);
 				productOrderHis.setRegisterNumber(VariableUtils.typeCast(prodcutStringModify[0], Long.class));
 				productOrderHisDao.insert(productOrderHis);
@@ -472,7 +515,8 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			for (String productOrderString : productOrderDeleteList) {
 				prodcutStringDelete = productOrderString.split("~");
 				productOrderDelete = new ProductOrder();
@@ -503,8 +547,8 @@ public class UserOrderService {
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
 			userOrderId = (Long) filter.get("userOrderId");
 			userOrderQuery.setUserOrderId(userOrderId);
-			userOrderQuery.setStatusCd("6");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-											// 已取消
+			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
+			userOrderQuery.setStatusCd("6");
 			// 更新客户订单的状态
 			userOrderDao.update(userOrderQuery);
 		}
@@ -520,14 +564,12 @@ public class UserOrderService {
 			for (ProductOrder returnValue : productOrderReturn) {
 				productOrderUpdate = new ProductOrder();
 				productOrderUpdate.setRegisterNumber(returnValue.getRegisterNumber());
-				productOrderUpdate.setInvoiceStatus("1");// 状态:0.初始 1.未开具发票
-															// 2.已开具发票3.已送发票
+				// 状态:0.初始 1.未开具发票;2.已开具发票3.已送发票
+				productOrderUpdate.setInvoiceStatus("1");
 				// 更新产品订单项的订单状态
 				productOrderDao.update(productOrderUpdate);
-
 			}
 		}
-
 	}
 
 	/**
@@ -550,26 +592,30 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			String prodcutString[];
 			for (String productOrderString : productOrderList) {
 				prodcutString = productOrderString.split("~");
 				productOrder = new ProductOrder();
 				productOrder.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
-				productOrder.setStatusCd("1");// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				productOrder.setStatusCd("1");
 				productOrderDao.update(productOrder);
 
 				// 记录产品订单项的操作历史
 				orderResult = "产品订单状态更改为已出单!";
 				productOrderHis = new ProductOrderHis();
-				productOrderHis.setAcceptPerson(userId);// 当前操作人
+				// 当前操作人
+				productOrderHis.setAcceptPerson(userId);
 				productOrderHis.setOrderResult(orderResult);
 				productOrderHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
 				productOrderHisDao.insert(productOrderHis);
 
 				// 记录销售人员送货
 				orderResult = "销售人员送货";
-				productOrderHis.setAcceptPerson(VariableUtils.typeCast(prodcutString[1], String.class));// 当前操作人
+				// 当前操作人
+				productOrderHis.setAcceptPerson(VariableUtils.typeCast(prodcutString[1], String.class));
 				productOrderHis.setOrderResult(orderResult);
 				productOrderHisDao.insert(productOrderHis);
 			}
@@ -596,11 +642,13 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			for (String productOrderString : productOrderList) {
 				productOrder = new ProductOrder();
 				productOrder.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
-				productOrder.setStatusCd("2");// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				productOrder.setStatusCd("2");
 				productOrderDao.update(productOrder);
 
 				// 记录产品订单项的操作历史
@@ -636,14 +684,15 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			String prodcutString[];
 			for (String productOrderString : productOrderList) {
 				prodcutString = productOrderString.split("~");
 				productOrder = new ProductOrder();
 				productOrder.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
-				productOrder.setInvoiceStatus("2"); // 状态:0.初始 1.未开具发票
-													// 2.已开具发票3.已送发票
+				// 状态:0.初始 1.未开具发票 2.已开具发票3.已送发票
+				productOrder.setInvoiceStatus("2");
 				productOrderDao.update(productOrder);
 
 				// 记录产品订单项的操作历史
@@ -684,12 +733,13 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			for (String productOrderString : productOrderList) {
 				productOrder = new ProductOrder();
 				productOrder.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
-				productOrder.setInvoiceStatus("3"); // 状态:0.初始 1.未开具发票
-													// 2.已开具发票3.已送发票
+				// 状态:0.初始 1.未开具发票 2.已开具发票3.已送发票
+				productOrder.setInvoiceStatus("3");
 				productOrderDao.update(productOrder);
 
 				// 记录产品订单项的操作历史
@@ -724,17 +774,20 @@ public class UserOrderService {
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
 			// 客户编码
-			String userId = "901";// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),String.class);
+			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);
 			for (String productOrderString : productOrderList) {
 				productOrder = new ProductOrder();
 				productOrder.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
-				productOrder.setStatusCd("3");// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+				productOrder.setStatusCd("3");
 				productOrderDao.update(productOrder);
 
 				// 记录产品订单项的操作历史
 				orderResult = "产品订单状态更改为已结款";
 				productOrderHis = new ProductOrderHis();
-				productOrderHis.setAcceptPerson(userId);// 当前操作人
+				// 当前操作人
+				productOrderHis.setAcceptPerson(userId);
 				productOrderHis.setOrderResult(orderResult);
 				productOrderHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
 				productOrderHisDao.insert(productOrderHis);
@@ -764,8 +817,8 @@ public class UserOrderService {
 			// 如果flag=true 则代表所有单子都已结款，更新客户订单信息状态为已完成
 			UserOrder userOrderQuery = new UserOrder();
 			if (flag) {
-				userOrderQuery.setStatusCd("7");// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1
-												// 已取消
+				// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
+				userOrderQuery.setStatusCd("7");
 				// 更新客户订单的状态
 				userOrderQuery.setUserOrderId(userOrderId);
 				userOrderDao.update(userOrderQuery);

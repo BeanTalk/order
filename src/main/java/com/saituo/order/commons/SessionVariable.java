@@ -26,6 +26,8 @@ public class SessionVariable implements Serializable {
 	private List<Map<String, Object>> authorizationInfo;
 	// 当前用户的菜单集合
 	private List<Map<String, Object>> menusList;
+	// 当前用户的角色集合
+	private List<String> roleList;
 	// 当前用户所在组
 	private String groupId;
 	// 当前用户所在地市
@@ -112,6 +114,24 @@ public class SessionVariable implements Serializable {
 	 */
 	public void setMenusList(List<Map<String, Object>> menusList) {
 		this.menusList = menusList;
+	}
+
+	/**
+	 * 获取当前用户的角色集合
+	 * 
+	 * @return
+	 */
+	public List<String> getRoleList() {
+		return roleList;
+	}
+
+	/**
+	 * 设置当前用户的角色集合
+	 * 
+	 * @param roleList
+	 */
+	public void setRoleList(List<String> roleList) {
+		this.roleList = roleList;
 	}
 
 	/**

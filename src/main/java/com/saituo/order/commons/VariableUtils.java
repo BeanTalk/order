@@ -6,14 +6,12 @@ import java.util.Map;
 
 import org.apache.commons.beanutils.ConvertUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.enumeration.FieldType;
 import com.saituo.order.commons.enumeration.ValueEnum;
-import com.saituo.order.service.variable.SystemVariableService;
 
 /**
  * 变量工具类，该类封装对系统变量的一些静态获取方法
@@ -32,20 +30,6 @@ public class VariableUtils {
 	 * 默认字典值的键名称
 	 */
 	public static final String DEFAULT_KEY_NAME = "key";
-
-	// 系统变量业务逻辑
-	private static SystemVariableService systemVariableService;
-
-	/**
-	 * 设置系统变量业务逻辑
-	 * 
-	 * @param systemVariableService
-	 *            系统变量业务逻辑类
-	 */
-	@Autowired
-	public void setSystemVariableService(SystemVariableService systemVariableService) {
-		VariableUtils.systemVariableService = systemVariableService;
-	}
 
 	/**
 	 * 通过{@link com.saituo.order.commons.enumeration.ValueEnum} 接口子类 class
@@ -93,36 +77,6 @@ public class VariableUtils {
 			ValueEnum<?> ve = (ValueEnum<?>) o;
 			Object value = ve.getValue();
 			result.put(String.valueOf(value), ve.getName());
-		}
-		return result;
-	}
-
-	/**
-	 * 通过字典类别获取数据字典集合
-	 * 
-	 * @param code
-	 *            字典类别代码
-	 * @param ignore
-	 *            要忽略的值
-	 * 
-	 * @return key value 数据字典 Map 集合
-	 */
-	public static List<Map<String, Object>> getVariables(String code, Object... ignore) {
-
-		List<Map<String, Object>> result = Lists.newArrayList();
-		List<Map<String, Object>> dataDictionaries = systemVariableService.getDataDictionaries(code);
-
-		for (Map<String, Object> data : dataDictionaries) {
-
-			String value = typeCast(data.get("value"));
-			if (!ArrayUtils.contains(ignore, value)) {
-				continue;
-			}
-			String type = data.get("type").toString();
-			Map<String, Object> dictionary = new HashMap<String, Object>();
-			dictionary.put(DEFAULT_VALUE_NAME, data.get("name"));
-			dictionary.put(DEFAULT_KEY_NAME, typeCast(value, type));
-			result.add(data);
 		}
 		return result;
 	}

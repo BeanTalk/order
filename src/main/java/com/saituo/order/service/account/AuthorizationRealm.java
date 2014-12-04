@@ -78,6 +78,7 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 
 		sv.setAuthorizationInfo(authorizationInfo);
 		sv.setMenusList(menuList);
+		sv.setRoleList(roleList);
 
 		Map<String, Object> groupAndareaData = accountService.getUserGroup(userId);
 		sv.setAreaId((String) groupAndareaData.get("areaId"));

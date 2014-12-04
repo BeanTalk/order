@@ -89,4 +89,20 @@ public interface UserDao {
 	@Update("update sys_user set password=#{newpasswordHex} where login_name = #{login_name}")
 	public void resetPassword(@Param(value = "login_name") String loginName,
 			@Param(value = "newpasswordHex") String newpasswordHex);
+
+	/**
+	 * 获取所有人员在该组织中的
+	 * 
+	 * @param officeId
+	 * @return
+	 */
+	public List<Map<String, Object>> findAllofUserByGroupId(@Param(value = "officeId") String officeId);
+	
+	/**
+	 * 获取所有人员在该地市中的
+	 * 
+	 * @param officeId
+	 * @return
+	 */
+	public List<Map<String, Object>> findAllofUserByAreaId(@Param(value = "areaId") String areaId);
 }

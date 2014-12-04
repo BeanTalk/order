@@ -15,8 +15,10 @@ public class AuditHis {
 	private String turnDownReason;
 	//驳回描述
 	private String turnDownNote;
+	
 	//状态:1.代表当前最新审批结果。0代表旧版本审批结果
 	private String statusCd;
+	
 	public Long getAuditId() {
 		return auditId;
 	}

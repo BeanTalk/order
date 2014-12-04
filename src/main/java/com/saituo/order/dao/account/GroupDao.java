@@ -1,5 +1,6 @@
 package com.saituo.order.dao.account;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
@@ -17,7 +18,7 @@ public interface GroupDao {
 	 * 
 	 * @return 组实体 Map
 	 */
-	public Map<String, Object> get(@Param("id") String id);
+	public List<Map<String, Object>> get(@Param("areaId") String areaId);
 
 	/**
 	 * 获取用户所在的组
@@ -27,6 +28,6 @@ public interface GroupDao {
 	 * 
 	 * @return 组实体 Map 集合
 	 */
-	Map<String, Object> getUserGroup(@Param("userId") String userId);
+	public Map<String, Object> getUserGroup(@Param("userId") String userId);
 
 }

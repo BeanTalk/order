@@ -22,6 +22,9 @@
 	<import resource="classpath:applicationContext-redis.xml"/>
 	<import resource="classpath:applicationContext-mail.xml"/>
 
+	<!-- init -->
+	<bean id="systemVariableService" class="com.saituo.order.service.variable.SystemVariableService" init-method="init"/>  
+	
 	<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
 
 	<!-- 定义 aop Aspect自动代理 -->

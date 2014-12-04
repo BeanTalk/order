@@ -1,0 +1,156 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+<script type="text/javascript">
+
+    $(document).ready(function () {
+
+		// 全选与全不选
+        var isCheckAll=true;
+		$("#all_checkbox").click(function(){
+			if(isCheckAll){
+				$("input[type=checkbox]").prop("checked", true);
+				isCheckAll=false;	
+			}else{
+				$("input[type=checkbox]").prop("checked", false);
+				isCheckAll=true;
+			}
+		});
+		
+		// 选择用户订单
+		var isUserOrderCheckAll=true;
+		$(".userOrderClass").click(function(){
+			if(isUserOrderCheckAll){
+				var checked_id = "check_prodordid_" + $(this).val();
+				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",true);
+				isUserOrderCheckAll=false;	
+			}else{
+				var checked_id = "check_prodordid_" + $(this).val();
+				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",false);
+				isUserOrderCheckAll=true;
+			}
+		});
+		
+		//点击议价
+		$(".bargain").click(function(event){
+			event.preventDefault();
+			var id = $(event.target).attr('id');
+			var orderFee = $("#"+id+"_orderFees").val();
+			var disCountFee = $("#"+id+"_disCountFees").val();
+			$.post("/order/order/list/inside/bargain", {"productOrderId" : id, "modifiedFee": orderFee, "disCountFee": disCountFee});
+		});
+		
+		$("#batch_bargain_btn").click(function(){
+			$("#bargain-list-form").attr("action", "/order/order/list/inside/bargain");
+			$("#bargain-list-form").submit();
+		});
+		
+    });
+
+</script>
+</#macro>
+
+<#macro body>
+<div class="grid2 m_t">
+	<form id="bargain-list-form" action="" method="post">
+		<div class="panel">
+			<div class="panel_header">
+				<h3>订单议价</h3>
+			</div>
+			<div class="panel_body  clearfix">
+				<table width="100%">
+					<tbody>
+						<tr>
+				            <td width="60" nowrap="nowrap">课题组:
+				            	<select name="office_id" id="office_id">
+	                                <option value="">请选择...</option>
+	                                <#list offices?keys as key>  
+						            	<option value="${key}">${offices[key]}</option>
+									</#list> 
+	                            </select>
+				            </td>
+				            <td width="60" nowrap="nowrap">订购人:
+				            	<select name="user_id" id="user_id">
+	                                <option value="">请选择...</option>
+	                            </select>
+				            </td>
+				            <td width="60" nowrap="nowrap">订单号:
+				            	<input type="text" id="orderId" name="orderId" value="">
+				            </td>
+				            <td width="58" nowrap="nowrap">
+				            	<div id="bargain_query_btn" class="button white medium">检索</div>
+				            </td>
+				            <td width="398" nowrap="nowrap"></td>
+				            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
+						</tr>
+					</tbody>
+				</table>
+				<br>
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+				            <th width="30" align="center"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
+				            <th width="248" align="left">产品</th>
+				            <th width="80" align="left">规格</th>
+				            <th width="60" align="left">单位</th>
+				            <th width="100" align="left">目录价</th>
+				            <th width="100" align="left">订购价</th>
+				            <th width="80" align="left">数量</th>
+				            <th width="140" align="left">操作</th>
+						</tr>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="6">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+			                    <tr>
+						            <th width="30">
+						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
+						            </th>
+						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
+						            <th align="left" colspan="2">订货人:${userName}</th>
+						            <th align="left" colspan="2">审批人: XXX</th>
+						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
+								</tr>
+								<#list r.productOrderReturn as productOrderInfo>
+				                    <tr>
+										<td width="30">
+											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
+										</td>
+				                        <td width="248" align="left">
+											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
+											<p><b>货号:</b>${productOrderInfo.product.productNum}</p>
+											<p><b>品牌:</b>${productOrderInfo.product.brandId}</p>
+										</td>
+				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
+				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
+							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
+							            <td width="100" align="center">
+							            	<input type="text" class="right" size="8" id="${productOrderInfo.registerNumber}_orderFees" name="orderFees" value="${productOrderInfo.orderFee}">
+							            	<input type="hidden" id="${productOrderInfo.registerNumber}_disCountFees" name="disCountFees" value="${productOrderInfo.orderFee}">
+							            </td>
+										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+										<td width="140" align="center">
+							            	<div id="${productOrderInfo.registerNumber}" class="button blue medium fl bargain">议价</div>
+										</td>
+				                    </tr>
+			                    </#list>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<#assign parameterMap = { "searchContext":"${searchContext!}"}>
+				<@pager page "/order/order/list/inside/bargain_view" parameterMap />
+				<div class="actionBar">
+					<div id="batch_bargain_btn" class="button white">批量议价更改</div>
+		        </div>
+		 	</div>
+		</div>
+	</form>
+</div>
+</#macro>

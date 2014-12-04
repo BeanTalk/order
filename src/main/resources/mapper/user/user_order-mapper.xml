@@ -15,8 +15,8 @@
 			status_cd
 		) values (
 			#{userId},
-			#{groupId},
 			#{areaId},
+			#{groupId},
 			#{addressId},
 			now(),
 			#{statusCd}
@@ -53,7 +53,34 @@
 			accept_date as acceptDate,
 			status_cd as statusCd
 		from st_user_order
-		<where>
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
+			<if test="userOrder.areaId!=null and userOrder.areaId!=''">
+				area_id =#{userOrder.areaId}
+			</if>
+			<if test="userOrder.userOrderId !=null and userOrder.userOrderId != ''">
+				and user_order_id =#{userOrder.userOrderId}
+			</if>
+			<if test="userOrder.groupId != null and userOrder.groupId != ''">
+			 	and group_id =#{userOrder.groupId}
+			</if>
+			<if test="userOrder.userId != null and userOrder.userId != ''">
+			    and user_id =#{userOrder.userId}
+			</if>
+			<if test="userOrder.statusCd !=null and userOrder.statusCd != ''">
+			    and status_cd =#{userOrder.statusCd}
+			</if>
+		</trim> 
+		order by accept_date desc
+		<if test="filter.first != null and filter.last != null">
+            LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+	
+	<select id="count" resultType="int">
+		select
+			count(user_order_id)
+		from st_user_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
 			<if test="areaId!=null and areaId!=''">
 				area_id =#{areaId}
 			</if>
@@ -69,7 +96,7 @@
 			<if test="statusCd !=null and statusCd != ''">
 			    and status_cd =#{statusCd}
 			</if>
-		</where>
+		</trim> 
 	</select>
 	
 	<delete id="delete">

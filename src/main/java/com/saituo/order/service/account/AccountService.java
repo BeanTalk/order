@@ -334,18 +334,6 @@ public class AccountService {
 	// ----------------------------------------//
 
 	/**
-	 * 获取组
-	 * 
-	 * @param id
-	 *            组主键 ID
-	 * 
-	 * @return 组实体 Map
-	 */
-	public Map<String, Object> getGroup(String id) {
-		return groupDao.get(id);
-	}
-
-	/**
 	 * 获取用户所在的组
 	 * 
 	 * @param userId
@@ -418,7 +406,7 @@ public class AccountService {
 
 		List<Map<String, Object>> result = Lists.newArrayList();
 		for (Map<String, Object> entity : resources) {
-			
+
 			String parentId = VariableUtils.typeCast(entity.get("parent_id"), String.class);
 			Integer type = VariableUtils.typeCast(entity.get("type"), Integer.class);
 
