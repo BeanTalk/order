@@ -102,7 +102,7 @@ public class SystemVariableService {
 	}
 
 	private Map<String, Map<String, String>> getUserDataByOfficeId() {
-		List<Map<String, Object>> userList = userDao.findAllofUserByGroupId(null);
+		List<Map<String, Object>> userList = userDao.findAllofUserByOfficeId(null);
 		Map<String, Map<String, String>> idAndNameMap = Maps.newHashMap();
 		for (Map<String, Object> mapData : userList) {
 			String officeId = String.valueOf(mapData.get("officeId"));

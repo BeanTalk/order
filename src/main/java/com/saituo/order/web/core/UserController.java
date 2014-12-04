@@ -52,9 +52,19 @@ public class UserController {
 	 */
 	@RequestMapping("list")
 	public Page<Map<String, Object>> list(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
-
 		model.addAttribute("states", VariableUtils.getVariables(State.class, State.DELETE.getValue()));
 		return accountService.findUsers(pageRequest, filter);
+	}
+
+	/**
+	 * 根据groupId获取用户列表
+	 * 
+	 * @return
+	 */
+	@RequestMapping("userlist")
+	public @ResponseBody Object getUserListByGroupId(@RequestParam Map<String, Object> filter) {
+		String groupId = String.valueOf(filter.get("groupId"));
+		return accountService.findAllofUserByOfficeId(groupId);
 	}
 
 	/**

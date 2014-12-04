@@ -194,6 +194,31 @@ public class AccountService {
 	}
 
 	/**
+	 * 通过areaId 获取人员
+	 * 
+	 * @param areaId
+	 * @return
+	 */
+	public Map<String, String> findAllofUserByAreaId(String areaId) {
+		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(areaId);
+		Map<String, String> mapDataRes = Maps.newHashMap();
+		for (Map<String, Object> mapData : list) {
+			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
+		}
+		return mapDataRes;
+	}
+
+	/**
+	 * 通过officeId 获取人员
+	 * 
+	 * @param officeId
+	 * @return
+	 */
+	public List<Map<String, Object>> findAllofUserByOfficeId(String officeId) {
+		return userDao.findAllofUserByOfficeId(officeId);
+	}
+
+	/**
 	 * 更新用户头像
 	 * 
 	 * @param is

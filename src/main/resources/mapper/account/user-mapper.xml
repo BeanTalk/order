@@ -103,7 +103,7 @@
           id = #{id}
 	</update>
     
-	<select id="findAllofUserByGroupId" resultType="hashmap">
+	<select id="findAllofUserByOfficeId" resultType="hashmap">
     	SELECT
           id AS "id",
           name AS "name",

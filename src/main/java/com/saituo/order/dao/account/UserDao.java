@@ -96,7 +96,7 @@ public interface UserDao {
 	 * @param officeId
 	 * @return
 	 */
-	public List<Map<String, Object>> findAllofUserByGroupId(@Param(value = "officeId") String officeId);
+	public List<Map<String, Object>> findAllofUserByOfficeId(@Param(value = "officeId") String officeId);
 
 	/**
 	 * 获取所有人员在该地市中的

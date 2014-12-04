@@ -42,6 +42,15 @@
 			$("#received-list-form").attr("action", "/order/order/list/inside/received");
 			$("#received-list-form").submit();
 		});
+		
+		$("#office_id").change(function(){
+	        $.getJSON("/order/order/user/userlist", {groupId:$(this).val()}, function(data) { 
+	            $("#user_id").get(0).options.length=1;//清一下选项，只留下第一项  
+	            $.each(data,function(i){  
+	                $("#user_id").append("<option value=\""+data[i].id+"\">"+data[i].name+"</option>");  
+	            });  
+	        });  
+    	});
     });
 
 </script>
@@ -78,7 +87,6 @@
 				            	<div id="bargain_query_btn" class="button white medium">检索</div>
 				            </td>
 				            <td width="398" nowrap="nowrap"></td>
-				            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
 						</tr>
 					</tbody>
 				</table>
