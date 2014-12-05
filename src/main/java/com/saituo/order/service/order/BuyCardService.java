@@ -82,15 +82,18 @@ public class BuyCardService {
 	public List<CustomerOrdering> getProductListFromBag(String userId) {
 
 		List<Integer> productIds = new ArrayList<Integer>();
+		List<CustomerOrdering> result = new ArrayList<CustomerOrdering>();
 		Map<Object, Object> mapData = redisCacheService.getProductIdAndBuyNumMapFromCache(userId);
+
+		if (mapData == null || mapData.size() == 0) {
+			return result;
+		}
 
 		for (Entry<Object, Object> entry : mapData.entrySet()) {
 			Integer productId = Integer.valueOf(String.valueOf(entry.getKey()));
 			productIds.add(productId);
 		}
-
 		List<Product> productList = productDao.getProductListByProductIds(productIds);
-		List<CustomerOrdering> result = new ArrayList<CustomerOrdering>();
 		try {
 			for (Product product : productList) {
 				CustomerOrdering customerOrdering = new CustomerOrdering();
