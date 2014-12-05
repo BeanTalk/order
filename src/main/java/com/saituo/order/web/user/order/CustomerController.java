@@ -80,7 +80,7 @@ public class CustomerController {
 	 */
 	@RequestMapping(value = "customer/cancel", method = RequestMethod.POST)
 	public String customerCancelOrdering(@RequestParam Map<String, Object> filter, Model model) {
-		// userOrderService.doUpdateUserOrderStatus(filter);
+		// XXX
 		return "redirect:/order/list/customer/confirm_view";
 	}
 
@@ -94,7 +94,7 @@ public class CustomerController {
 	 */
 	@RequestMapping(value = "customer/upgrade", method = RequestMethod.POST)
 	public String customerUpgardeOrdering(@RequestParam Map<String, Object> filter, Model model) {
-		// userOrderService.doUpdateUserOrderStatus(filter);
+		// XXX
 		return "redirect:/order/list/customer/confirm_view";
 	}
 

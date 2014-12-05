@@ -1,6 +1,7 @@
 package com.saituo.order.web.user;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.service.order.BuyCardService;
@@ -30,16 +32,19 @@ public class BuyCardController {
 	private AddressService addressService;
 
 	@RequestMapping(value = "addProductToBag/{productId}", method = RequestMethod.POST)
-	public @ResponseBody Object addProductToBag(@PathVariable("productId") String productId) {
+	public @ResponseBody Map<String, String> addProductToBag(@PathVariable("productId") String productId) {
 
+		Map<String, String> mapData = Maps.newHashMap();
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
 		boolean isAlreayAdded = buyCardService.isAddedIntoBuyCard(userId, productId);
 		if (isAlreayAdded) {
-			return "已经加入到购物车";
+			mapData.put("msg", "had");
+			return mapData;
 		}
 		buyCardService.putProductIntoBag(userId, productId);
-		return "添加成功";
+		mapData.put("msg", "sccuess");
+		return mapData;
 	}
 
 	@RequestMapping(value = "removeOneProductFromBag/{productId}", method = RequestMethod.GET)
@@ -53,15 +58,15 @@ public class BuyCardController {
 	}
 
 	@RequestMapping(value = "batchremove", method = RequestMethod.POST)
-	public String removeBatchProductFromBag(@RequestParam List<String> items, RedirectAttributes redirectAttributes) {
+	public String removeBatchProductFromBag(@RequestParam List<String> productIds, RedirectAttributes redirectAttributes) {
 
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
 
-		if (items == null || items.size() == 0) {
-			return "redirect:/error";
+		if (productIds == null || productIds.size() == 0) {
+			return "redirect:/order/buycard/list";
 		}
-		String[] array = items.toArray(new String[items.size()]);
+		String[] array = productIds.toArray(new String[productIds.size()]);
 		buyCardService.removeProductListFromBuyCard(userId, array);
 		return "redirect:/order/buycard/list";
 	}

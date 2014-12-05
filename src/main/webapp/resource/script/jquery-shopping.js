@@ -2,14 +2,17 @@
 	$.extend($.fn,{
 
 		shoping:function(options){
+			
 			var self=this,
 				$shop=$('.shopping'),
 				$num=$('.fontred');
 			
 			var S={
+					
 				init:function(){
 					$(self).data('click',true).live('click',this.addShoping);
 				},
+				
 				addShoping:function(e){
 					e.stopPropagation();
 					
@@ -23,22 +26,27 @@
 					
 					// click the float
 					if(dis){
-						if ($('#floatOrder').length <= 0) {
-							$('body').append('<div id="floatOrder"><img src="http://localhost/pro1.jpg" width="50" height="50" /></div');
-						};
-						var $obj=$('#floatOrder');
-						$obj.css({'left': x,'top': y}).animate({'left': X,'top': Y-80}, 500, function() {
-							$obj.stop(false, false).animate({'top': Y-20,'opacity':0}, 500, function(){
-								$obj.fadeOut(300,function(){
-									$obj.remove();	
-									$target.data('click', false).addClass('dis-click');
-								});
-								$.post('/order/order/buycard/addProductToBag/'+id, function(data) {
-									var num = Number($num.text());
-									$num.text(num+1);
-								});
-							});
-						});	
+						$.post('/order/order/buycard/addProductToBag/'+id, function(data) {
+							if(data.msg == "had"){
+								alert("对不起，您已经将该产品添加到购物车里");
+							}
+							if(data.msg == "sccuess"){
+								if ($('#floatOrder').length <= 0) {
+									$('body').append('<div id="floatOrder" width="25" height="25"></div>');
+								};
+								var $obj=$('#floatOrder');
+								$obj.css({'left': x,'top': y}).animate({'left': X,'top': Y-80}, 500, function() {
+									$obj.stop(false, false).animate({'top': Y-20,'opacity':0}, 500, function(){
+										$obj.fadeOut(300,function(){
+											$obj.remove();	
+											$target.data('click', false).addClass('dis-click');
+										});
+									});
+								});	
+								var num = Number($num.text());
+								$num.text(num+1);
+							}
+						});
 					};
 				}
 			};
