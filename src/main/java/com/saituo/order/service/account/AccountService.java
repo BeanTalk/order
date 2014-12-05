@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.alibaba.druid.util.StringUtils;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.enumeration.entity.PortraitSize;
@@ -173,8 +174,67 @@ public class AccountService {
 	public void resetPassword(String loginname, String newPassword) {
 		String newpasswordHex = HexPassword.entryptPassword(newPassword);
 		userDao.resetPassword(loginname, newpasswordHex);
-
 	}
+
+	/**
+	 * 通过areaid和roleSign获取人员
+	 * 
+	 * @param areaId
+	 * @param roleSign
+	 * @return
+	 */
+	public Map<String, String> findUserByAreaIdAndRole(String areaId, String roleSign) {
+
+		List<Map<String, Object>> list = userDao.findUserByAreaIdAndRole(areaId, roleSign);
+		Map<String, String> mapDataRes = Maps.newHashMap();
+		for (Map<String, Object> mapData : list) {
+			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
+		}
+		return mapDataRes;
+	}
+
+	/**
+	 * 通过areaid和roleSign获取人员
+	 * 
+	 * @param areaId
+	 * @param roleSign
+	 * @return
+	 */
+	public Map<String, String> findUserByOfficeId(String officeId) {
+
+		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(officeId);
+		Map<String, String> mapDataRes = Maps.newHashMap();
+		for (Map<String, Object> mapData : list) {
+			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
+		}
+		return mapDataRes;
+	}
+
+	/**
+	 * 通过areaId 获取人员
+	 * 
+	 * @param areaId
+	 * @return
+	 */
+	public Map<String, String> findAllofUserByAreaId(String areaId) {
+		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(areaId);
+		Map<String, String> mapDataRes = Maps.newHashMap();
+		for (Map<String, Object> mapData : list) {
+			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
+		}
+		return mapDataRes;
+	}
+
+	/**
+	 * 通过officeId 获取人员
+	 * 
+	 * @param officeId
+	 * @return
+	 */
+	public List<Map<String, Object>> findAllofUserByOfficeId(String officeId) {
+		return userDao.findAllofUserByOfficeId(officeId);
+	}
+
 	/**
 	 * 更新用户头像
 	 * 
@@ -334,18 +394,6 @@ public class AccountService {
 	// ----------------------------------------//
 
 	/**
-	 * 获取组
-	 * 
-	 * @param id
-	 *            组主键 ID
-	 * 
-	 * @return 组实体 Map
-	 */
-	public Map<String, Object> getGroup(String id) {
-		return groupDao.get(id);
-	}
-
-	/**
 	 * 获取用户所在的组
 	 * 
 	 * @param userId
@@ -353,20 +401,8 @@ public class AccountService {
 	 * 
 	 * @return 组实体 Map 集合
 	 */
-	public List<Map<String, Object>> getUserGroups(String userId) {
-		return groupDao.getUserGroups(userId);
-	}
-
-	/**
-	 * 查询组
-	 * 
-	 * @param filter
-	 *            查询条件
-	 * 
-	 * @return 组实体 Map 集合
-	 */
-	public List<Map<String, Object>> findGroups(Map<String, Object> filter) {
-		return groupDao.find(filter);
+	public Map<String, Object> getUserGroup(String userId) {
+		return groupDao.getUserGroup(userId);
 	}
 
 	/**
@@ -492,7 +528,7 @@ public class AccountService {
 	 * @return
 	 */
 	public boolean isValidPinByLoginName(String loginName, String md5) {
-		String md5Temp = redisCacheService.getPasswordFromRedisCache(loginName);
+		String md5Temp = redisCacheService.getPinFromRedisCache(loginName);
 		if (StringUtils.equals(md5, md5Temp)) {
 			return true;
 		}

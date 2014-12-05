@@ -1,0 +1,76 @@
+<#include "*/basic/default.html"/>
+<#macro head>
+<script type="text/javascript">
+	$(function(){
+		$('.Q-buy-btn').shoping();
+	});
+</script>
+</#macro>
+
+<#macro body>
+<div class="containerPx clearfix">
+	<@shiro.guest>
+	<div class="grid1 m_t">
+		<div class="subnav">
+			<p class="subnav-header">产品中心</p>
+		</div>
+	</div>
+	</@shiro.guest>
+	<div class="grid2 m_t">
+		<div class="panel_body clearfix">
+        	<table width="100%" class="table_pro_header">
+          		<tbody>
+	          		<tr>
+		            	<th width="308">产品</th>
+			            <th width="100">规格</th>
+			            <th width="60">单位</th>
+			            <th width="100">目录价</th>
+			            <th width="100">订购价</th>
+			            <@shiro.authenticated>
+			            	<th width="130">操作</th>
+			            </@shiro.authenticated>
+			        </tr>
+		    	</tbody>
+			</table>
+        	<table width="100%" class="table_pro_body">
+				<tbody>
+					<#if page.content?size == 0>
+	                    <tr>
+	                        <td colspan="6"> 没有记录</td>
+	                    </tr>
+                    <#else>
+                        <#list page.content as r>
+                        <tr>
+	                        <td width="308" align="left">
+								<p><span class="pro_name">${r.productName}</span></p>
+								<p><b>货号：</b>${r.productNum}</p>
+								<p><b>品牌：</b>${r.brandId}</p>
+							</td>
+                            <td width="100" align="center">${r.specValue}</td>
+				            <td width="60" align="center">${r.unitValue}</td>
+				            <td width="100" align="center">${r.catalogFee}</td>
+				            <td width="100" align="center">${r.catalogFee}</td>
+				            
+				            <input type="hidden" id="productId" value="${r.productId}">
+				            <@shiro.authenticated>
+                            <td width="130" align="center">
+                            	<a href="###">
+				            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
+				            	</a>
+				            	<a href="${base}/record/addinfo?productId=${r.productId}">
+	          						<div id="record_btn" class="button orange medium fl">记录</div>
+	          					</a>
+	          				</td>
+	          				</@shiro.authenticated>
+                        </tr>
+                        </#list>
+                    </#if>
+				</tbody>
+			</table>
+        	<p class="pageBar"></p>
+        	<#assign parameterMap = { "searchContext":"${searchContext}"}>
+			<@pager page "/order/views/search/productlist" parameterMap />
+		</div>
+	</div>
+</div>
+</#macro>

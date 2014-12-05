@@ -1,0 +1,39 @@
+<#include "*/basic/default.html"/>
+<#macro head>
+<script type="text/javascript">
+	$('#add_addr_btn').click(function(){
+		window.location.href='/order/order/address/edit';
+	});
+</script>
+</#macro>
+
+<#macro body>
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+	    	<h3>地址管理</h3>
+	    </div>
+	    <div class="panel_body">
+	    	<div class="msg_Div clearfix">
+	    		<#if addressList?size == 0>
+                    <p class="font_address">
+                        没有记录
+                    </p>
+                <#else>
+		    		<#list addressList as r>
+		    			<p class="font_address">
+			        		<input type="radio" checked="checked" value="${r.addressId!""}" name="addressId">
+			        		<span>${r.receiptAddress!""}</span>
+			        		(<span>${r.receiptPerson!""}</span>收)
+			        		<span style="color:#666">${r.contactPhone!""}</span>&nbsp;&nbsp;&nbsp;&nbsp;
+			        		<a href="${base}/order/address/edit?addressId=${r.addressId!""}">[修改]</a>
+			        		<a href="${base}/order/address/delete?addressId=${r.addressId!""}">[删除]</a>
+			        	</p>
+		    		</#list>
+		    	</#if>
+	        </div>
+	    	<div id="add_addr_btn" class="button blue fr">添加地址</div>
+		</div>
+	</div>
+</div>
+</#macro>

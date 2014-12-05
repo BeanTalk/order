@@ -162,4 +162,24 @@ public class SystemCommonController {
 		outputStream.close();
 		return new ResponseEntity<byte[]>(bs, headers, HttpStatus.OK);
 	}
+
+	/**
+	 * 根据用户的权限与角色跳转到不同的页面
+	 * 
+	 * @param entity
+	 * @param model
+	 * @return
+	 */
+
+	// @RequestMapping(value = "order/redirect/index", method =
+	// RequestMethod.GET)
+	// public String redirectToPageByRole(Model model) {
+	//
+	// String userId =
+	// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+	// String.class);
+	// Subject subject = SecurityUtils.getSubject();
+	// return "success";
+	// }
+
 }

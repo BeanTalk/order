@@ -5,69 +5,103 @@
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.user.UserOrderDao">
 
-	<insert id="insert" useGeneratedKeys="true" keyProperty="registerNumber">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="userOrderId">
 		insert into st_user_order(
-		user_id,
-		area_id,
-		group_id,
-		address_id,
-		accept_date,
-		status_cd
+			user_id,
+			area_id,
+			group_id,
+			address_id,
+			accept_date,
+			status_cd
 		) values (
-		#{userId},
-		#{areaId},
-		#{addressId},
-		#{acceptDate},
-		#{statusCd}
+			#{userId},
+			#{areaId},
+			#{groupId},
+			#{addressId},
+			now(),
+			#{statusCd}
 		)
 	</insert>
 
 	<update id="update">
-		update st_user_order
-		<trim prefix="set" suffixOverrides=",">
-			<if test=" orderFee!= null">
-				address_id= #{orderFee},
-			</if>
-			<if test=" orderNum!= null">
-				order_num= #{orderNum},
-			</if>
-		</trim>
-		change_date= sysdate
-		where register_number = #{registerNumber}
+		update st_user_order set
+			status_Cd = #{statusCd}
+		where user_order_id = #{userOrderId}
 	</update>
 
 	<select id="query" resultType="userOrder">
 		select
-		user_order_id,
-		user_id,
-		area_id,
-		group_id,
-		address_id,
-		accept_date,
-		status_cd
+			user_order_id as userOrderId,
+			user_id as userId,
+			area_id as areaId,
+			group_id as groupId,
+			address_id as addressId,
+			accept_date as acceptDate,
+			status_cd as statusCd
 		from st_user_order
 		where
-		user_order_id = #{userOrderId}
+			user_order_id = #{userOrderId}
 	</select>
 
 	<select id="queryList" resultType="userOrder">
 		select
-		user_order_id,
-		user_id,
-		area_id,
-		group_id,
-		address_id,
-		accept_date,
-		status_cd
+			user_order_id as userOrderId,
+			user_id as userId,
+			area_id as areaId,
+			group_id as groupId,
+			address_id as addressId,
+			accept_date as acceptDate,
+			status_cd as statusCd
 		from st_user_order
-		where
-		where
-		user_id =#{userId}
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
+			<if test="userOrder.areaId!=null and userOrder.areaId!=''">
+				area_id =#{userOrder.areaId}
+			</if>
+			<if test="userOrder.userOrderId !=null and userOrder.userOrderId != ''">
+				and user_order_id =#{userOrder.userOrderId}
+			</if>
+			<if test="userOrder.groupId != null and userOrder.groupId != ''">
+			 	and group_id =#{userOrder.groupId}
+			</if>
+			<if test="userOrder.userId != null and userOrder.userId != ''">
+			    and user_id =#{userOrder.userId}
+			</if>
+			<if test="userOrder.statusCd !=null and userOrder.statusCd != ''">
+			    and status_cd =#{userOrder.statusCd}
+			</if>
+		</trim> 
+		order by accept_date desc
+		<if test="filter.first != null and filter.last != null">
+            LIMIT #{filter.first}, #{filter.last}
+		</if>
 	</select>
-
+	
+	<select id="count" resultType="int">
+		select
+			count(user_order_id)
+		from st_user_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
+			<if test="areaId!=null and areaId!=''">
+				area_id =#{areaId}
+			</if>
+			<if test="userOrderId !=null and userOrderId != ''">
+				and user_order_id =#{userOrderId}
+			</if>
+			<if test="groupId != null and groupId != ''">
+			 	and group_id =#{groupId}
+			</if>
+			<if test="userId != null and userId != ''">
+			    and user_id =#{userId}
+			</if>
+			<if test="statusCd !=null and statusCd != ''">
+			    and status_cd =#{statusCd}
+			</if>
+		</trim> 
+	</select>
+	
 	<delete id="delete">
 		delete from st_user_order
-		where user_order_id =
-		#{userOrderId}
+		where user_order_id = #{userOrderId}
 	</delete>
+	
 </mapper>

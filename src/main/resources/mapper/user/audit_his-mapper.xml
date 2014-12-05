@@ -17,7 +17,7 @@
         ) values (
           #{registerNumber},
           #{auditPerson},
-          #{acceptDate},
+          now(),
           #{auditResult},
           #{turnDownReason},
           #{turnDownNote},
@@ -27,14 +27,14 @@
 	
 	<select id="queryList" resultType="auditHis">
 		select
-		  audit_id,
-		  register_number,
-          audit_person,
-          audit_date,
-          audit_result,
-          turn_down_reason,
-          turn_down_note,
-          status_cd
+		  audit_id as auditId ,
+		  register_number as registerNumber,
+          audit_person as auditPerson,
+          audit_date as acceptDate,
+          audit_result as auditResult,
+          turn_down_reason as turnDownReason,
+          turn_down_note as turnDownNote,
+          status_cd as statusCd
 		from st_audit_his
 		where
 		register_number =#{registerNumber}

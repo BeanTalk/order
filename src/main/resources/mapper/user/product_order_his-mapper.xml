@@ -15,17 +15,17 @@
           #{registerNumber},
           #{orderResult},
           #{acceptPerson},
-          #{acceptDate}
+          now()
         )
 	</insert>
 	
 	<select id="queryList" resultType="productOrderHis">
 		select
-			id,
-			register_number,
-			order_result ,
-			accept_person ,
-			accept_date
+			id as id,
+			register_number as registerNumber,
+			order_result as orderResult ,
+			accept_person as acceptPerson ,
+			accept_date as acceptDate
 		from st_product_order_his
 		where
 		register_number =#{registerNumber}

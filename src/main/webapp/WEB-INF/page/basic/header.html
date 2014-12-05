@@ -1,7 +1,7 @@
 <div class="topBar">
 	<div class="container clearfix">
 		<@shiro.guest> 
-    		<div class="fl"><a href="login.html">免费注册</a>&nbsp;&nbsp;<a href="login.html">请登录</a></div>
+    		<div class="fl"><a href="login.html">免费注册</a>&nbsp;&nbsp;<a href="${base}/login.html">请登录</a></div>
     	</@shiro.guest>
     	<@shiro.authenticated>
     	<div class="fl">
@@ -17,13 +17,21 @@
 		<div class="header_fr">
 			<ul class="topnav">
 				<li><a href="myOrders.html"><div class="fl icon icon_user"></div>个人中心</a></li>
-        		<li><a href="cart.html"><div class="fl icon icon_cart"></div>购物车<span class="fontred">&nbsp;</span></a></li>
+				<li>
+					<a href="${base}/order/buycard/list">
+					<div class="shopping fl icon icon_cart"></div>
+						购物车
+						<@shiro.authenticated>
+							<span id="productInBagCount" class="fontred">0</span>
+						</@shiro.authenticated>
+					</a>
+				</li>
       		</ul>
       		<p><img src="${base}/resource/images/hotfont.gif"></p>
 		</div>
 	    <div class="schBox">
-	    	<input type="text" class="sch_text" name="">
-	    	<input type="button" onclick="window.location.href='schProduct.html'" value="搜索" class="sch_btn fb" name="">
+	    	<input type="text" class="required sch_text" id="search_context">
+	    	<input type="button" class="sch_btn fb" id="search_btn" value="搜索" >
 		</div>
 		<div class="logoBar">
 			<div class="logo"></div>
