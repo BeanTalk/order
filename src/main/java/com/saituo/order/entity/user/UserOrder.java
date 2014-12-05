@@ -1,5 +1,7 @@
 package com.saituo.order.entity.user;
 
+import com.saituo.order.commons.utils.DateUtils;
+
 public class UserOrder {
 
 	// 客户订单编码

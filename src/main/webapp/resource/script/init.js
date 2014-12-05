@@ -29,4 +29,13 @@ $(document).ready(function() {
 		window.location.href='/order/views/search/productlist?searchContext='+search_context;
 	});
 	
+	$("#groupId").change(function(){
+        $.getJSON("/order/order/user/userlist", {groupId:$(this).val()}, function(data) {
+            $("#userId").empty().append("<option value=\"\">请选择</option>");  
+            $.each(data,function(i){  
+                $("#userId").append("<option value=\""+data[i].id+"\">"+data[i].name+"</option>");  
+            });  
+        });  
+	});
+	
 });

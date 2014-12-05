@@ -194,6 +194,23 @@ public class AccountService {
 	}
 
 	/**
+	 * 通过areaid和roleSign获取人员
+	 * 
+	 * @param areaId
+	 * @param roleSign
+	 * @return
+	 */
+	public Map<String, String> findUserByOfficeId(String officeId) {
+
+		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(officeId);
+		Map<String, String> mapDataRes = Maps.newHashMap();
+		for (Map<String, Object> mapData : list) {
+			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
+		}
+		return mapDataRes;
+	}
+
+	/**
 	 * 通过areaId 获取人员
 	 * 
 	 * @param areaId

@@ -21,14 +21,10 @@
 			$("#take-list-form").submit();
 		});
 		
-		$("#office_id").change(function(){
-	        $.getJSON("/order/order/user/userlist", {groupId:$(this).val()}, function(data) { 
-	            $("#user_id").get(0).options.length=1;//清一下选项，只留下第一项  
-	            $.each(data,function(i){  
-	                $("#user_id").append("<option value=\""+data[i].id+"\">"+data[i].name+"</option>");  
-	            });  
-	        });  
-    	});
+		$("#query_btn").click(function(event){
+			$("#head_query_form").attr("action", "/order/order/list/inside/take_view");
+			$("#head_query_form").submit();
+		});
 		
     });
 
@@ -37,97 +33,71 @@
 
 <#macro body>
 <div class="grid2 m_t">
-	<input type="hidden" value="${userIdAndNameMap?size}">
-	<form id="take-list-form" action="" method="post">
 		<div class="panel">
 			<div class="panel_header">
 				<h3>内勤接单</h3>
 			</div>
 			<div class="panel_body  clearfix">
-				<table width="100%">
-					<tbody>
-						<tr>
-				            <td width="60" nowrap="nowrap">课题组:
-				            	<select name="office_id" id="office_id">
-	                                <option value="">请选择...</option>
-	                                <#list offices?keys as key>  
-						            	<option value="${key}">${offices[key]}</option>
-									</#list> 
-	                            </select>
-				            </td>
-				            <td width="60" nowrap="nowrap">订购人:
-				            	<select name="user_id" id="user_id">
-	                                <option value="">请选择...</option>
-	                            </select>
-				            </td>
-				            <td width="60" nowrap="nowrap">订单号:
-				            	<input type="text" id="orderId" name="orderId" value="">
-				            </td>
-				            <td width="58" nowrap="nowrap">
-				            	<div id="bargain_query_btn" class="button white medium">检索</div>
-				            </td>
-				            <td width="398" nowrap="nowrap"></td>
-						</tr>
-					</tbody>
-				</table>
+				<@headquery offices groupId userInfoMap userId userOrderId/>
 				<br>
-		        <table width="100%" class="table_pro_header">
-					<tbody>
-						<tr>
-				            <th width="30" align="center"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
-				            <th width="248" align="left">产品</th>
-				            <th width="80" align="left">规格</th>
-				            <th width="60" align="left">单位</th>
-				            <th width="100" align="left">目录价</th>
-				            <th width="100" align="left">订购价</th>
-				            <th width="80" align="left">数量</th>
-						</tr>
-					</tbody>
-				</table>
-		        <table width="100%" class="table_pro_body_t">
-					<tbody>
-						<#if page.content?size == 0>
-		                    <tr>
-		                        <td colspan="6">没有记录</td>
-		                    </tr>
-		                <#else>
-		                    <#list page.content as r>
+				<form id="take-list-form" action="" method="post">
+			        <table width="100%" class="table_pro_header">
+						<tbody>
+							<tr>
+					            <th width="30" align="center"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
+					            <th width="248" align="left">产品</th>
+					            <th width="80" align="left">规格</th>
+					            <th width="60" align="left">单位</th>
+					            <th width="100" align="left">目录价</th>
+					            <th width="100" align="left">订购价</th>
+					            <th width="80" align="left">数量</th>
+							</tr>
+						</tbody>
+					</table>
+			        <table width="100%" class="table_pro_body_t">
+						<tbody>
+							<#if page.content?size == 0>
 			                    <tr>
-						            <th width="30">
-						            	<input type="checkbox" class="userOrderClass" name="userOrderIds" value="${r.userOrderReturn.userOrderId}">
-						            </th>
-						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
-						            <th align="left" colspan="2">审批人: XXX</th>
-						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
-								</tr>
-								<#list r.productOrderReturn as productOrderInfo>
+			                        <td colspan="6">没有记录</td>
+			                    </tr>
+			                <#else>
+			                    <#list page.content as r>
 				                    <tr>
-										<td width="30">
-										</td>
-				                        <td width="248" align="left">
-											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
-											<p><b>货号:</b>${productOrderInfo.product.productNum}</p>
-											<p><b>品牌:</b>${productOrderInfo.product.brandId}</p>
-										</td>
-				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
-				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
-							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
-							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
-				                    </tr>
+							            <th width="30">
+							            	<input type="checkbox" class="userOrderClass" name="userOrderIds" value="${r.userOrderReturn.userOrderId}">
+							            </th>
+							            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
+							            <th align="left" colspan="2">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
+							            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
+							            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]}</th>
+									</tr>
+									<#list r.productOrderReturn as productOrderInfo>
+					                    <tr>
+											<td width="30">
+											</td>
+					                        <td width="248" align="left">
+												<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
+												<p><b>货号:</b>${productOrderInfo.product.productNum}</p>
+												<p><b>品牌:</b>${productOrderInfo.product.brandId}</p>
+											</td>
+					                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
+					                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
+								            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
+								            <td width="100" align="center">${productOrderInfo.orderFee}</td>
+											<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+					                    </tr>
+				                    </#list>
 			                    </#list>
-		                    </#list>
-		                </#if>
-					</tbody>
-				</table>
-				<#assign parameterMap = { "searchContext":"${searchContext!}"}>
-				<@pager page "/order/order/list/inside/take_view" parameterMap />
-				<div class="actionBar">
-					<div id="batch_take_btn" class="button blue fr">所选的订单接单</div>
-		        </div>
+			                </#if>
+						</tbody>
+					</table>
+					<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+					<@pager page "/order/order/list/inside/take_view" parameterMap />
+					<div class="actionBar">
+						<div id="batch_take_btn" class="button blue fr">所选订单接单</div>
+			        </div>
+		        </form>
 		 	</div>
 		</div>
-	</form>
 </div>
 </#macro>

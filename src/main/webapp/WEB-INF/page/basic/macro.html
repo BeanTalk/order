@@ -1,0 +1,145 @@
+<#-- 菜单显示的宏方法,在navbar中进行调用,每个用户所看到的不同菜单-->
+<#macro recursionMenu menu id=false>
+    <#if menu.children?size gt 0>
+    <ul class="subnav-body">
+        <#list menu.children as c>
+            <li <#if c.children?size gt 0>class="subnav-title"</#if>>
+                <a <#if id>id="${c.id}"</#if> href="<#if c.value?has_content>${base}/${c.value?substring(1,c.value?length - 3)}<#else>javascript:;</#if>">
+                    <span class="${c.icon!'glyphicon glyphicon-file'}"> </span> ${c.name}
+                </a>
+                <@recursionMenu c />
+            </li>
+        </#list>
+    </ul>
+    </#if>
+</#macro>
+
+<#-- 分页功能 -->
+<#macro pager page baseUrl parameterMap = {} maxShowPageCount = 4>
+
+	<#local pageNumber = page.pageNumber />
+	<#local pageSize = page.pageSize />
+	<#local pageCount = page.totalPages />
+	<#local parameter = "" />
+
+	<#local parameter = parameter + "&pageSize=" + pageSize />
+	<#list parameterMap?keys as key>
+		<#if parameterMap[key]??>
+			<#local parameter = parameter + "&" + key + "=" + parameterMap[key] />
+		</#if>
+	</#list>
+	
+	<#if baseUrl?contains("?")>
+		<#local baseUrl = baseUrl + "&" />
+	<#else>
+		<#local baseUrl = baseUrl + "?" />
+	</#if>
+	
+	<#local firstPageUrl = baseUrl + "pageNumber=1" + parameter />
+	<#local lastPageUrl = baseUrl + "pageNumber=" + pageCount + parameter />
+	<#local prePageUrl = baseUrl + "pageNumber=" + (pageNumber - 1) + parameter />
+	<#local nextPageUrl = baseUrl + "pageNumber=" + (pageNumber + 1) + parameter />
+
+	<#if maxShowPageCount <= 0>
+		<#local maxShowPageCount = 4>
+	</#if>
+	
+	<#local segment = ((pageNumber - 1) / maxShowPageCount)?int + 1 />
+	<#local startPageNumber = (segment - 1) * maxShowPageCount + 1 />
+	<#local endPageNumber = segment * maxShowPageCount />
+	
+	<#if (startPageNumber < 1)>
+		<#local startPageNumber = 1 />
+	</#if>
+	
+	<#if (endPageNumber > pageCount)>
+		<#local endPageNumber = pageCount />
+	</#if>
+
+	<#if (pageCount > 1)>
+	<div class="page">
+			<#-- 首页 -->
+			<#if (pageNumber > 1)>
+				<a href="${firstPageUrl}">首页</a>
+			<#else>
+				<span>首页</span>
+			</#if>
+			
+			<#-- 上一页 -->
+			<#if (pageNumber > 1)>
+				<a href="${prePageUrl}">上一页</a>
+			<#else>
+				<span>上一页</span>
+			</#if>
+			
+			<#if (startPageNumber > 1)>
+				<a href="${baseUrl + "pageNumber=" + (pageNumber - 2) + parameter}">...</a>
+			</#if>
+			
+			<#list startPageNumber .. endPageNumber as index>
+				<#if pageNumber != index>
+					<a href="${baseUrl + "pageNumber=" + index + parameter}">${index}</a>
+				<#else>
+					<span>${index}</span>
+				</#if>
+			</#list>
+			
+			<#if (endPageNumber < pageCount)>
+				<a href="${baseUrl + "pageNumber=" + (pageNumber + 2) + parameter}">...</a>
+			</#if>
+		    
+			<#-- 下一页 -->
+			<#if (pageNumber < pageCount)>
+				<a href="${nextPageUrl}">下一页</a>
+			<#else>
+				<span>下一页</span>
+			</#if>
+			
+			<#-- 末页 -->
+			<#if (pageNumber < pageCount)>
+				<a href="${lastPageUrl}">末页</a>
+			<#else>
+				<span>末页</span>
+			</#if>
+			共 ${pageCount} 页
+		</div>
+	</#if>
+</#macro>
+
+<#--需要按条件进行查询的功能-->
+<#macro headquery offices groupId="" userInfoMap={} userId="" userOrderId="">
+	<form id="head_query_form">
+		<table width="100%">
+			<tbody>
+				<tr>
+		            <td width="60" nowrap="nowrap">课题组:
+		            	<select name="groupId" id="groupId">
+	                        <option value="">请选择...</option>
+	                        <#list offices?keys as key>  
+				            	<option value="${key}" <#if key == groupId>selected</#if>>${offices[key]}</option>
+							</#list> 
+	                    </select>
+		            </td>
+		            <td width="60" nowrap="nowrap">订购人:
+		            	<select name="userId" id="userId">
+		            		<#if userInfoMap?size == 0>
+	                        	<option value="">请选择...</option>
+	                        <#else>
+	                        	<#list userInfoMap?keys as key>  
+	                        		<option value="${key}" <#if key == userId>selected</#if>> ${userInfoMap[key]}</option>
+	                        	</#list>
+	                        </#if>
+	                    </select>
+		            </td>
+		            <td width="60" nowrap="nowrap">订单号:
+		            	<input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}">
+		            </td>
+		            <td width="58" nowrap="nowrap">
+		            	<div id="query_btn" class="button white medium">检索</div>
+		            </td>
+		            <td width="398" nowrap="nowrap"></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</#macro>

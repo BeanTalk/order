@@ -35,62 +35,50 @@
 		$(".received").click(function(event){
 			event.preventDefault();
 			var id = $(event.target).attr('id');
-			$.post("/order/order/list/inside/received", {"productOrderId" : id});
+			$.post("/order/order/list/inside/received", {"productOrderId" : id})
+			.success(
+				function(){
+					alert("收货成功");
+				}
+			).done(
+				function(){
+					window.location.reload();
+				}
+			);
 		});
 		
 		$("#batch_received_btn").click(function(){
-			$("#received-list-form").attr("action", "/order/order/list/inside/received");
-			$("#received-list-form").submit();
+			var length = $("#received-list-form").find("input[type='checkbox'][name='productOrderIds']:checked").length;
+	        if (length == 0) {
+	            return;
+	        }
+			bootbox.confirm("确定要操作选中的" + length + "条记录吗？", function (result) {
+	            if (result) {
+	                $("#received-list-form").attr("action", "/order/order/list/inside/received");
+					$("#received-list-form").submit();
+	            }
+	        });
 		});
 		
-		$("#office_id").change(function(){
-	        $.getJSON("/order/order/user/userlist", {groupId:$(this).val()}, function(data) { 
-	            $("#user_id").get(0).options.length=1;//清一下选项，只留下第一项  
-	            $.each(data,function(i){  
-	                $("#user_id").append("<option value=\""+data[i].id+"\">"+data[i].name+"</option>");  
-	            });  
-	        });  
-    	});
+		$("#query_btn").click(function(event){
+			$("#head_query_form").attr("action", "/order/order/list/inside/received_view");
+			$("#head_query_form").submit();
+		});
+		
     });
-
 </script>
 </#macro>
 
 <#macro body>
 <div class="grid2 m_t">
-	<form id="received-list-form" action="" method="post">
-		<div class="panel">
-			<div class="panel_header">
-				<h3>客户收货</h3>
-			</div>
-			<div class="panel_body  clearfix">
-				<table width="100%">
-					<tbody>
-						<tr>
-				            <td width="60" nowrap="nowrap">课题组:
-				            	<select name="office_id" id="office_id">
-	                                <option value="">请选择...</option>
-	                                <#list offices?keys as key>  
-						            	<option value="${key}">${offices[key]}</option>
-									</#list> 
-	                            </select>
-				            </td>
-				            <td width="60" nowrap="nowrap">订购人:
-				            	<select name="user_id" id="user_id">
-	                                <option value="">请选择...</option>
-	                            </select>
-				            </td>
-				            <td width="60" nowrap="nowrap">订单号:
-				            	<input type="text" id="orderId" name="orderId" value="">
-				            </td>
-				            <td width="58" nowrap="nowrap">
-				            	<div id="bargain_query_btn" class="button white medium">检索</div>
-				            </td>
-				            <td width="398" nowrap="nowrap"></td>
-						</tr>
-					</tbody>
-				</table>
-				<br>
+	<div class="panel">
+		<div class="panel_header">
+			<h3>客户收货</h3>
+		</div>
+		<div class="panel_body  clearfix">
+			<@headquery offices groupId userInfoMap userId userOrderId/>
+			<br>
+			<form id="received-list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
 					<tbody>
 						<tr>
@@ -128,7 +116,9 @@
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr>
 										<td width="30">
-											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
+											<#if productOrderInfo.statusCd == "1">
+												<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
+											</#if>
 										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
@@ -142,7 +132,9 @@
 							            <td width="80" align="center">${productOrderInfo.orderNum!1}</td>
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]}</td>
 										<td width="80" align="right">
-							            	<div id="${productOrderInfo.registerNumber}" class="button green medium fl received">收货</div>
+										<#if productOrderInfo.statusCd == "1">
+								            <div id="${productOrderInfo.registerNumber}" class="button green medium fl received">收货</div>
+										</#if>
 										</td>
 				                    </tr>
 			                    </#list>
@@ -150,13 +142,13 @@
 		                </#if>
 					</tbody>
 				</table>
-				<#assign parameterMap = { "searchContext":"${searchContext!}"}>
+				<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
 				<@pager page "/order/order/list/inside/received_view" parameterMap />
 				<div class="actionBar">
 					<div id="batch_received_btn" class="button blue fr">所选订单收货</div>
 		        </div>
-		 	</div>
-		</div>
-	</form>
+			</form>
+	 	</div>
+	</div>
 </div>
 </#macro>

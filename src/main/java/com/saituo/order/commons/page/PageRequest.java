@@ -27,7 +27,7 @@ public class PageRequest implements Serializable {
 	// 页号
 	private int pageNumber = 1;
 	// 每页大小
-	private int pageSize = 10;
+	private int pageSize = 1;
 
 	/**
 	 * 分页请求对象，用于在分页查询时，通过该对象得知要查询的页数。

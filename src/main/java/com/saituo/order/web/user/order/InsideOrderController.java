@@ -85,6 +85,14 @@ public class InsideOrderController {
 
 		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
+
+		String groupId = VariableUtils.typeCast(filter.get("groupId"));
+		model.addAttribute("groupId", groupId);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		if (StringUtils.isNotEmpty(groupId)) {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
+		}
 	}
 
 	/**
@@ -170,6 +178,14 @@ public class InsideOrderController {
 		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
 		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+
+		String groupId = VariableUtils.typeCast(filter.get("groupId"));
+		model.addAttribute("groupId", groupId);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		if (StringUtils.isNotEmpty(groupId)) {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
+		}
 	}
 
 	/**
@@ -209,6 +225,7 @@ public class InsideOrderController {
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
 			return;
 		}
+
 		filter.putAll(pageRequest.getMap());
 		// 内勤出单，客户订单状态必须为已接单状态
 		filter.put("statusCd", UserOrderingState.RECEIVED.getValue());
@@ -221,7 +238,6 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("productStatusCd", 0);
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 
@@ -230,10 +246,18 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
 		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
 		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, "5"));
+
+		String groupId = VariableUtils.typeCast(filter.get("groupId"));
+		model.addAttribute("groupId", groupId);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		if (StringUtils.isNotEmpty(groupId)) {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
+		}
 	}
 
 	/**
@@ -250,6 +274,10 @@ public class InsideOrderController {
 
 		Map<String, Object> mapData = Maps.newHashMap();
 		List<String> list = Lists.newArrayList();
+
+		if (productOrderIds == null) {
+			return "redirect:/order/list/inside/load_view";
+		}
 
 		for (String productOrderId : productOrderIds) {
 			StringBuilder sb = new StringBuilder();
@@ -290,7 +318,6 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("productStatusCd", ProductOrderState.DEALED.getValue());
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -298,9 +325,17 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
 		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+
+		String groupId = VariableUtils.typeCast(filter.get("groupId"));
+		model.addAttribute("groupId", groupId);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		if (StringUtils.isNotEmpty(groupId)) {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
+		}
 	}
 
 	/**
@@ -323,6 +358,11 @@ public class InsideOrderController {
 			list.add(productOrderId);
 			filter.put("productOrderList", list);
 		} else {
+
+			if (productOrderIds == null) {
+				return "redirect:/order/list/inside/received_view";
+			}
+
 			filter.put("productOrderList", productOrderIds);
 		}
 		userOrderService.doProductOrderReceipt(filter);

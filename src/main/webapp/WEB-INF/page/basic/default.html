@@ -1,6 +1,8 @@
 <#assign shiro=JspTaglibs["/WEB-INF/taglib/shiro.tld"] />
 <#assign form=JspTaglibs["/WEB-INF/taglib/spring-form.tld"] />
 <#assign spring=JspTaglibs["/WEB-INF/taglib/spring.tld"] />
+<#assign fns=JspTaglibs["/WEB-INF/taglib/fns.tld"] />
+
 <#assign base="${request.contextPath}" />
 
 <!DOCTYPE html>
@@ -26,9 +28,11 @@
 	<script src="${base}/resource/script/jquery.ui.core.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/jquery.ui.widget.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/jquery.ui.datepicker.js" type="text/javascript"></script>
+	<script src="${base}/resource/script/jquery.blockUI.js" type="text/javascript"></script>
 	
 </head>
 <body>
+	<#include "./macro.html"/>
 	<#--未登录显示信息与登录后显示的样式不同-->
 	<#-- 未登录显示 -->
     <@shiro.notAuthenticated>
@@ -48,115 +52,7 @@
     <#if head?exists>
         <@head/>
     </#if>
-    
     <script src="${base}/resource/script/maked.js" type="text/javascript"></script>
 </body>
 </html>
 
-<#-- 菜单显示的宏方法,在navbar中进行调用,每个用户所看到的不同菜单-->
-<#macro recursionMenu menu id=false>
-    <#if menu.children?size gt 0>
-    <ul class="subnav-body">
-        <#list menu.children as c>
-            <li <#if c.children?size gt 0>class="subnav-title"</#if>>
-                <a <#if id>id="${c.id}"</#if> href="<#if c.value?has_content>${base}/${c.value?substring(1,c.value?length - 3)}<#else>javascript:;</#if>">
-                    <span class="${c.icon!'glyphicon glyphicon-file'}"> </span> ${c.name}
-                </a>
-                <@recursionMenu c />
-            </li>
-        </#list>
-    </ul>
-    </#if>
-</#macro>
-
-<#macro pager pager baseUrl parameterMap = {} maxShowPageCount = 4>
-
-	<#local pageNumber = pager.pageNumber />
-	<#local pageSize = pager.pageSize />
-	<#local pageCount = pager.totalPages />
-	<#local parameter = "" />
-
-	<#local parameter = parameter + "&pageSize=" + pageSize />
-	<#list parameterMap?keys as key>
-		<#if parameterMap[key]??>
-			<#local parameter = parameter + "&" + key + "=" + parameterMap[key] />
-		</#if>
-	</#list>
-	
-	<#if baseUrl?contains("?")>
-		<#local baseUrl = baseUrl + "&" />
-	<#else>
-		<#local baseUrl = baseUrl + "?" />
-	</#if>
-	
-	<#local firstPageUrl = baseUrl + "pageNumber=1" + parameter />
-	<#local lastPageUrl = baseUrl + "pageNumber=" + pageCount + parameter />
-	<#local prePageUrl = baseUrl + "pageNumber=" + (pageNumber - 1) + parameter />
-	<#local nextPageUrl = baseUrl + "pageNumber=" + (pageNumber + 1) + parameter />
-
-	<#if maxShowPageCount <= 0>
-		<#local maxShowPageCount = 4>
-	</#if>
-	
-	<#local segment = ((pageNumber - 1) / maxShowPageCount)?int + 1 />
-	<#local startPageNumber = (segment - 1) * maxShowPageCount + 1 />
-	<#local endPageNumber = segment * maxShowPageCount />
-	
-	<#if (startPageNumber < 1)>
-		<#local startPageNumber = 1 />
-	</#if>
-	
-	<#if (endPageNumber > pageCount)>
-		<#local endPageNumber = pageCount />
-	</#if>
-
-	<#if (pageCount > 1)>
-	<div class="page">
-			<#-- 首页 -->
-			<#if (pageNumber > 1)>
-				<a href="${firstPageUrl}">首页</a>
-			<#else>
-				<span>首页</span>
-			</#if>
-			
-			<#-- 上一页 -->
-			<#if (pageNumber > 1)>
-				<a href="${prePageUrl}">上一页</a>
-			<#else>
-				<span>上一页</span>
-			</#if>
-			
-			<#if (startPageNumber > 1)>
-				<a href="${baseUrl + "pageNumber=" + (pageNumber - 2) + parameter}">...</a>
-			</#if>
-			
-			<#list startPageNumber .. endPageNumber as index>
-				<#if pageNumber != index>
-					<a href="${baseUrl + "pageNumber=" + index + parameter}">${index}</a>
-				<#else>
-					<span>${index}</span>
-				</#if>
-			</#list>
-			
-			<#if (endPageNumber < pageCount)>
-				<a href="${baseUrl + "pageNumber=" + (pageNumber + 2) + parameter}">...</a>
-			</#if>
-		    
-			<#-- 下一页 -->
-			<#if (pageNumber < pageCount)>
-				<a href="${nextPageUrl}">下一页</a>
-			<#else>
-				<span>下一页</span>
-			</#if>
-			
-			<#-- 末页 -->
-			<#if (pageNumber < pageCount)>
-				<a href="${lastPageUrl}">末页</a>
-			<#else>
-				<span>末页</span>
-			</#if>
-			共 ${pageCount} 页
-		</div>
-	</#if>
-
-</#macro>

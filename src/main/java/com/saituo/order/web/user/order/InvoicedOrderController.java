@@ -1,6 +1,5 @@
 package com.saituo.order.web.user.order;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +23,7 @@ import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.service.account.AccountService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
 
@@ -38,6 +38,9 @@ public class InvoicedOrderController {
 	@Autowired
 	private SystemVariableService systemVariableService;
 
+	@Autowired
+	private AccountService accountService;
+
 	/**
 	 * 财务查看未开具发票状态的订单
 	 * 
@@ -48,7 +51,8 @@ public class InvoicedOrderController {
 	 */
 	@RequiresPermissions("perms[order:list:invoiced]")
 	@RequestMapping(value = "invoiced_view", method = RequestMethod.GET)
-	public void getReceivedViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+	public void getinvoicedViewForProductsOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
+			Model model) {
 
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
@@ -67,17 +71,28 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("invoiceStatus", 1);
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
+
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
-		model.addAttribute("page", page);
+		
 		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
 		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, "5"));
+		model.addAttribute("page", page);
+
+		// 查询条件
+		String groupId = VariableUtils.typeCast(filter.get("groupId"));
+		model.addAttribute("groupId", groupId);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		if (StringUtils.isNotEmpty(groupId)) {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
+		}
 	}
 
 	/**
@@ -89,10 +104,10 @@ public class InvoicedOrderController {
 	 * @return
 	 */
 	@RequestMapping(value = "invoiced", method = RequestMethod.POST)
-	public String invoicedForOrder(@RequestParam Map<String, Object> filter,
+	public String invoicedForProductOrder(@RequestParam Map<String, Object> filter,
 			@RequestParam(required = false) List<String> productOrderIds) {
 
-		String productOrderId = String.valueOf(filter.get("productOrderId"));
+		String productOrderId = (String) filter.get("productOrderId");
 		String saleId = String.valueOf(filter.get("saleId"));
 
 		if (StringUtils.isNotEmpty(productOrderId)) {
@@ -111,6 +126,59 @@ public class InvoicedOrderController {
 	}
 
 	/**
+	 * 财务查看开完发票未结款的订单
+	 * 
+	 * @param filter
+	 * @param productIds
+	 * @param subscripts
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:invoiced_nopay]")
+	@RequestMapping(value = "invoiced_nopay_view", method = RequestMethod.GET)
+	public void getInvoicedNoPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
+			Model model) {
+
+		Integer userCatagory = VariableUtils.typeCast(
+				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
+		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
+			return;
+		}
+		filter.putAll(pageRequest.getMap());
+		// 客户收货，客户订单状态必须为已接单状态
+		filter.put("statusCd", UserOrderingState.RECEIVED.getValue());
+
+		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
+		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+		int userOrderCount = userOrderService.getUserOrderCount(filter);
+
+		for (UserOrder userOrder : userOrderList) {
+			String userOrderId = String.valueOf(userOrder.getUserOrderId());
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+		}
+		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
+				userOrderCount);
+
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
+
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
+		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+		model.addAttribute("page", page);
+
+		// 查询条件
+		String groupId = VariableUtils.typeCast(filter.get("groupId"));
+		model.addAttribute("groupId", groupId);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		if (StringUtils.isNotEmpty(groupId)) {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
+		}
+	}
+
+	/**
 	 * 财务已送发票待结款
 	 * 
 	 * @param filter
@@ -120,17 +188,63 @@ public class InvoicedOrderController {
 	 */
 	@RequestMapping(value = "invoiced_nopay", method = RequestMethod.POST)
 	public String invoicedNopayForOrder(@RequestParam Map<String, Object> filter,
-			@RequestParam List<String> productIds, @RequestParam List<String> subscripts) {
+			@RequestParam(required = false) List<String> productOrderIds) {
 
-		List<String> productOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
-			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(99.99).append("~").append(subscripts.get(0));
-			productOrderList.add(sb.toString());
-		}
-		filter.put("productOrderList", productOrderList);
+		filter.put("productOrderList", productOrderIds);
 		userOrderService.doProductOrderAlreadySend(filter);
-		return "redirect:/order/list/all_order";
+		return "redirect:/order/list/finance/invoiced_nopay_view";
+	}
+
+	/**
+	 * 财务查看已送发票未结款的订单
+	 * 
+	 * @param filter
+	 * @param productIds
+	 * @param subscripts
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:pay]")
+	@RequestMapping(value = "pay_view", method = RequestMethod.GET)
+	public void getPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+
+		Integer userCatagory = VariableUtils.typeCast(
+				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
+		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
+			return;
+		}
+		filter.putAll(pageRequest.getMap());
+		// 客户收货，客户订单状态必须为已接单状态
+		filter.put("statusCd", UserOrderingState.RECEIVED.getValue());
+
+		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
+		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+		int userOrderCount = userOrderService.getUserOrderCount(filter);
+
+		for (UserOrder userOrder : userOrderList) {
+			String userOrderId = String.valueOf(userOrder.getUserOrderId());
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+		}
+		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
+				userOrderCount);
+
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
+
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
+		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+		model.addAttribute("page", page);
+
+		// 查询条件
+		String groupId = VariableUtils.typeCast(filter.get("groupId"));
+		model.addAttribute("groupId", groupId);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		if (StringUtils.isNotEmpty(groupId)) {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
+		}
 	}
 
 	/**
@@ -141,18 +255,13 @@ public class InvoicedOrderController {
 	 * @param subscripts
 	 * @return
 	 */
+	@RequiresPermissions("perms[order:list:pay]")
 	@RequestMapping(value = "pay", method = RequestMethod.POST)
-	public String payForOrder(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
-			@RequestParam List<String> subscripts) {
+	public String payForOrder(@RequestParam Map<String, Object> filter,
+			@RequestParam(required = false) List<String> productOrderIds) {
 
-		List<String> productOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
-			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(99.99).append("~").append(subscripts.get(0));
-			productOrderList.add(sb.toString());
-		}
-		filter.put("productOrderList", productOrderList);
-		userOrderService.doProductOrderReceivables(filter);
-		return "redirect:/order/list/all_order";
+		filter.put("productOrderList", productOrderIds);
+		userOrderService.doProductOrderAlreadySend(filter);
+		return "redirect:/order/list/finance/pay_view";
 	}
 }

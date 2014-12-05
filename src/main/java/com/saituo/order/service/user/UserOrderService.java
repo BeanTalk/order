@@ -146,7 +146,7 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
 			userOrderQuery.setUserOrderId(userOrderId);
 		}
 		// 客户组别编码
