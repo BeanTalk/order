@@ -187,7 +187,7 @@ public class UserOrderService {
 
 		// 根据客户订单编号查询客户订单信息
 		UserOrder userOrderReturn = userOrderDao.query(userOrderQuery);
-
+		userOrderReturn.setUserName(String.valueOf(filter.get("userName")));
 		// 根据地址编码查询地址信息
 		Address address = new Address();
 		address.setAddressId(userOrderReturn.getAddressId());

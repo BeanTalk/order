@@ -110,7 +110,7 @@
 			                    <tr>
 						            <th width="30"><input type="checkbox" name="userOrderIds" value="${r.userOrderReturn.userOrderId}"></th>
 						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
+						            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName}</th>
 						            <th align="left" colspan="2">下单时间:${r.userOrderReturn.acceptDate}</th>
 						            <th align="left" colspan="3">当前状态:${states[r.userOrderReturn.statusCd]}</th>
 								</tr>

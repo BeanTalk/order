@@ -195,13 +195,13 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("userName", systemVariableService.getUserByOfficeIdData(groupId, userOrder.getUserId()));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("userIdAndNameMap", systemVariableService.getUserIdAndNameCache(groupId));
 	}
 
 	/**
@@ -297,7 +297,6 @@ public class CustomerController {
 	public void customerBookViewOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
 		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
-
 		filter.putAll(pageRequest.getMap());
 		// 客户订单状态必须为待审批状态
 		filter.put("statusCd", UserOrderingState.ACCEPTED.getValue());
@@ -312,13 +311,13 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("userName", systemVariableService.getUserByOfficeIdData(groupId, userOrder.getUserId()));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("userIdAndNameMap", systemVariableService.getUserIdAndNameCache(groupId));
 	}
 
 	/**
@@ -386,6 +385,7 @@ public class CustomerController {
 	@RequestMapping(value = "all_order", method = RequestMethod.GET)
 	public void getAllOrderingList(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
+		String areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
 		filter.putAll(pageRequest.getMap());
 
 		// 根据用户的角色与类别，来区分用户能看到的订单
@@ -399,6 +399,7 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -406,8 +407,6 @@ public class CustomerController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(SessionVariable
-				.getCurrentSessionVariable().getAreaId()));
 	}
 
 	/**
