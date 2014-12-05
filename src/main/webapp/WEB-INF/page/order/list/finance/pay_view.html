@@ -82,15 +82,15 @@
 						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
 						            </th>
 						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
-						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
-						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
+						            <th align="left" colspan="3">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
+						            <th align="left" colspan="3">时间:${r.userOrderReturn.acceptDate}</th>
+						            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]}</th>
 								</tr>
 								</#if>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr>
 										<td width="30">
-											<#if productOrderInfo.invoiceStatus == "3">
+											<#if productOrderInfo.invoiceStatus == "3" && productOrderInfo.statusCd == "2">
 												<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
 											</#if>
 										</td>
@@ -104,10 +104,10 @@
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
 							            <td width="80" align="center">${productOrderInfo.orderNum!1}</td>
-							            <td width="80" align="center">${productOrderInfo.invoiceStatus}</td>
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]}</td>
+										<td width="80" align="center">${billstates[productOrderInfo.invoiceStatus]}</td>
 										<td width="80" align="right">
-										<#if productOrderInfo.invoiceStatus == "3">
+										<#if productOrderInfo.invoiceStatus == "3" && productOrderInfo.statusCd == "2">
 								            <div id="${productOrderInfo.registerNumber}" class="button green medium fl received">结款</div>
 										</#if>
 										</td>

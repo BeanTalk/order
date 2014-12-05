@@ -17,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.BillStatus;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.commons.enumeration.entity.UserOrderingState;
@@ -78,7 +79,8 @@ public class InvoicedOrderController {
 
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
-		
+		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
+
 		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
 		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
@@ -162,6 +164,7 @@ public class InvoicedOrderController {
 
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
+		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
 
 		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
@@ -190,7 +193,16 @@ public class InvoicedOrderController {
 	public String invoicedNopayForOrder(@RequestParam Map<String, Object> filter,
 			@RequestParam(required = false) List<String> productOrderIds) {
 
-		filter.put("productOrderList", productOrderIds);
+		String productOrderId = (String) filter.get("productOrderId");
+
+		if (StringUtils.isNotEmpty(productOrderId)) {
+			List<String> list = Lists.newArrayList();
+			list.add(productOrderId);
+			filter.put("productOrderList", list);
+		} else {
+			filter.put("productOrderList", productOrderIds);
+		}
+
 		userOrderService.doProductOrderAlreadySend(filter);
 		return "redirect:/order/list/finance/invoiced_nopay_view";
 	}
@@ -231,6 +243,7 @@ public class InvoicedOrderController {
 
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
+		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
 
 		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
 		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
@@ -260,8 +273,17 @@ public class InvoicedOrderController {
 	public String payForOrder(@RequestParam Map<String, Object> filter,
 			@RequestParam(required = false) List<String> productOrderIds) {
 
-		filter.put("productOrderList", productOrderIds);
-		userOrderService.doProductOrderAlreadySend(filter);
+		String productOrderId = (String) filter.get("productOrderId");
+
+		if (StringUtils.isNotEmpty(productOrderId)) {
+			List<String> list = Lists.newArrayList();
+			list.add(productOrderId);
+			filter.put("productOrderList", list);
+		} else {
+			filter.put("productOrderList", productOrderIds);
+		}
+
+		userOrderService.doProductOrderReceivables(filter);
 		return "redirect:/order/list/finance/pay_view";
 	}
 }

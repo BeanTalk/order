@@ -102,7 +102,7 @@
 							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
 							            <td width="80" align="center">${productOrderInfo.orderNum!1}</td>
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]}</td>
-									    <td width="80" align="center">${productOrderInfo.invoiceStatus}</td>
+									    <td width="80" align="center">${billstates[productOrderInfo.invoiceStatus]}</td>
 										<td width="80" align="right">
 										<#if productOrderInfo.invoiceStatus == "2">
 								            <div id="${productOrderInfo.registerNumber}" class="button green medium fl single_business_btn">送发票</div>
