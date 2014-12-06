@@ -86,7 +86,6 @@ public class UserOrderService {
 				productOrder = new ProductOrder();
 				productOrder.setAreaId(areaId);// 受理地市
 				productOrder.setAuditCd("0");// 审批状态:0未处理 1.待审批;2.已驳回;3.审批通过;
-				productOrder.setIfValid("1");// 是否有效 1是有效，0无效
 				productOrder.setInvoiceStatus("0"); // 状态:0.初始 1.未开具发票
 													// 2.已开具发票3.已送发票
 				productOrder.setOrderFee(VariableUtils.typeCast(prodcutString[1], Double.class)); // 目录价
@@ -168,7 +167,7 @@ public class UserOrderService {
 			userOrderQuery.setStatusCd(statusCd);
 		}
 		userOrderQuery.setAreaId(SessionVariable.getCurrentSessionVariable().getAreaId());
-		return userOrderDao.count(userOrderQuery);
+		return userOrderDao.count(userOrderQuery, filter);
 	}
 
 	/**
@@ -432,7 +431,7 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			userOrderId = VariableUtils.typeCast(filter.get("userOrderId"), Long.class);
 			userOrderQuery.setUserOrderId(userOrderId);
 			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消;
 			userOrderQuery.setStatusCd("-1");
@@ -475,25 +474,12 @@ public class UserOrderService {
 	 */
 	public void doModifyUserOrder(Map<String, Object> filter) {
 
-		UserOrder userOrderQuery = new UserOrder();
-		// 客户订单编号
-		Long userOrderId = null;
-		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
-			userOrderQuery.setUserOrderId(userOrderId);
-			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
-			userOrderQuery.setStatusCd("2");
-			// 更新客户订单的状态
-			userOrderDao.update(userOrderQuery);
-		}
-
 		// 产品订单项列表 前台页面传的订购的产品订单串，格式：产品订单编号~数量
 		List<String> productOrderModifyList = (List<String>) filter.get("productOrderModifyList");
 		// 产品订单项列表 前台页面传的订购的产品订单串，格式：产品订单编号
 		List<String> productOrderDeleteList = (List<String>) filter.get("productOrderDeleteList");
 
 		String prodcutStringModify[];
-		String prodcutStringDelete[];
 		if (productOrderModifyList != null && productOrderModifyList.size() > 0) {
 			ProductOrder productOrder = null;
 			ProductOrderHis productOrderHis = null;
@@ -530,22 +516,50 @@ public class UserOrderService {
 			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 					String.class);
 			for (String productOrderString : productOrderDeleteList) {
-				prodcutStringDelete = productOrderString.split("~");
 				productOrderDelete = new ProductOrder();
-				productOrderDelete.setRegisterNumber(VariableUtils.typeCast(prodcutStringDelete[0], Long.class));
-				productOrderDelete.setIfValid("0");
-				productOrderDao.update(productOrderDelete);
+				productOrderDelete.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+				productOrderDao.delete(productOrderDelete);
 
 				// 记录产品订单项的操作历史
 				orderResult = "删除产品订单项!";
 				productOrderHis = new ProductOrderHis();
 				productOrderHis.setAcceptPerson(userId);// 当前操作人
 				productOrderHis.setOrderResult(orderResult);
-				productOrderHis.setRegisterNumber(VariableUtils.typeCast(prodcutStringDelete[0], Long.class));
+				productOrderHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
 				productOrderHisDao.insert(productOrderHis);
 			}
 		}
 
+		// 客户订单编号
+		Long userOrderId = null;
+		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
+			userOrderId = VariableUtils.typeCast(filter.get("userOrderId"), Long.class);
+		}
+		// 根据客户订单编码查询产品订单项信息列表
+		ProductOrder productOrderQuery = new ProductOrder();
+		productOrderQuery.setUserOrderId(userOrderId);
+		List<ProductOrder> productOrderReturnList = productOrderDao.queryListByUserOrderId(productOrderQuery);
+
+		if (productOrderReturnList != null && productOrderReturnList.size() > 0) {
+			boolean flag = true;
+			// 判断是否全部修改为待审批
+			for (ProductOrder productOrder2 : productOrderReturnList) {
+				// 审批状态:0未处理;1.待审批;2.已驳回;3.审批通过;
+				if (!productOrder2.getAuditCd().equals("1")) {
+					flag = false;
+					break;
+				}
+			}
+			// 只有全部产品订单的审批状态更改为待审批时，才将客户订单的状态改为待审批
+			if (flag) {
+				UserOrder userOrderQuery = new UserOrder();
+				userOrderQuery.setUserOrderId(userOrderId);
+				// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
+				userOrderQuery.setStatusCd("2");
+				// 更新客户订单的状态
+				userOrderDao.update(userOrderQuery);
+			}
+		}
 	}
 
 	/**
@@ -557,7 +571,7 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = Long.valueOf(String.valueOf(filter.get("userOrderId")));
+			userOrderId = VariableUtils.typeCast(filter.get("userOrderId"), Long.class);
 			userOrderQuery.setUserOrderId(userOrderId);
 			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1.已取消
 			userOrderQuery.setStatusCd("6");
@@ -583,7 +597,6 @@ public class UserOrderService {
 			}
 		}
 	}
-
 	/**
 	 * 根据产品订单编号修改订单状态为内勤出单 此方法适用于内勤出单：出单时productOrderStatusCd传1
 	 */
@@ -809,7 +822,7 @@ public class UserOrderService {
 		// 客户订单编号
 		Long userOrderId = null;
 		if (filter.get("userOrderId") != null && !filter.get("userOrderId").equals("")) {
-			userOrderId = (Long) filter.get("userOrderId");
+			userOrderId = VariableUtils.typeCast(filter.get("userOrderId"), Long.class);
 		}
 
 		// 根据客户订单编码查询产品订单项信息列表

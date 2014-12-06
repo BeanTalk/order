@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -55,6 +56,7 @@ public class CustomerController {
 	 * @param model
 	 * @return
 	 */
+	@RequiresPermissions("perms[order:list:confirm]")
 	@RequestMapping(value = "customer/save", method = RequestMethod.POST)
 	public String customerSaveOrdering(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
 			@RequestParam List<String> subscripts, Model model) {
@@ -67,34 +69,6 @@ public class CustomerController {
 		}
 		filter.put("productOrderList", productOrderList);
 		userOrderService.doCreateUserOrder(filter);
-		return "redirect:/order/list/customer/confirm_view";
-	}
-
-	/**
-	 * 客户取消所选订单，目前不支持批量操作
-	 * 
-	 * @param filter
-	 *            : productOrderId
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value = "customer/cancel", method = RequestMethod.POST)
-	public String customerCancelOrdering(@RequestParam Map<String, Object> filter, Model model) {
-		// XXX
-		return "redirect:/order/list/customer/confirm_view";
-	}
-
-	/**
-	 * 客户修改所选订单的产品数量，目前不支持批量操作
-	 * 
-	 * @param filter
-	 *            : productOrderId, orderNum
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value = "customer/upgrade", method = RequestMethod.POST)
-	public String customerUpgardeOrdering(@RequestParam Map<String, Object> filter, Model model) {
-		// XXX
 		return "redirect:/order/list/customer/confirm_view";
 	}
 
@@ -151,6 +125,7 @@ public class CustomerController {
 	 * @param model
 	 * @return
 	 */
+	@RequiresPermissions("perms[order:list:confirm]")
 	@RequestMapping(value = "customer/confirm", method = RequestMethod.POST)
 	public String customerConfirmOrdering(@RequestParam Map<String, Object> filter,
 			@RequestParam List<String> userOrders, Model model) {
@@ -160,6 +135,213 @@ public class CustomerController {
 			userOrderService.doUpdateUserOrderStatus(mapData);
 		}
 		return "redirect:/order/list/customer/confirm_view";
+	}
+
+	/**
+	 * 客户查看内勤修改完价格的订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:upgrade]")
+	@RequestMapping(value = "customer/upgrade_view", method = RequestMethod.GET)
+	public void customerQueryUpardeOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
+			Model model) {
+
+		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				String.class);
+		filter.put("userId", userId);
+		filter.putAll(pageRequest.getMap());
+		// 内勤议价，客户订单状态必须为待审批状态
+		List<Integer> mutilStatusCdList = Lists.newArrayList();
+		mutilStatusCdList.add(UserOrderingState.PENDING.getValue());
+		mutilStatusCdList.add(UserOrderingState.HOLD.getValue());
+		filter.put("multiStatusCd", mutilStatusCdList);
+
+		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
+		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+		int userOrderCount = userOrderService.getUserOrderCount(filter);
+
+		for (UserOrder userOrder : userOrderList) {
+			String userOrderId = String.valueOf(userOrder.getUserOrderId());
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+		}
+		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
+				userOrderCount);
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("page", page);
+		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+	}
+
+	/**
+	 * 客户修改产品订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions(value = {"perms[order:list:confirm]", "perms[order:list:upgrade]"}, logical = Logical.OR)
+	@RequestMapping(value = "customer/upgrade", method = RequestMethod.POST)
+	public String customerUpgardProductOrdering(@RequestParam Map<String, Object> filter, Model model) {
+
+		String userOrderAndProductOrderId = (String) filter.get("userOrderAndProductOrderId");
+		// 该方法两个地方使用,一个是confirm_view 一个是upgrade_view 使用.
+		// confirm_view 时传入if_userOrder: false; 为不需要更新userOrder得状态
+		// upgrade_view 时传入if_userOrder: true; 需要更新userOrder得状态
+		Boolean ifUpdateUserOrder = VariableUtils.typeCast(filter.get("if_userOrder"), Boolean.class);
+
+		if (ifUpdateUserOrder) {
+			String userOrderId = StringUtils.substringBefore(userOrderAndProductOrderId, "_");
+			filter.put("userOrderId", userOrderId);
+		}
+
+		String productOrderId = StringUtils.substringAfter(userOrderAndProductOrderId, "_");
+		String orderNum = (String) filter.get("orderNum");
+		List<String> list = Lists.newArrayList();
+		list.add(productOrderId + "~" + orderNum);
+		filter.put("productOrderModifyList", list);
+
+		userOrderService.doModifyUserOrder(filter);
+
+		model.addAttribute("userName",
+				VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("name")));
+
+		String redirectUrl = "";
+		// 跳转到upgrade_view页面
+		if (ifUpdateUserOrder) {
+			redirectUrl = "redirect:/order/list/customer/upgrade_view";
+			// confirm_view
+		} else {
+			redirectUrl = "redirect:/order/list/customer/confirm_view";
+		}
+		return redirectUrl;
+	}
+
+	/**
+	 * 客户取消产品订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions(value = {"perms[order:list:confirm]", "perms[order:list:upgrade]"}, logical = Logical.OR)
+	@RequestMapping(value = "customer/cancel", method = RequestMethod.POST)
+	public String customerCancelProductOrdering(@RequestParam Map<String, Object> filter, Model model) {
+
+		String userOrderAndProductOrderId = (String) filter.get("userOrderAndProductOrderId");
+
+		Boolean ifUpdateUserOrder = VariableUtils.typeCast(filter.get("if_userOrder"), Boolean.class);
+
+		if (ifUpdateUserOrder) {
+			String userOrderId = StringUtils.substringBefore(userOrderAndProductOrderId, "_");
+			filter.put("userOrderId", userOrderId);
+		}
+		String productOrderId = StringUtils.substringAfter(userOrderAndProductOrderId, "_");
+		List<String> list = Lists.newArrayList();
+		list.add(productOrderId);
+		filter.put("productOrderDeleteList", list);
+		userOrderService.doModifyUserOrder(filter);
+		model.addAttribute("userName",
+				VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("name")));
+
+		String redirectUrl = "";
+		// 跳转到upgrade_view页面
+		if (ifUpdateUserOrder) {
+			redirectUrl = "redirect:/order/list/customer/upgrade_view";
+			// confirm_view
+		} else {
+			redirectUrl = "redirect:/order/list/customer/confirm_view";
+		}
+		return redirectUrl;
+	}
+
+	/**
+	 * 客户查看内勤修改完价格的订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:userordercancel]")
+	@RequestMapping(value = "customer/userordercancel_view", method = RequestMethod.GET)
+	public void customerQueryApprovingOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
+			Model model) {
+
+		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				String.class);
+		filter.put("userId", userId);
+		filter.putAll(pageRequest.getMap());
+		// 待审批、已驳回、已审批、已下单 可以取消订单
+		List<Integer> mutilStatusCdList = Lists.newArrayList();
+		mutilStatusCdList.add(UserOrderingState.PENDING.getValue());
+		mutilStatusCdList.add(UserOrderingState.HOLD.getValue());
+		mutilStatusCdList.add(UserOrderingState.REJECTED.getValue());
+		mutilStatusCdList.add(UserOrderingState.HAVEORDERED.getValue());
+		filter.put("multiStatusCd", mutilStatusCdList);
+
+		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
+		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+		int userOrderCount = userOrderService.getUserOrderCount(filter);
+
+		for (UserOrder userOrder : userOrderList) {
+			String userOrderId = String.valueOf(userOrder.getUserOrderId());
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+		}
+		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
+				userOrderCount);
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("page", page);
+		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+	}
+
+	/**
+	 * 客户取消产品订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:userordercancel]")
+	@RequestMapping(value = "customer/userordercancel", method = RequestMethod.POST)
+	public String customerCancelUserOrdering(@RequestParam Map<String, Object> filter,
+			@RequestParam List<String> userOrderIds, Model model) {
+
+		for (String userOrderId : userOrderIds) {
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userOrderId", userOrderId);
+			userOrderService.doUpdateUserOrderStatusCancel(mapData);
+		}
+		return "redirect:/order/list/customer/userordercancel_view";
 	}
 
 	/**
@@ -216,6 +398,7 @@ public class CustomerController {
 	 * @param model
 	 * @return
 	 */
+	@RequiresPermissions("perms[order:list:approve]")
 	@RequestMapping(value = "customer/approve", method = RequestMethod.POST)
 	public String customerApproveOrdering(@RequestParam Map<String, Object> filter,
 			@RequestParam(required = false) List<String> userOrderAndProductOrderIds, Model model) {
@@ -251,33 +434,6 @@ public class CustomerController {
 			userOrderService.doAuditProductOrder(filter);
 		}
 		return "redirect:/order/list/customer/approve_view";
-	}
-
-	/**
-	 * 审批未通过的订单查询
-	 * 
-	 * @param items
-	 *            :productId
-	 * @param subscripts
-	 *            :订购数量
-	 * @param addressId
-	 *            :地址Id
-	 * @param model
-	 * @return
-	 */
-	@RequestMapping(value = "customer/reject", method = RequestMethod.GET)
-	public String customerRejectOrdering(@RequestParam Map<String, Object> filter,
-			@RequestParam List<String> productIds, @RequestParam List<String> subscripts, Model model) {
-
-		List<String> productOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
-			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(99.99).append("~").append(subscripts.get(0));
-			productOrderList.add(sb.toString());
-		}
-		filter.put("productOrderList", productOrderList);
-		userOrderService.doAuditProductOrder(filter);
-		return "redirect:/order/list/all_order";
 	}
 
 	/**
@@ -332,6 +488,7 @@ public class CustomerController {
 	 * @param model
 	 * @return
 	 */
+	@RequiresPermissions("perms[order:list:book]")
 	@RequestMapping(value = "customer/book", method = RequestMethod.POST)
 	public String customerBookOrdering(@RequestParam Map<String, Object> filter,
 			@RequestParam List<String> userOrderIds, Model model) {

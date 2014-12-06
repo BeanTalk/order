@@ -17,8 +17,7 @@
 			status_cd,
 			invoice_status,
 			accept_date,
-			change_date,
-			if_valid
+			change_date
         ) values (
           #{userOrderId},
           #{areaId},
@@ -30,8 +29,7 @@
           #{statusCd},
           #{invoiceStatus},
           now(),
-          now(),
-          #{ifValid}
+          now()
         )
 	</insert>
 	
@@ -53,9 +51,6 @@
 			<if test=" invoiceStatus!= null">  
                     invoice_status= #{invoiceStatus},  
 			</if>
-			<if test=" ifValid!= null">  
-                    if_valid= #{ifValid},  
-			</if>
 		</trim>
 		,change_date= now()
         where register_number = #{registerNumber}  
@@ -74,8 +69,7 @@
 			status_cd as statusCd,
 			invoice_status as invoiceStatus,
 			accept_date as acceptDate,
-			change_date as changeDate,
-			if_valid as ifValid
+			change_date as changeDate
 		from st_product_order
 		where
 		register_number = #{registerNumber}  
@@ -94,8 +88,7 @@
 			status_cd as statusCd,
 			invoice_status as invoiceStatus,
 			accept_date as acceptDate,
-			change_date as changeDate,
-			if_valid as ifValid
+			change_date as changeDate
 		from st_product_order
 		where
 		user_order_id = #{userOrderId}

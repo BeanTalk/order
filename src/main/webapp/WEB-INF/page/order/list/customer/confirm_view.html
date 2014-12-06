@@ -4,14 +4,11 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 	
-		//时间插件
-		$(".datepicker").datepicker({dateFormat: 'yy-mm-dd'});
-	
 		// 点击取消
 		$('.cancel').click(function(event){
 			event.preventDefault();
-			var userOrderIdAndproductOrderId = $(event.target).attr('id');
-			$.post("${cancelURL}", {"productOrderId" : productOrderId})
+			var userOrderAndProductOrderId = $(event.target).attr('id');
+			$.post("${cancelURL}", {"userOrderAndProductOrderId" : userOrderAndProductOrderId, "if_userOrder": false})
 			.success(
 				function(){
 					alert("取消成功!");
@@ -26,12 +23,13 @@
 		// 点击修改
 		$('.update').click(function(event){
 			event.preventDefault();
-			var userOrderIdAndproductOrderId = $(event.target).attr('id');
-			var orderNum = $('#n_'+productOrderId).val();
-			$.post("${upgradURL}", {"productOrderId" : productOrderId, "orderNum" : orderNum})
-			.success(
+			var userOrderAndProductOrderId = $(event.target).attr('id');
+			var orderNum = $('#n_'+userOrderAndProductOrderId).val();
+			$.post("${upgradURL}", 
+				{"userOrderAndProductOrderId" : userOrderAndProductOrderId, "orderNum" : orderNum, "if_userOrder": false}
+			).success(
 				function(){
-					alert("修改成功");
+					alert("修改成功!");
 				}
 			).done(
 				function(){

@@ -28,8 +28,6 @@ public class ProductOrder {
 	private String acceptDate;
 	// 最后修改时间
 	private String changeDate;
-	// 是否有效 1是有效，0无效
-	private String ifValid;
 	// 产品项
 	private Product product;
 
@@ -104,12 +102,6 @@ public class ProductOrder {
 	}
 	public void setChangeDate(String changeDate) {
 		this.changeDate = changeDate;
-	}
-	public String getIfValid() {
-		return ifValid;
-	}
-	public void setIfValid(String ifValid) {
-		this.ifValid = ifValid;
 	}
 	public Product getProduct() {
 		return product;

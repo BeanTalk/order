@@ -56,7 +56,8 @@ public interface UserOrderDao {
 	 * @return UserOrder
 	 * @throws
 	 */
-	public List<UserOrder> queryList(@Param(value = "userOrder") UserOrder userOrder, @Param(value = "filter") Map<String, Object> filter);
+	public List<UserOrder> queryList(@Param(value = "userOrder") UserOrder userOrder,
+			@Param(value = "filter") Map<String, Object> filter);
 
 	/**
 	 * <p>
@@ -68,7 +69,8 @@ public interface UserOrderDao {
 	 * @return UserOrder
 	 * @throws
 	 */
-	public int count(UserOrder userOrder);
+	public int count(@Param(value = "userOrder") UserOrder userOrder,
+			@Param(value = "filter") Map<String, Object> filter);
 
 	/**
 	 * <p>

@@ -1,5 +1,7 @@
 package com.saituo.order.entity.user;
 
+import java.util.List;
+
 public class UserOrder {
 
 	// 客户订单编码
