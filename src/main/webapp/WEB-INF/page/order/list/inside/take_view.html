@@ -2,102 +2,100 @@
 
 <#macro head>
 <script type="text/javascript">
-    $(document).ready(function () {
-
-		// 全选与全不选
-        var isCheckAll=true;
-		$("#all_checkbox").click(function(){
-			if(isCheckAll){
-				$("input[type=checkbox]").prop("checked", true);
-				isCheckAll=false;	
-			}else{
-				$("input[type=checkbox]").prop("checked", false);
-				isCheckAll=true;
-			}
-		});
-		
-		$("#batch_take_btn").click(function(){
-			$("#take-list-form").attr("action", "/order/order/list/inside/take");
-			$("#take-list-form").submit();
-		});
-		
-		$("#query_btn").click(function(event){
-			$("#head_query_form").attr("action", "/order/order/list/inside/take_view");
-			$("#head_query_form").submit();
-		});
-		
-    });
-
+	$("#batch_btn").click(function(){
+		var length = $("#list-form").find("input[type='checkbox'][name='userOrderIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个客户订单");
+            return;
+        }
+		$("#list-form").attr("action", "${submitUrl}");
+		$("#list-form").submit();
+	});
+	
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewUrl}");
+		$("#head_query_form").submit();
+	});
 </script>
 </#macro>
 
 <#macro body>
+<#assign viewUrl = "${base}/order/list/inside/take_view">
+<#assign submitUrl = "${base}/order/list/inside/take">
+
 <div class="grid2 m_t">
-		<div class="panel">
-			<div class="panel_header">
-				<h3>内勤接单</h3>
-			</div>
-			<div class="panel_body  clearfix">
-				<@headquery offices groupId userInfoMap userId userOrderId/>
-				<br>
-				<form id="take-list-form" action="" method="post">
-			        <table width="100%" class="table_pro_header">
-						<tbody>
-							<tr>
-					            <th width="30" align="center"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
-					            <th width="248" align="left">产品</th>
-					            <th width="80" align="left">规格</th>
-					            <th width="60" align="left">单位</th>
-					            <th width="100" align="left">目录价</th>
-					            <th width="100" align="left">订购价</th>
-					            <th width="80" align="left">数量</th>
-							</tr>
-						</tbody>
-					</table>
-			        <table width="100%" class="table_pro_body_t">
-						<tbody>
-							<#if page.content?size == 0>
-			                    <tr>
-			                        <td colspan="6">没有记录</td>
-			                    </tr>
-			                <#else>
-			                    <#list page.content as r>
-				                    <tr>
-							            <th width="30">
-							            	<input type="checkbox" class="userOrderClass" name="userOrderIds" value="${r.userOrderReturn.userOrderId}">
-							            </th>
-							            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-							            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName}</th>
-							            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
-							            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]}</th>
-									</tr>
-									<#list r.productOrderReturn as productOrderInfo>
-					                    <tr>
-											<td width="30">
-											</td>
-					                        <td width="248" align="left">
-												<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
-												<p><b>货号:</b>${productOrderInfo.product.productNum}</p>
-												<p><b>品牌:</b>${productOrderInfo.product.brandId}</p>
-											</td>
-					                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
-					                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
-								            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
-								            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-											<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
-					                    </tr>
-				                    </#list>
-			                    </#list>
-			                </#if>
-						</tbody>
-					</table>
-					<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
-					<@pager page "/order/order/list/inside/take_view" parameterMap />
-					<div class="actionBar">
-						<div id="batch_take_btn" class="button blue fr">所选订单接单</div>
-			        </div>
-		        </form>
-		 	</div>
+	<div class="panel">
+		<div class="panel_header">
+			<h3>内勤接单</h3>
 		</div>
+		<div class="panel_body clearfix">
+			<@headquery offices groupId userInfoMap userId userOrderId/>
+			<br>
+			<form id="list-form" action="" method="post">
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+				            <th width="30" align="center"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
+				            <th width="248" align="left">产品</th>
+				            <th width="80" align="left">规格</th>
+				            <th width="60" align="left">单位</th>
+				            <th width="100" align="left">目录价</th>
+				            <th width="100" align="left">订购价</th>
+				            <th width="80" align="left">数量</th>
+						</tr>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="6">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+			                    <tr>
+						            <th width="30">
+						            	<input type="checkbox" class="userOrderClass" name="userOrderIds" value="${r.userOrderReturn.userOrderId}">
+						            </th>
+						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
+						            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName}</th>
+						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
+						            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]}</th>
+								</tr>
+								<#list r.productOrderReturn as productOrderInfo>
+				                    <tr>
+										<td width="30">
+										</td>
+				                        <td width="248" align="left">
+											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
+											<p><b>货号:</b>${productOrderInfo.product.productNum}</p>
+											<p><b>品牌:</b>${productOrderInfo.product.brandId}</p>
+										</td>
+				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
+				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
+							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
+							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
+										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+				                    </tr>
+			                    </#list>
+			                    <#if r.addressReturn??>
+			                    	<@address_plugin r.addressReturn />
+			                    <#else>
+			                    	<tr>
+										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+									</tr>
+			                    </#if>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+				<@pager page "${viewUrl}" parameterMap />
+				<div class="actionBar">
+					<div id="batch_btn" class="button blue fr">所选订单接单</div>
+		        </div>
+	        </form>
+	 	</div>
+	</div>
 </div>
 </#macro>

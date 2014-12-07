@@ -269,22 +269,30 @@ public class InsideOrderController {
 	 */
 	@RequestMapping(value = "load", method = RequestMethod.POST)
 	public String loadOrder(@RequestParam Map<String, Object> filter,
-			@RequestParam(required = false) List<String> productOrderIds, @RequestParam String saleId) {
+			@RequestParam(required = false) List<String> productOrderIds, @RequestParam(required = false) String saleId) {
 
 		Map<String, Object> mapData = Maps.newHashMap();
 		List<String> list = Lists.newArrayList();
 
-		if (productOrderIds == null) {
-			return "redirect:/order/list/inside/load_view";
-		}
-
-		for (String productOrderId : productOrderIds) {
+		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"));
+		if (StringUtils.isNotEmpty(productOrderId)) {
+			String saleManId = VariableUtils.typeCast(filter.get("saleManId"));
 			StringBuilder sb = new StringBuilder();
-			sb.append(productOrderId).append("~").append(saleId);
+			sb.append(productOrderId).append("~").append(saleManId);
 			list.add(sb.toString());
 			mapData.put("productOrderList", list);
 			userOrderService.doProductOrderShipment(mapData);
+
+		} else if (productOrderIds != null) {
+			for (String productOrderIdTemp : productOrderIds) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(productOrderIdTemp).append("~").append(saleId);
+				list.add(sb.toString());
+				mapData.put("productOrderList", list);
+				userOrderService.doProductOrderShipment(mapData);
+			}
 		}
+
 		return "redirect:/order/list/inside/load_view";
 	}
 
@@ -350,7 +358,7 @@ public class InsideOrderController {
 	public String receivedOrder(@RequestParam Map<String, Object> filter,
 			@RequestParam(required = false) List<String> productOrderIds) {
 
-		String productOrderId = String.valueOf(filter.get("productOrderId"));
+		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"), String.class);
 
 		if (StringUtils.isNotEmpty(productOrderId)) {
 			List<String> list = Lists.newArrayList();

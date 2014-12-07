@@ -143,3 +143,20 @@
 		</table>
 	</form>
 </#macro>
+
+<#--需要按条件进行查询的功能-->
+<#macro salemenselect salemens saleSelectId="saleId">
+	<select name="${saleSelectId}" id="${saleSelectId}">
+	    <#list salemens?keys as key>
+	    	<option value="">--请选择--</option>
+	    	<option value="${key}">${salemens[key]}</option>
+		</#list> 
+	</select>
+</#macro>
+
+<#--送货地址-->
+<#macro address_plugin address="">
+	<tr>
+		<td colspan="10" class="msg_Div" align="center">送货地址: <span>${(address.receiptAddress)!""}</span>(<span>${(address.receiptPerson)!""}</span>收)&nbsp;&nbsp;&nbsp;<span style="color:#666">${(address.contactPhone)!""}</span></td>
+	</tr>
+</#macro>

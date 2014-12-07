@@ -25,7 +25,10 @@ import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
+import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.service.order.BuyCardService;
+import com.saituo.order.service.order.ProductService;
 import com.saituo.order.service.user.AddressService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
@@ -40,6 +43,12 @@ public class CustomerController {
 
 	@Autowired
 	private AddressService addressService;
+
+	@Autowired
+	private ProductService productService;
+
+	@Autowired
+	private BuyCardService buyCardService;
 
 	@Autowired
 	private SystemVariableService systemVariableService;
@@ -61,17 +70,28 @@ public class CustomerController {
 	public String customerSaveOrdering(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
 			@RequestParam List<String> subscripts, Model model) {
 
+		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				String.class);
 		List<String> productOrderList = new ArrayList<String>();
+		List<Product> products = productService.getProductInfoListByProductId(productIds);
+
+		Map<String, String> productPriceMap = Maps.newHashMap();
+		for (Product product : products) {
+			productPriceMap.put(String.valueOf(product.getProductId()), String.valueOf(product.getCatalogFee()));
+		}
+
 		for (int i = 0; i < productIds.size(); i++) {
 			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(99.99).append("~").append(subscripts.get(0));
+			String productId = productIds.get(i);
+			sb.append(productId).append("~").append(productPriceMap.get(productId)).append("~")
+					.append(subscripts.get(0));
 			productOrderList.add(sb.toString());
 		}
 		filter.put("productOrderList", productOrderList);
 		userOrderService.doCreateUserOrder(filter);
+		buyCardService.removeProductListFromBuyCard(userId, productIds.toArray(new String[productIds.size()]));
 		return "redirect:/order/list/customer/confirm_view";
 	}
-
 	/**
 	 * 客户查看内勤修改完价格的订单
 	 * 
@@ -435,7 +455,6 @@ public class CustomerController {
 		}
 		return "redirect:/order/list/customer/approve_view";
 	}
-
 	/**
 	 * 查看导师需要的下单的订单
 	 * 

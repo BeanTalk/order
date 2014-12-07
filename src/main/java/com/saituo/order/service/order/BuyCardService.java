@@ -9,6 +9,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.collect.Lists;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.dao.order.ProductDao;
 import com.saituo.order.entity.order.CustomerOrdering;
@@ -81,7 +82,6 @@ public class BuyCardService {
 
 	public List<CustomerOrdering> getProductListFromBag(String userId) {
 
-		List<Integer> productIds = new ArrayList<Integer>();
 		List<CustomerOrdering> result = new ArrayList<CustomerOrdering>();
 		Map<Object, Object> mapData = redisCacheService.getProductIdAndBuyNumMapFromCache(userId);
 
@@ -89,8 +89,9 @@ public class BuyCardService {
 			return result;
 		}
 
+		List<String> productIds = Lists.newArrayList();
 		for (Entry<Object, Object> entry : mapData.entrySet()) {
-			Integer productId = Integer.valueOf(String.valueOf(entry.getKey()));
+			String productId = String.valueOf(entry.getKey());
 			productIds.add(productId);
 		}
 		List<Product> productList = productDao.getProductListByProductIds(productIds);

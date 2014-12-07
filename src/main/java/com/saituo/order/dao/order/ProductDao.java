@@ -19,7 +19,7 @@ public interface ProductDao {
 
 	public int count(@Param(value = "filter") Map<String, ?> filter);
 
-	public List<Product> getProductListByProductIds(@Param(value = "productIds") List<Integer> productIds);
+	public List<Product> getProductListByProductIds(@Param(value = "productIds") List<String> productIds);
 
 	public Product getProductByProductId(@Param(value = "productId") Integer productId);
 

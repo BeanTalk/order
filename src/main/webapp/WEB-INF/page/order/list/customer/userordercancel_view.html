@@ -1,20 +1,21 @@
 <#include "*/basic/default.html"/>
 
 <#macro head>
-
 <script type="text/javascript">
-    $(document).ready(function() {
-    
-		//按条件进行查询
-		$("#query_all_order_btn").click(function(){
-			alert("test");
-		});
-		
-		$("#batch_btn").click(function(){
-			$("#list-form").attr("action", "${submitUrl}");
-			$("#list-form").submit();
-		});
-    });
+	//按条件进行查询
+	$("#query_all_order_btn").click(function(){
+		alert("test");
+	});
+	
+	$("#batch_btn").click(function(){
+		var length = $("#list-form").find("input[type='checkbox'][name='userOrderIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个订单");
+            return;
+        }
+		$("#list-form").attr("action", "${submitUrl}");
+		$("#list-form").submit();
+	});
 </script>
 </#macro>
 
@@ -38,7 +39,6 @@
 			            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
 			            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
 						<td width="398" nowrap="nowrap"></td>
-			            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
 					</tr>
 				</tbody>
 			</table>
@@ -89,6 +89,13 @@
 										<td width="100" align="center">${productOrderInfo.orderNum!1}</td>
 				                    </tr>
 			                    </#list>
+			                    <#if r.addressReturn??>
+			                    	<@address_plugin r.addressReturn />
+			                    <#else>
+			                    	<tr>
+										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+									</tr>
+			                    </#if>
 		                    </#list>
 		                </#if>
 					</tbody>

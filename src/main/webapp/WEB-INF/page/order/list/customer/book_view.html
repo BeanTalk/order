@@ -3,70 +3,30 @@
 <#macro head>
 
 <script type="text/javascript">
-
-    $(document).ready(function() {
-    
-    	//时间插件
-		$(".datepicker").datepicker({dateFormat: 'yy-mm-dd'});
-
-		// 全选与全不选
-        var isCheckAll=true;
-		$("#all_checkbox").click(function(){
-			if(isCheckAll){
-				$("input[type=checkbox]").prop("checked", true);
-				isCheckAll=false;	
-			}else{
-				$("input[type=checkbox]").prop("checked",false);
-				isCheckAll=true;
-			}
-		});
-		
-		// 选择用户订单
-		var isUserOrderCheckAll=true;
-		$(".userOrderClass").click(function(){
-			if(isUserOrderCheckAll){
-				var checked_id = "check_prodorder_id_" + $(this).val();
-				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",true);
-				isUserOrderCheckAll=false;	
-			}else{
-				var checked_id = "check_prodorder_id_" + $(this).val();
-				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",false);
-				isUserOrderCheckAll=true;
-			}
-		});
-		
-		//按条件进行查询
-		$("#query_all_order_btn").click(function(){
-			alert("test");
-		});
-		
-		// 点击取消
-		$('.cancel').click(function(event){
-			event.preventDefault();
-			var productOrderId = $(event.target).attr('id');
-			$.post("/order/order/list/customer/cancel", {"productOrderId" : productOrderId});
-		});
-		
-		// 点击修改
-		$('.update').click(function(event){
-			event.preventDefault();
-			var productOrderId = $(event.target).attr('id');
-			var orderNum = $('#order_num_'+productOrderId).val();
-			$.post("/order/order/list/customer/upgrade", {"productOrderId" : productOrderId, "orderNum" : orderNum});
-		});
-		
-		$("#book_order_btn").click(function(){
-			$("#book-list-form").attr("action", "/order/order/list/customer/book");
-			$("#book-list-form").submit();
-		});
-    });
-
+	//按条件进行查询
+	$("#query_all_order_btn").click(function(){
+		alert("test");
+	});
+	
+	$("#book_order_btn").click(function(){
+		var length = $("#list-form").find("input[type='checkbox'][name='userOrderIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个订单");
+            return;
+        }
+		$("#list-form").attr("action", "${submitUrl}");
+		$("#list-form").submit();
+	});
 </script>
 </#macro>
 
 <#macro body>
+
+<#assign viewUrl = "${base}/order/list/customer/book_view">
+<#assign submitUrl = "${base}/order/list/customer/book">
+
 <div class="grid2 m_t">
-	<form id="book-list-form" action="" method="post">
+	<form id="list-form" action="" method="post">
 		<div class="panel">
 			<div class="panel_header">
 				<h3>客户下单</h3>
@@ -81,7 +41,6 @@
 				            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
 				            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
 							<td width="398" nowrap="nowrap"></td>
-				            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
 						</tr>
 					</tbody>
 				</table>
@@ -129,13 +88,20 @@
 										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
 				                    </tr>
 			                    </#list>
+			                    <#if r.addressReturn??>
+			                    	<@address_plugin r.addressReturn />
+			                    <#else>
+			                    	<tr>
+										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+									</tr>
+			                    </#if>
 		                    </#list>
 		                </#if>
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
 		    	<#assign parameterMap = { "searchContext":"${searchContext!}"}>
-				<@pager page "/order/order/list/customer/book_view" parameterMap />
+				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="book_order_btn" class="button green fr">所有选择的订单下单</div>
 				</div>

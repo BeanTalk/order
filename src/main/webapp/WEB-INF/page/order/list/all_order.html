@@ -3,10 +3,6 @@
 <#macro head>
 <script type="text/javascript">
     $(document).ready(function() {
-    
-    	//时间插件
-		$(".datepicker").datepicker({dateFormat: 'yy-mm-dd'});
-
 		//按条件进行查询
 		$("#query_all_order_btn").click(function(){
 			alert("test");
@@ -31,7 +27,6 @@
 		            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
 		            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
 					<td width="398" nowrap="nowrap"></td>
-		            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
 				</tr>
 			</tbody>
 		</table>
@@ -58,10 +53,11 @@
                 <#else>
                     <#list page.content as r>
 	                    <tr>
-				            <th align="left" colspan="2">订单号:${r.userOrderReturn.userOrderId}</th>
+	                    	<th width="30"></th>
+				            <th align="left" colspan="1">订单号:${r.userOrderReturn.userOrderId}</th>
 				            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName}</th>
 				            <th align="left" colspan="2">下单时间:${r.userOrderReturn.acceptDate}</th>
-				            <th align="left" colspan="3">当前状态:${states[r.userOrderReturn.statusCd]}</th>
+				            <th align="left" colspan="2">当前状态:${states[r.userOrderReturn.statusCd]}</th>
 						</tr>
 						<#list r.productOrderReturn as productOrderInfo>
 		                    <tr>
@@ -80,16 +76,20 @@
 								<td width="80" align="center">${productStates[productOrderInfo.statusCd]}</td>
 		                    </tr>
 	                    </#list>
-	                    <tr>
-				            <td colspan="8" class="msg_Div" align="center">送货地址: ddd</td>
-						</tr>
+	                    <#if r.addressReturn??>
+	                    	<@address_plugin r.addressReturn />
+	                    <#else>
+	                    	<tr>
+								<td colspan="8" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+							</tr>
+	                    </#if>
                     </#list>
                 </#if>
 			</tbody>
 		</table>
 		<p class="pageBar"></p>
     	<#assign parameterMap = { "searchContext":"${searchContext!}"}>
-		<@pager page "/order/order/list/all_order" parameterMap />
+		<@pager page "${base}/order/list/all_order" parameterMap />
  	</div>
 </div>
 </div>

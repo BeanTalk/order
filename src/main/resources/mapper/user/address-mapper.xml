@@ -13,7 +13,8 @@
 			contact_phone ,
 			invoice_caput ,
 			invoice_require ,
-			other_require 
+			other_require,
+			del_flag
         ) values (
           #{userId},
           #{receiptAddress},
@@ -21,12 +22,13 @@
           #{contactPhone},
           #{invoiceCaput},
           #{invoiceRequire},
-          #{otherRequire}
+          #{otherRequire},
+          0
         )
 	</insert>
 	
 	<update id="update">  
-        update st_address  
+        update st_address
 		<trim prefix="set" suffixOverrides=",">  
 			<if test="receiptAddress != null">  
                   receipt_address = #{receiptAddress},  
@@ -49,8 +51,6 @@
 		</trim>
         where address_id = #{addressId}  
 	</update>  
-	
-
 
 	<select id="query"  resultType="address">
 		select
@@ -63,8 +63,8 @@
 			invoice_require  as invoiceRequire,
 			other_require as otherRequire
 		from st_address
-		where
-		address_id = #{addressId}
+		where del_flag = 0
+		and address_id = #{addressId}
 	</select>
 
 	<select id="queryList" resultType="address">
@@ -78,12 +78,14 @@
 			invoice_require  as invoiceRequire,
 			other_require as otherRequire
 		from st_address
-		where
-		user_id =#{userId}
+		where del_flag = 0
+		and user_id =#{userId}
 	</select>
 	
-	<delete id="delete">
-		delete from st_address
-		where address_id = #{addressId}
-	</delete> 
+	<update id="delete">
+		update st_address
+		set del_flag = 1
+		where user_id = #{userId} 
+		and address_id = #{addressId}
+	</update> 
 </mapper>

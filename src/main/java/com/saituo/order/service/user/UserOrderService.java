@@ -375,7 +375,7 @@ public class UserOrderService {
 			boolean flag = true;
 			// 判断是否全部审批完毕
 			for (ProductOrder productOrder2 : productOrderReturnList) {
-				if (productOrder2.getAuditCd().equals("0")) {
+				if (productOrder2.getAuditCd().equals("1")) {
 					flag = false;
 					break;
 				}

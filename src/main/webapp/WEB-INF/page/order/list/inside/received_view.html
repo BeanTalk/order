@@ -2,74 +2,44 @@
 
 <#macro head>
 <script type="text/javascript">
-
-    $(document).ready(function () {
-
-		// 全选与全不选
-        var isCheckAll=true;
-		$("#all_checkbox").click(function(){
-			if(isCheckAll){
-				$("input[type=checkbox]").prop("checked", true);
-				isCheckAll=false;	
-			}else{
-				$("input[type=checkbox]").prop("checked", false);
-				isCheckAll=true;
+	//点击收货
+	$(".received").click(function(event){
+		event.preventDefault();
+		var id = $(event.target).attr('id');
+		$.post("${submitUrl}", {"productOrderId" : id})
+		.success(
+			function(){
+				alert("收货成功");
 			}
-		});
-		
-		// 选择用户订单
-		var isUserOrderCheckAll=true;
-		$(".userOrderClass").click(function(){
-			if(isUserOrderCheckAll){
-				var checked_id = "check_prodordid_" + $(this).val();
-				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",true);
-				isUserOrderCheckAll=false;	
-			}else{
-				var checked_id = "check_prodordid_" + $(this).val();
-				$("input[type=checkbox][id^="+checked_id+"]").prop("checked",false);
-				isUserOrderCheckAll=true;
+		).done(
+			function(){
+				window.location.reload();
 			}
-		});
-		
-		//点击收货
-		$(".received").click(function(event){
-			event.preventDefault();
-			var id = $(event.target).attr('id');
-			$.post("/order/order/list/inside/received", {"productOrderId" : id})
-			.success(
-				function(){
-					alert("收货成功");
-				}
-			).done(
-				function(){
-					window.location.reload();
-				}
-			);
-		});
-		
-		$("#batch_received_btn").click(function(){
-			var length = $("#received-list-form").find("input[type='checkbox'][name='productOrderIds']:checked").length;
-	        if (length == 0) {
-	            return;
-	        }
-			bootbox.confirm("确定要操作选中的" + length + "条记录吗？", function (result) {
-	            if (result) {
-	                $("#received-list-form").attr("action", "/order/order/list/inside/received");
-					$("#received-list-form").submit();
-	            }
-	        });
-		});
-		
-		$("#query_btn").click(function(event){
-			$("#head_query_form").attr("action", "/order/order/list/inside/received_view");
-			$("#head_query_form").submit();
-		});
-		
-    });
+		);
+	});
+	
+	$("#batch_btn").click(function(){
+		var length = $("#list-form").find("input[type='checkbox'][name='productOrderIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个产品订单");
+            return;
+        }
+        $("#list-form").attr("action", "${submitUrl}");
+		$("#list-form").submit();
+	});
+	
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewUrl}");
+		$("#head_query_form").submit();
+	});
 </script>
 </#macro>
 
 <#macro body>
+
+<#assign viewUrl = "${base}/order/list/inside/received_view">
+<#assign submitUrl = "${base}/order/list/inside/received">
+
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
@@ -78,7 +48,7 @@
 		<div class="panel_body  clearfix">
 			<@headquery offices groupId userInfoMap userId userOrderId/>
 			<br>
-			<form id="received-list-form" action="" method="post">
+			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
 					<tbody>
 						<tr>
@@ -102,7 +72,6 @@
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
-		                    	<#if r.productOrderReturn?size != 0>
 			                    <tr>
 						            <th width="30">
 						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
@@ -112,7 +81,6 @@
 						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
 						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
 								</tr>
-								</#if>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr>
 										<td width="30">
@@ -138,14 +106,21 @@
 										</td>
 				                    </tr>
 			                    </#list>
+			                    <#if r.addressReturn??>
+			                    	<@address_plugin r.addressReturn />
+			                    <#else>
+			                    	<tr>
+										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+									</tr>
+			                    </#if>
 		                    </#list>
 		                </#if>
 					</tbody>
 				</table>
 				<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
-				<@pager page "/order/order/list/inside/received_view" parameterMap />
+				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
-					<div id="batch_received_btn" class="button blue fr">所选订单收货</div>
+					<div id="batch_btn" class="button blue fr">所选订单收货</div>
 		        </div>
 			</form>
 	 	</div>
