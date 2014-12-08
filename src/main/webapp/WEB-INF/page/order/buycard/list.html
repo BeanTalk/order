@@ -4,19 +4,16 @@
 	var isCheckAll=true;
 	$("#checkboxAll").click(function(){
 		if(isCheckAll){
-			$(".table_pro_body input[type=checkbox][name=productIds]").attr("checked",true);
-			$(".table_pro_body input[type=checkbox][name=productIds]").parent().parent().addClass('selected');
+			$(".table_pro_body input[type=checkbox]").attr("checked",true);
 			isCheckAll=false;	
 		}else{
-			$(".table_pro_body input[type=checkbox][name=productIds]").attr("checked",false);
-			$(".table_pro_body input[type=checkbox][name=productIds]").parent().parent().removeClass('selected');
+			$(".table_pro_body input[type=checkbox]").attr("checked",false);
 			isCheckAll=true;
 		}
 	});
 	
 	//批量删除
 	$('#batch_btn').click(function(){
-	
 		var length = $("#buycard-list-form").find("input[type='checkbox'][name='productIds']:checked").length;
         if (length == 0) {
         	alert("请选择至少一个产品");
@@ -28,15 +25,13 @@
 	
 	//保存
 	$('#save_btn').click(function(){
-		
 		var length = $("#buycard-list-form").find("input[type='checkbox'][name='productIds']:checked").length;
         if (length == 0) {
         	alert("请选择至少一个产品");
             return;
         }
         
-        //
-        var addressId=$("#addressId")val();
+        var addressId=$('input[name=addressId]:checked').val();
         if($.trim(addressId)==''){
 			alert("请选择送货地址");
 			return;	
@@ -54,7 +49,7 @@
 <#assign savebatchUrl = "${base}/order/list/customer/save">
 
 <div class="grid2 m_t">
-	<form id="buycard-list-form" action="" method="post">
+	<form id="buycard-list-form" method="post">
 		<div class="panel">	
 			<div class="panel_header">
 	        	<h3>收货地址</h3>

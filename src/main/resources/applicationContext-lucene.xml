@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd 
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/cache
+	http://www.springframework.org/schema/cache/spring-cache.xsd ">
+
+	<description>Lucene</description>
+	
+	<context:property-placeholder ignore-resource-not-found="true" location="classpath*:/application.properties" />
+	
+	<!-- set the Lucene version -->
+	<util:constant id="LUCENE_VERSION" static-field="org.apache.lucene.util.Version.LUCENE_40" />
+	
+	<!-- set your analyzer, to be used by the IndexWriter and QueryParser -->
+	<bean id="luceneAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer">
+		<constructor-arg ref="LUCENE_VERSION"/>
+	</bean>	
+	
+	<!-- set your Lucene directory -->
+	<!-- in this case I am pulling the location from a properties file -->
+	<!-- also, using the SimpleFSLockFactory -->
+	<bean id="luceneDirectory" class="org.apache.lucene.store.FSDirectory" factory-method="open">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg value="${config.search.indexDir}" />
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<bean class="org.apache.lucene.store.SimpleFSLockFactory" />
+		</constructor-arg>
+	</bean>
+	
+	<!-- now you're ready to define the IndexWriter -->
+	<bean id="indexWriter" class="org.apache.lucene.index.IndexWriter">
+		<constructor-arg ref="luceneDirectory" />
+		<constructor-arg>
+			<bean class="org.apache.lucene.index.IndexWriterConfig">
+				<constructor-arg ref="LUCENE_VERSION"/>
+				<constructor-arg ref="luceneAnalyzer" />
+			</bean>
+		</constructor-arg>
+	</bean>
+ 
+	<!-- define the IndexSearcher -->
+	<bean id="indexSearcher" class="org.apache.lucene.search.IndexSearcher" depends-on="indexWriter">
+		<constructor-arg ref="luceneDirectory" />
+	</bean>
+	
+	<!-- also useful is to define a query parser -->
+	<bean id="queryParser" class="org.apache.lucene.queryParser.standard.StandardQueryParser">
+		<constructor-arg ref="luceneAnalyzer" />
+	</bean>
+
+</beans>
