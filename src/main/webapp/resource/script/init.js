@@ -21,7 +21,6 @@ $(document).ready(function() {
 	//search button
 	$("#search_btn").click(function(){
 		var search_context = $("#search_context").val();
-		$.trim($("#search_context").val())
 		if($.trim($("#search_context").val())==''){
 			alert("请输入需要的产品号或产品名称");
 			return;

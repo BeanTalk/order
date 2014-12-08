@@ -429,6 +429,9 @@
 					<webAppConfig>
 						<contextPath>/${project.artifactId}</contextPath>
 					</webAppConfig>
+					<webApp>
+						<contextPath>/order</contextPath>
+					</webApp>
 				</configuration>
 			</plugin>
 
