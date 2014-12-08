@@ -2,44 +2,42 @@
 
 <#macro head>
 <script type="text/javascript">
-    $(document).ready(function () {
-
-		$(".single_business_btn").click(function(event){
-			event.preventDefault();
-			var id = $(event.target).attr('id');
-			$.post("${submitUrl}", {"productOrderId" : id})
-			.success(
-				function(){
-					alert("操作成功! 发票已送,但未结款");
-				}
-			).done(
-				function(){
-					window.location.reload();
-				}
-			);
-		});
-		
-		$("#batch_btn").click(function(){
-			var length = $("#list-form").find("input[type='checkbox'][name='productOrderIds']:checked").length;
-	        if (length == 0) {
-	            return;
-	        }
-            $("#list-form").attr("action", "${submitUrl}");
-			$("#list-form").submit();
-		});
-		
-		$("#query_btn").click(function(event){
-			$("#head_query_form").attr("action", "${viewUrl}");
-			$("#head_query_form").submit();
-		});
-		
-    });
+	$(".single_business_btn").click(function(event){
+		event.preventDefault();
+		var id = $(event.target).attr('id');
+		$.post("${submitUrl}", {"productOrderId" : id})
+		.success(
+			function(){
+				alert("操作成功! 发票已送,但未结款");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
+	});
+	
+	$("#batch_btn").click(function(){
+		var length = $("#list-form").find("input[type='checkbox'][name='productOrderIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个产品订单");
+            return;
+        }
+        $("#list-form").attr("action", "${submitUrl}");
+		$("#list-form").submit();
+	});
+	
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewUrl}");
+		$("#head_query_form").submit();
+	});
 </script>
 </#macro>
 
 <#macro body>
 <#assign viewUrl = "${base}/order/list/finance/invoiced_nopay_view">
 <#assign submitUrl = "${base}/order/list/finance/invoiced_nopay">
+
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
@@ -79,7 +77,7 @@
 						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
 						            </th>
 						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="3">订货人:${userIdAndNameMap[r.userOrderReturn.userId]}</th>
+						            <th align="left" colspan="3">订货人:${r.userOrderReturn.userName}</th>
 						            <th align="left" colspan="3">时间:${r.userOrderReturn.acceptDate}</th>
 						            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]}</th>
 								</tr>
@@ -110,6 +108,13 @@
 										</td>
 				                    </tr>
 			                    </#list>
+			                    <#if r.addressReturn??>
+			                    	<@address_plugin r.addressReturn />
+			                    <#else>
+			                    	<tr>
+										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+									</tr>
+			                    </#if>
 		                    </#list>
 		                </#if>
 					</tbody>

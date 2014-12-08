@@ -10,39 +10,32 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderCacheService {
 
-	private static final String SYS_CACHE = "orderBussionss";
-
-	// private static final String ROLES = "roles";
-	// private static final String PERMISSIONS = "perms";
-	// private static final String GROUPS = "group";
-	// private static final String USER = "user";
-
 	@Autowired
 	private CacheManager ehCacheManager;
 
-	public Object get(String key) {
-		return get(SYS_CACHE, key);
+	public Object get(String cacheName, String key) {
+		return getEhCache(cacheName, key);
 	}
 
-	public void put(String key, Object value) {
-		put(SYS_CACHE, key, value);
+	public void put(String cacheName, String key, Object value) {
+		putEhCache(cacheName, key, value);
 	}
 
-	public void remove(String key) {
-		remove(SYS_CACHE, key);
+	public void remove(String cacheName, String key) {
+		removeEhCache(cacheName, key);
 	}
 
-	private Object get(String cacheName, String key) {
+	private Object getEhCache(String cacheName, String key) {
 		Element element = getCache(cacheName).get(key);
 		return element == null ? null : element.getObjectValue();
 	}
 
-	private void put(String cacheName, String key, Object value) {
+	private void putEhCache(String cacheName, String key, Object value) {
 		Element element = new Element(key, value);
 		getCache(cacheName).put(element);
 	}
 
-	private void remove(String cacheName, String key) {
+	private void removeEhCache(String cacheName, String key) {
 		getCache(cacheName).remove(key);
 	}
 

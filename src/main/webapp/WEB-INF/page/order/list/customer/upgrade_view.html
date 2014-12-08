@@ -1,35 +1,60 @@
 <#include "*/basic/default.html"/>
 
 <#macro head>
-
 <script type="text/javascript">
 	//按条件进行查询
 	$("#query_all_order_btn").click(function(){
 		alert("test");
 	});
 	
-	$("#book_order_btn").click(function(){
-		var length = $("#list-form").find("input[type='checkbox'][name='userOrderIds']:checked").length;
-        if (length == 0) {
-        	alert("请选择至少一个订单");
-            return;
-        }
-		$("#list-form").attr("action", "${submitUrl}");
-		$("#list-form").submit();
+	// 点击取消
+	$('.cancel_btn').click(function(event){
+		event.preventDefault();
+		var userOrderAndProductOrderId = $(event.target).attr('id');
+		$.post("${cancelURL}", {"userOrderAndProductOrderId" : userOrderAndProductOrderId, "if_userOrder": true})
+		.success(
+			function(){
+				alert("已取消!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
+	});
+	
+	// 点击修改
+	$('.update_btn').click(function(event){
+		event.preventDefault();
+		var userOrderAndProductOrderId = $(event.target).attr('id');
+		var orderNum = $('#order_num_'+userOrderAndProductOrderId).val();
+		$.post("${upgradURL}", 
+			{"userOrderAndProductOrderId" : userOrderAndProductOrderId, "orderNum" : orderNum, "if_userOrder": true}
+		).success(
+			function(){
+				alert("修改完毕!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
 	});
 </script>
 </#macro>
 
 <#macro body>
 
-<#assign viewUrl = "${base}/order/list/customer/book_view">
-<#assign submitUrl = "${base}/order/list/customer/book">
+<#assign cancelURL = "${base}/order/list/customer/cancel">
+<#assign saveURL = "${base}/order/list/customer/confirm">
+<#assign viewURL = "${base}/order/list/customer/upgrade_view">
+<#assign upgradURL = "${base}/order/list/customer/upgrade">
 
 <div class="grid2 m_t">
-	<form id="list-form" action="" method="post">
+	<form id="list-form" method="post">
 		<div class="panel">
 			<div class="panel_header">
-				<h3>客户下单</h3>
+				<h3>修改订单</h3>
 			</div>
 			<div class="panel_body clearfix">
 				<table width="100%">
@@ -41,6 +66,7 @@
 				            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
 				            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
 							<td width="398" nowrap="nowrap"></td>
+				            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
 						</tr>
 					</tbody>
 				</table>
@@ -48,13 +74,14 @@
 		        <table width="100%" class="table_pro_header">
 					<tbody>
 						<tr>
-				            <th width="30" align="center"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
+				            <th width="30" align="center"></th>
 				            <th width="238" align="left">产品</th>
 				            <th width="80" align="left">规格</th>
 				            <th width="60" align="left">单位</th>
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
 				            <th width="80" align="left">数量</th>
+				            <th width="140" align="left">操作</th>
 						</tr>
 					</tbody>
 				</table>
@@ -67,15 +94,16 @@
 		                <#else>
 		                    <#list page.content as r>
 			                    <tr>
-						            <th width="30"><input type="checkbox" name="userOrderIds" value="${r.userOrderReturn.userOrderId}"></th>
-						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName}</th>
-						            <th align="left" colspan="2">下单时间:${r.userOrderReturn.acceptDate}</th>
-						            <th align="left" colspan="3">当前状态:${states[r.userOrderReturn.statusCd]}</th>
+						            <th width="30"></th>
+						            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId}</th>
+						            <th align="left" colspan="2">订货人:${userName}</th>
+						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
+						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr>
-				                    	<td width="30"></td>
+										<td width="30">
+										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
 											<p><b>货号：</b>${productOrderInfo.product.productNum}</p>
@@ -83,9 +111,17 @@
 										</td>
 				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
+							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+										<td width="80" align="center"><input type="text" size="2" id="order_num_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="prodOrderIdAndOrderNums" value=${productOrderInfo.orderNum!1}></td>
+										<td width="140" align="center">
+											<!--需要userOrderId修改状态-->
+							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl cancel_btn">取消</div>
+							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium fl update_btn">修改</div>
+							            	<#if productOrderInfo.auditCd == "2">
+												<div id="${productOrderInfo.registerNumber}" class="button orange medium fl rejectInfo_btn">驳回原因</div>
+											</#if>
+										</td>
 				                    </tr>
 			                    </#list>
 			                    <#if r.addressReturn??>
@@ -100,11 +136,8 @@
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-		    	<#assign parameterMap = { "searchContext":"${searchContext!}"}>
-				<@pager page "${viewUrl}" parameterMap />
-				<div class="actionBar">
-					<div id="book_order_btn" class="button green fr">所有选择的订单下单</div>
-				</div>
+		    	<#assign parameterMap = {"searchContext":"${searchContext!}"}>
+				<@pager page "${viewURL}" parameterMap />
 		 	</div>
 		</div>
 	</form>

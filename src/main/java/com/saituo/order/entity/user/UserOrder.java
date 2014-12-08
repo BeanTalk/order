@@ -1,6 +1,6 @@
 package com.saituo.order.entity.user;
 
-import com.saituo.order.commons.utils.DateUtils;
+import java.util.List;
 
 public class UserOrder {
 
@@ -8,6 +8,8 @@ public class UserOrder {
 	private Long userOrderId;
 	// 客户编码
 	private String userId;
+	// 客户名称
+	private String userName;
 	// 受理地市
 	private String areaId;
 	// 客户组别编码
@@ -18,6 +20,14 @@ public class UserOrder {
 	private String acceptDate;
 	// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
 	private String statusCd;
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
 	public Long getUserOrderId() {
 		return userOrderId;

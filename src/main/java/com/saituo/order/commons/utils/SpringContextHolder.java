@@ -38,27 +38,26 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 		assertContextInjected();
 		return applicationContext;
 	}
-	
-	public static String getRootRealPath(){
-		String rootRealPath ="";
+
+	public static String getRootRealPath() {
+		String rootRealPath = "";
 		try {
-			rootRealPath=getApplicationContext().getResource("").getFile().getAbsolutePath();
+			rootRealPath = getApplicationContext().getResource("").getFile().getAbsolutePath();
 		} catch (IOException e) {
 			logger.warn("获取系统根目录失败");
 		}
 		return rootRealPath;
 	}
-	
-	public static String getResourceRootRealPath(){
-		String rootRealPath ="";
+
+	public static String getResourceRootRealPath() {
+		String rootRealPath = "";
 		try {
-			rootRealPath=new DefaultResourceLoader().getResource("").getFile().getAbsolutePath();
+			rootRealPath = new DefaultResourceLoader().getResource("").getFile().getAbsolutePath();
 		} catch (IOException e) {
 			logger.warn("获取资源根目录失败");
 		}
 		return rootRealPath;
 	}
-	
 
 	/**
 	 * 从静态变量applicationContext中取得Bean, 自动转型为所赋值对象的类型.
@@ -81,7 +80,7 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	 * 清除SpringContextHolder中的ApplicationContext为Null.
 	 */
 	public static void clearHolder() {
-		if (logger.isDebugEnabled()){
+		if (logger.isDebugEnabled()) {
 			logger.debug("清除SpringContextHolder中的ApplicationContext:" + applicationContext);
 		}
 		applicationContext = null;
@@ -92,10 +91,12 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	 */
 	@Override
 	public void setApplicationContext(ApplicationContext applicationContext) {
-//		logger.debug("注入ApplicationContext到SpringContextHolder:{}", applicationContext);
+		// logger.debug("注入ApplicationContext到SpringContextHolder:{}",
+		// applicationContext);
 
 		if (SpringContextHolder.applicationContext != null) {
-			logger.info("SpringContextHolder中的ApplicationContext被覆盖, 原有ApplicationContext为:" + SpringContextHolder.applicationContext);
+			logger.info("SpringContextHolder中的ApplicationContext被覆盖, 原有ApplicationContext为:"
+					+ SpringContextHolder.applicationContext);
 		}
 
 		SpringContextHolder.applicationContext = applicationContext; // NOSONAR
@@ -113,6 +114,7 @@ public class SpringContextHolder implements ApplicationContextAware, DisposableB
 	 * 检查ApplicationContext不为空.
 	 */
 	private static void assertContextInjected() {
-		Validate.validState(applicationContext != null, "applicaitonContext属性未注入, 请在applicationContext.xml中定义SpringContextHolder.");
+		Validate.validState(applicationContext != null,
+				"applicaitonContext属性未注入, 请在applicationContext.xml中定义SpringContextHolder.");
 	}
 }

@@ -29,4 +29,7 @@ public class ProductService {
 		return new Page<Product>(pageRequest, content, total);
 	}
 
+	public List<Product> getProductInfoListByProductId(List<String> productIds) {
+		return productDao.getProductListByProductIds(productIds);
+	}
 }

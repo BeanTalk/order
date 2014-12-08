@@ -67,7 +67,13 @@
 			    and user_id =#{userOrder.userId}
 			</if>
 			<if test="userOrder.statusCd !=null and userOrder.statusCd != ''">
-			    and status_cd =#{userOrder.statusCd}
+			    and status_cd = #{userOrder.statusCd}
+			</if>
+			<if test="filter.multiStatusCd != null and filter.multiStatusCd.size() != 0">
+			    and status_cd in 
+			    <foreach item="item" index="index" collection="filter.multiStatusCd" open="(" separator="," close=")">
+					#{item}
+                </foreach>
 			</if>
 		</trim> 
 		order by accept_date desc
@@ -81,20 +87,26 @@
 			count(user_order_id)
 		from st_user_order
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
-			<if test="areaId!=null and areaId!=''">
-				area_id =#{areaId}
+			<if test="userOrder.areaId!=null and userOrder.areaId!=''">
+				area_id =#{userOrder.areaId}
 			</if>
-			<if test="userOrderId !=null and userOrderId != ''">
-				and user_order_id =#{userOrderId}
+			<if test="userOrder.userOrderId !=null and userOrder.userOrderId != ''">
+				and user_order_id =#{userOrder.userOrderId}
 			</if>
-			<if test="groupId != null and groupId != ''">
-			 	and group_id =#{groupId}
+			<if test="userOrder.groupId != null and userOrder.groupId != ''">
+			 	and group_id =#{userOrder.groupId}
 			</if>
-			<if test="userId != null and userId != ''">
-			    and user_id =#{userId}
+			<if test="userOrder.userId != null and userOrder.userId != ''">
+			    and user_id =#{userOrder.userId}
 			</if>
-			<if test="statusCd !=null and statusCd != ''">
-			    and status_cd =#{statusCd}
+			<if test="userOrder.statusCd !=null and userOrder.statusCd != ''">
+			    and status_cd =#{userOrder.statusCd}
+			</if>
+			<if test="filter.multiStatusCd != null and filter.multiStatusCd.size() != 0">
+			    and status_cd in 
+			    <foreach item="item" index="index" collection="filter.multiStatusCd" open="(" separator="," close=")">
+					#{item}
+                </foreach>
 			</if>
 		</trim> 
 	</select>

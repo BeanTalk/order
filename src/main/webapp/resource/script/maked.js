@@ -2,6 +2,9 @@ $.post('/order/order/buycard/get/productconut/', function(data) {
 	$('#productInBagCount').text(data);
 });
 
+//时间插件
+$(".datepicker").datepicker({dateFormat: 'yy-mm-dd'});
+
 //全选与全不选
 var isCheckAll=true;
 $("#all_checkbox").click(function(){

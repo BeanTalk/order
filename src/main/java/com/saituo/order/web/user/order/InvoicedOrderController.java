@@ -55,8 +55,10 @@ public class InvoicedOrderController {
 	public void getinvoicedViewForProductsOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		Integer userCatagory = VariableUtils.typeCast(
-				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
+		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
+				.get("userCatagory"));
+
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
 			return;
 		}
@@ -72,6 +74,7 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -80,10 +83,7 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
-		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
-		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
 		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, "5"));
 		model.addAttribute("page", page);
 
@@ -140,6 +140,7 @@ public class InvoicedOrderController {
 	public void getInvoicedNoPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -157,6 +158,7 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -165,10 +167,7 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
-		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
-		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
 		model.addAttribute("page", page);
 
 		// 查询条件
@@ -219,11 +218,14 @@ public class InvoicedOrderController {
 	@RequestMapping(value = "pay_view", method = RequestMethod.GET)
 	public void getPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		Integer userCatagory = VariableUtils.typeCast(
-				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
+		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
+				.get("userCatagory"));
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
+
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
 			return;
 		}
+
 		filter.putAll(pageRequest.getMap());
 		// 客户收货，客户订单状态必须为已接单状态
 		filter.put("statusCd", UserOrderingState.RECEIVED.getValue());
@@ -236,6 +238,7 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -244,10 +247,7 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
-		model.addAttribute("offices", systemVariableService.getGroupIdAndNameCache(areaId));
-		model.addAttribute("userIdAndNameMap", systemVariableService.getAllofUserIdAndNameByCache(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
 		model.addAttribute("page", page);
 
 		// 查询条件

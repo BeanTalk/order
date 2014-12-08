@@ -2,49 +2,49 @@
 
 <#macro head>
 <script type="text/javascript">
-	$(document).ready(function() {
+	// 点击取消
+	$('.cancel').click(function(event){
+		event.preventDefault();
+		var userOrderAndProductOrderId = $(event.target).attr('id');
+		$.post("${cancelURL}", {"userOrderAndProductOrderId" : userOrderAndProductOrderId, "if_userOrder": false})
+		.success(
+			function(){
+				alert("取消成功!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
+	});
 	
-		//时间插件
-		$(".datepicker").datepicker({dateFormat: 'yy-mm-dd'});
+	// 点击修改
+	$('.update').click(function(event){
+		event.preventDefault();
+		var userOrderAndProductOrderId = $(event.target).attr('id');
+		var orderNum = $('#n_'+userOrderAndProductOrderId).val();
+		$.post("${upgradURL}", 
+			{"userOrderAndProductOrderId" : userOrderAndProductOrderId, "orderNum" : orderNum, "if_userOrder": false}
+		).success(
+			function(){
+				alert("修改成功!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
+	});
 	
-		// 点击取消
-		$('.cancel').click(function(event){
-			event.preventDefault();
-			var userOrderIdAndproductOrderId = $(event.target).attr('id');
-			$.post("${cancelURL}", {"productOrderId" : productOrderId})
-			.success(
-				function(){
-					alert("取消成功!");
-				}
-			).done(
-				function(){
-					window.location.reload();
-				}
-			);
-		});
-		
-		// 点击修改
-		$('.update').click(function(event){
-			event.preventDefault();
-			var userOrderIdAndproductOrderId = $(event.target).attr('id');
-			var orderNum = $('#n_'+productOrderId).val();
-			$.post("${upgradURL}", {"productOrderId" : productOrderId, "orderNum" : orderNum})
-			.success(
-				function(){
-					alert("修改成功");
-				}
-			).done(
-				function(){
-					window.location.reload();
-				}
-			);
-		});
-		
-		// 点击生成
-		$("#confirm_order_btn").click(function(){
-			$("#confirm-list-form").attr("action", "${saveURL}");
-			$("#confirm-list-form").submit();
-		});
+	// 点击生成
+	$("#confirm_order_btn").click(function(){
+		var length = $("#list-form").find("input[type='checkbox'][name='userOrders']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个订单");
+            return;
+        }
+		$("#list-form").attr("action", "${saveURL}");
+		$("#list-form").submit();
 	});
 </script>
 </#macro>
@@ -54,9 +54,10 @@
 <#assign cancelURL = "${base}/order/list/customer/cancel">
 <#assign saveURL = "${base}/order/list/customer/confirm">
 <#assign upgradURL = "${base}/order/list/customer/upgrade">
+<#assign viewURL = "${base}/order/list/customer/confirm_view">
 
 <div class="grid2 m_t">
-	<form id="confirm-list-form" action="" method="post">
+	<form id="list-form" method="post">
 		<div class="panel">
 			<div class="panel_header">
 				<h3>提交订单</h3>
@@ -111,8 +112,8 @@
 										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
-											<p><b>货号：</b>${productOrderInfo.product.productNum}</p>
-											<p><b>品牌：</b>${productOrderInfo.product.brandId}</p>
+											<p><b>货号:</b>${productOrderInfo.product.productNum}</p>
+											<p><b>品牌:</b>${productOrderInfo.product.brandId}</p>
 										</td>
 				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
@@ -126,7 +127,7 @@
 				                    </tr>
 			                    </#list>
 			                    <tr>
-						            <td colspan="8" class="msg_Div" align="center">送货地址: ddd</td>
+						            <td colspan="10" class="msg_Div" align="center">送货地址: ddd</td>
 								</tr>
 		                    </#list>
 		                </#if>
@@ -134,7 +135,7 @@
 				</table>
 				<p class="pageBar"></p>
 		    	<#assign parameterMap = {"searchContext":"${searchContext!}"}>
-				<@pager page "/order/order/list/customer/confirm_view" parameterMap />
+				<@pager page "${viewURL}" parameterMap />
 				<div class="actionBar">
 					<div id="confirm_order_btn" class="button blue fr">提交审批</div>
 				</div>

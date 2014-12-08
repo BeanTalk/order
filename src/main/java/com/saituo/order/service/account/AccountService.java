@@ -202,22 +202,10 @@ public class AccountService {
 	 */
 	public Map<String, String> findUserByOfficeId(String officeId) {
 
-		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(officeId);
-		Map<String, String> mapDataRes = Maps.newHashMap();
-		for (Map<String, Object> mapData : list) {
-			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
-		}
-		return mapDataRes;
-	}
+		Map<String, String> mapDataCond = Maps.newHashMap();
+		mapDataCond.put("officeId", officeId);
 
-	/**
-	 * 通过areaId 获取人员
-	 * 
-	 * @param areaId
-	 * @return
-	 */
-	public Map<String, String> findAllofUserByAreaId(String areaId) {
-		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(areaId);
+		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(mapDataCond);
 		Map<String, String> mapDataRes = Maps.newHashMap();
 		for (Map<String, Object> mapData : list) {
 			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
@@ -232,7 +220,9 @@ public class AccountService {
 	 * @return
 	 */
 	public List<Map<String, Object>> findAllofUserByOfficeId(String officeId) {
-		return userDao.findAllofUserByOfficeId(officeId);
+		Map<String, String> mapDataCond = Maps.newHashMap();
+		mapDataCond.put("officeId", officeId);
+		return userDao.findAllofUserByOfficeId(mapDataCond);
 	}
 
 	/**

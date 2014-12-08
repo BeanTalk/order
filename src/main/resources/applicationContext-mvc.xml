@@ -24,7 +24,7 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
 
-	<mvc:view-controller path="/" view-name="redirect:/order/list/all_order" />
+	<mvc:view-controller path="/" view-name="redirect:/index" />
 
 	<!-- 使用缓存mvc注解配置 -->
 	<mvc:annotation-driven>

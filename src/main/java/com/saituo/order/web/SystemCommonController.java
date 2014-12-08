@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.druid.util.StringUtils;
+import com.saituo.order.commons.SessionVariable;
+import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.mailer.RetryPasswordMailService;
 import com.saituo.order.commons.utils.CaptchaUtils;
 import com.saituo.order.commons.utils.Encodes;
@@ -171,15 +173,14 @@ public class SystemCommonController {
 	 * @return
 	 */
 
-	// @RequestMapping(value = "order/redirect/index", method =
-	// RequestMethod.GET)
-	// public String redirectToPageByRole(Model model) {
-	//
-	// String userId =
-	// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-	// String.class);
-	// Subject subject = SecurityUtils.getSubject();
-	// return "success";
-	// }
+	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	public void redirectToPageByRole(Model model) {
+		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				String.class);
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(),
+				String.class);
+		String groupId  = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
+				String.class);
+	}
 
 }

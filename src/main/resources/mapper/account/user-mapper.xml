@@ -112,8 +112,11 @@
           sys_user
         WHERE
           del_flag = 0
-		<if test="officeId != null and officeId != ''">
-          AND office_id = #{officeId}
+		<if test="filter.officeId != null and filter.officeId != ''">
+          AND office_id = #{filter.officeId}
+		</if>
+		<if test="filter.userId != null and filter.userId != ''">
+          AND id = #{filter.userId}
 		</if>
 	</select>
     
@@ -132,8 +135,11 @@
         	u.office_id = o.id
         AND 
         	u.user_catagory = 1
-		<if test="areaId != null and areaId != ''">
-          AND o.area_id = #{areaId}
+		<if test="filter.areaId != null and filter.areaId != ''">
+          AND o.area_id = #{filter.areaId}
+		</if>
+		<if test="filter.userId != null and filter.userId != ''">
+          AND u.id = #{filter.userId}
 		</if>
 	</select>
     
