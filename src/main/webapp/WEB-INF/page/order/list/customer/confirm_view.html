@@ -126,9 +126,13 @@
 										</td>
 				                    </tr>
 			                    </#list>
-			                    <tr>
-						            <td colspan="10" class="msg_Div" align="center">送货地址: ddd</td>
-								</tr>
+			                    <#if r.addressReturn??>
+			                    	<@address_plugin r.addressReturn />
+			                    <#else>
+			                    	<tr>
+										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+									</tr>
+			                    </#if>
 		                    </#list>
 		                </#if>
 					</tbody>

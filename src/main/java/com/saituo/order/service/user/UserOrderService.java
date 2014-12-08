@@ -546,8 +546,10 @@ public class UserOrderService {
 			for (ProductOrder productOrder2 : productOrderReturnList) {
 				// 审批状态:0未处理;1.待审批;2.已驳回;3.审批通过;
 				if (!productOrder2.getAuditCd().equals("1")) {
-					flag = false;
-					break;
+					if (!productOrder2.getAuditCd().equals("3")) {
+						flag = false;
+						break;
+					}
 				}
 			}
 			// 只有全部产品订单的审批状态更改为待审批时，才将客户订单的状态改为待审批

@@ -180,7 +180,7 @@ public class CustomerController {
 		filter.putAll(pageRequest.getMap());
 		// 内勤议价，客户订单状态必须为待审批状态
 		List<Integer> mutilStatusCdList = Lists.newArrayList();
-		mutilStatusCdList.add(UserOrderingState.PENDING.getValue());
+		mutilStatusCdList.add(UserOrderingState.REJECTED.getValue());
 		mutilStatusCdList.add(UserOrderingState.HOLD.getValue());
 		filter.put("multiStatusCd", mutilStatusCdList);
 

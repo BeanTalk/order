@@ -16,12 +16,32 @@
 	
 	//批量删除
 	$('#batch_btn').click(function(){
+	
+		var length = $("#buycard-list-form").find("input[type='checkbox'][name='productIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个产品");
+            return;
+        }
 		$("#buycard-list-form").attr("action", "${removebatchUrl}");
 		$('#buycard-list-form').submit();
 	});
 	
 	//保存
 	$('#save_btn').click(function(){
+		
+		var length = $("#buycard-list-form").find("input[type='checkbox'][name='productIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个产品");
+            return;
+        }
+        
+        //
+        var addressId=$("#addressId")val();
+        if($.trim(addressId)==''){
+			alert("请选择送货地址");
+			return;	
+		}
+		
 		$("#buycard-list-form").attr("action", "${savebatchUrl}");
 		$('#buycard-list-form').submit();
 	});

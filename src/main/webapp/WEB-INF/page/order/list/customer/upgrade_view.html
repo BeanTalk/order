@@ -116,8 +116,15 @@
 										<td width="80" align="center"><input type="text" size="2" id="order_num_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="prodOrderIdAndOrderNums" value=${productOrderInfo.orderNum!1}></td>
 										<td width="140" align="center">
 											<!--需要userOrderId修改状态-->
-							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl cancel_btn">取消</div>
-							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium fl update_btn">修改</div>
+											<#if productOrderInfo.auditCd == "2" || productOrderInfo.auditCd == "0">
+								            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl cancel_btn">取消</div>
+								            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium fl update_btn">修改</div>
+							            	<#elseif productOrderInfo.auditCd == "1">
+												<div>待审批</div>  	
+							            	<#elseif productOrderInfo.auditCd == "3">
+												<div>已审批通过</div>  	
+							            	</#if>
+							            	
 							            	<#if productOrderInfo.auditCd == "2">
 												<div id="${productOrderInfo.registerNumber}" class="button orange medium fl rejectInfo_btn">驳回原因</div>
 											</#if>

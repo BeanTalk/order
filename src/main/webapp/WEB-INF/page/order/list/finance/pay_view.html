@@ -5,7 +5,7 @@
 	$(".received").click(function(event){
 		event.preventDefault();
 		var id = $(event.target).attr('id');
-		$.post("${submitUrl}", {"productOrderId" : id})
+		$.post("${submitUrl}", {"userOrderAndProductOrderId" : id})
 		.success(
 			function(){
 				alert("结款成功");
@@ -18,17 +18,13 @@
 	});
 	
 	$("#batch_btn").click(function(){
-		var length = $("#list-form").find("input[type='checkbox'][name='productOrderIds']:checked").length;
+		var length = $("#list-form").find("input[type='checkbox'][name='userOrderIdAndProductOrderIds']:checked").length;
         if (length == 0) {
         	alert("请选择至少一个产品订单");
             return;
         }
-		bootbox.confirm("确定要操作选中的" + length + "条记录吗？", function (result) {
-            if (result) {
-                $("#list-form").attr("action", "${submitUrl}");
-				$("#list-form").submit();
-            }
-        });
+        $("#list-form").attr("action", "${submitUrl}");
+		$("#list-form").submit();
 	});
 	
 	$("#query_btn").click(function(event){
@@ -89,7 +85,7 @@
 				                    <tr>
 										<td width="30">
 											<#if productOrderInfo.invoiceStatus == "3" && productOrderInfo.statusCd == "2">
-												<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
+												<input type="checkbox" name="userOrderIdAndProductOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}">
 											</#if>
 										</td>
 				                        <td width="248" align="left">
@@ -106,7 +102,7 @@
 										<td width="80" align="center">${billstates[productOrderInfo.invoiceStatus]}</td>
 										<td width="80" align="right">
 										<#if productOrderInfo.invoiceStatus == "3" && productOrderInfo.statusCd == "2">
-								            <div id="${productOrderInfo.registerNumber}" class="button green medium fl received">结款</div>
+								            <div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button green medium fl received">结款</div>
 										</#if>
 										</td>
 				                    </tr>
