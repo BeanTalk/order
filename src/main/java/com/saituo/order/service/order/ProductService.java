@@ -25,7 +25,7 @@ public class ProductService {
 
 		long total = productDao.count(filter);
 		filter.putAll(pageRequest.getMap());
-		List<Product> content = productDao.searchProductByContext(filter);
+		List<Product> content = productDao.getProductList(filter);
 		return new Page<Product>(pageRequest, content, total);
 	}
 

@@ -5,16 +5,11 @@
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.order.ProductDao" >
 
-	<select id="searchProductByContext" resultType="product">
+	<select id="getProductList" resultType="product">
         SELECT
           product_id AS "productId",
           product_name AS "productName",
-          product_num AS "productNum",
-          brand_id AS "brandId",
-          spec_value AS "specValue",
-          unit_value AS "unitValue",
-          catalog_fee AS "catalogFee",
-          del_flag AS "delFlag"
+          product_num AS "productNum"
         FROM
           st_product
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
@@ -26,8 +21,6 @@
 			<if test="filter.search != null and filter.search != ''">
 	            OR product_id LIKE #{filter.search}
 			</if>
-	        
-	        ORDER BY product_id ASC
 			<if test="filter.first != null and filter.last != null">
 	            LIMIT #{filter.first},#{filter.last}
 			</if>

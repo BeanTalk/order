@@ -15,7 +15,7 @@ import com.saituo.order.entity.order.Product;
  */
 public interface ProductDao {
 
-	public List<Product> searchProductByContext(@Param(value = "filter") Map<String, ?> filter);
+	public List<Product> getProductList(@Param(value = "filter") Map<String, ?> filter);
 
 	public int count(@Param(value = "filter") Map<String, ?> filter);
 
