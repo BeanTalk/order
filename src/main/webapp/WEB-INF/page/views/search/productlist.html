@@ -42,14 +42,14 @@
                         <#list page.content as r>
                         <tr>
 	                        <td width="308" align="left">
-								<p><span class="pro_name">${r.productName}</span></p>
-								<p><b>货号：</b>${r.productNum}</p>
-								<p><b>品牌：</b>${r.brandId}</p>
+								<p><span class="pro_name">${r.productName!}</span></p>
+								<p><b>货号：</b>${r.productNum!}</p>
+								<p><b>品牌：</b>${r.brandId!}</p>
 							</td>
-                            <td width="100" align="center">${r.specValue}</td>
-				            <td width="60" align="center">${r.unitValue}</td>
-				            <td width="100" align="center">${r.catalogFee}</td>
-				            <td width="100" align="center">${r.catalogFee}</td>
+                            <td width="100" align="center">${r.specValue!}</td>
+				            <td width="60" align="center">${r.unitValue!}</td>
+				            <td width="100" align="center">${r.catalogFee!}</td>
+				            <td width="100" align="center">${r.discountFee!}</td>
 				            
 				            <input type="hidden" id="productId" value="${r.productId}">
 				            <@shiro.authenticated>

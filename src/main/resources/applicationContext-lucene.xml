@@ -27,7 +27,7 @@
 	<util:constant id="LUCENE_VERSION" static-field="org.apache.lucene.util.Version.LUCENE_40" />
 	
 	<!-- set the IndexWriter Open -->
-	<util:constant id="OPEN_MODE" static-field="org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE_OR_APPEND" />
+	<util:constant id="OPEN_MODE" static-field="org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE" />
 	
 	<!-- set your analyzer, to be used by the IndexWriter and QueryParser -->
 	<bean id="luceneAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer">
@@ -44,12 +44,12 @@
 			</bean>
 		</constructor-arg>
 		<constructor-arg>
-			<bean class="org.apache.lucene.store.VerifyingLockFactory" />
+			<bean class="org.apache.lucene.store.NoLockFactory" />
 		</constructor-arg>
 	</bean>
 	
 	<!-- now you're ready to define the IndexWriter -->
-	<bean id="indexWriter" class="org.apache.lucene.index.IndexWriter">
+	<bean id="indexWriter" class="org.apache.lucene.index.IndexWriter" destroy-method="close">
 		<constructor-arg ref="luceneDirectory" />
 		<constructor-arg>
 			<bean class="org.apache.lucene.index.IndexWriterConfig">
@@ -65,8 +65,13 @@
 		<constructor-arg ref="indexReader" />
 	</bean>
 	
-	<bean id="indexReader" class="org.apache.lucene.index.IndexReader" factory-method="open">
+	<bean id="indexReader" class="org.apache.lucene.index.IndexReader" factory-method="open" depends-on="indexWriter">
 		<constructor-arg ref="luceneDirectory" />
+	</bean>
+	
+	<bean id="productInfoWriter" class="com.saituo.order.service.variable.ProductInfoWriter" init-method="init">
+		<property name="indexWriter" ref="indexWriter"/>
+		<property name="productDao" ref="productDao"/>
 	</bean>
 
 </beans>

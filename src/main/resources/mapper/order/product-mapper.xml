@@ -9,9 +9,14 @@
         SELECT
           product_id AS "productId",
           product_name AS "productName",
-          product_num AS "productNum"
+          product_num AS "productNum",
+          brand_id AS "brandId",
+          spec_value AS "specValue",
+          unit_value AS "unitValue",
+          catalog_fee AS "catalogFee"
         FROM
           st_product
+        WHERE del_flag = 0
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
 			<if test="filter.search != null and filter.search != ''">
 				<bind name="filter.search" value=" filter.search + '%' " />

@@ -23,6 +23,9 @@ public class Product {
 	// 目录价
 	private Double catalogFee;
 
+	// 折扣价
+	private Double discoutFee;
+
 	public Integer getProductId() {
 		return productId;
 	}
@@ -77,6 +80,14 @@ public class Product {
 
 	public void setCatalogFee(Double catalogFee) {
 		this.catalogFee = catalogFee;
+	}
+
+	public Double getDiscoutFee() {
+		return discoutFee;
+	}
+
+	public void setDiscoutFee(Double discoutFee) {
+		this.discoutFee = discoutFee;
 	}
 
 }
