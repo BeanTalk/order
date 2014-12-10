@@ -40,5 +40,20 @@
 		register_number =#{registerNumber}
 	</select>
 	
+	<select id="getAuditByProductOrderId" resultType="auditHis">
+		select
+		  audit_id as auditId ,
+		  register_number as registerNumber,
+          audit_person as auditPerson,
+          audit_date as acceptDate,
+          audit_result as auditResult,
+          turn_down_reason as turnDownReason,
+          turn_down_note as turnDownNote,
+          status_cd as statusCd
+		from st_audit_his
+		where
+		register_number =#{registerNumber}
+		and status_cd = 1
+	</select>
 			
 </mapper>

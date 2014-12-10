@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.google.common.collect.Lists;
@@ -26,10 +27,13 @@ import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.order.Product;
+import com.saituo.order.entity.user.Audit;
+import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.UserOrder;
 import com.saituo.order.service.order.BuyCardService;
 import com.saituo.order.service.order.ProductService;
 import com.saituo.order.service.user.AddressService;
+import com.saituo.order.service.user.AuditHisService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
 
@@ -43,6 +47,9 @@ public class CustomerController {
 
 	@Autowired
 	private AddressService addressService;
+
+	@Autowired
+	private AuditHisService auditHisService;
 
 	@Autowired
 	private ProductService productService;
@@ -199,6 +206,13 @@ public class CustomerController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+	}
+
+	@RequiresPermissions("perms[order:list:upgrade]")
+	@RequestMapping(value = "customer/get_rejectinfo", method = RequestMethod.GET)
+	public @ResponseBody AuditHis customerGetRejectInfo(@RequestParam Map<String, Object> filter) {
+		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"), String.class);
+		return auditHisService.getAuditHisByProductOrderId(productOrderId);
 	}
 
 	/**
@@ -443,18 +457,60 @@ public class CustomerController {
 			String userOrderId = entry.getKey();
 			List<String> productOrderIds = entry.getValue();
 
-			List<String> productOrderInfoList = new ArrayList<String>();
+			List<Audit> auditInfoList = new ArrayList<Audit>();
 			for (String productOrderId : productOrderIds) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(productOrderId).append("~").append(auditCd).append("~~");
-				productOrderInfoList.add(sb.toString());
+				Audit audit = new Audit();
+				audit.setProductOrderId(productOrderId);
+				audit.setAuditStatus(auditCd);
+				audit.setTurnDownNote("");
+				audit.setTurnDownReason("");
+				auditInfoList.add(audit);
 			}
-			filter.put("productOrderList", productOrderInfoList);
+			filter.put("auditInfoList", auditInfoList);
 			filter.put("userOrderId", userOrderId);
 			userOrderService.doAuditProductOrder(filter);
 		}
 		return "redirect:/order/list/customer/approve_view";
 	}
+
+	/**
+	 * 导师审批
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:approve]")
+	@RequestMapping(value = "customer/reject", method = RequestMethod.POST)
+	public String customerRejectOrdering(@RequestParam Map<String, Object> filter, Model model) {
+
+		String turnDownReason = VariableUtils.typeCast(filter.get("turn_down_reason"));
+		String turnDownNote = VariableUtils.typeCast(filter.get("turn_down_note"));
+		String userAndProductOrderid = VariableUtils.typeCast(filter.get("reject_userAndProductOrderid"));
+
+		String userOrderId = StringUtils.substringBefore(userAndProductOrderid, "_");
+		String productOrderId = StringUtils.substringAfter(userAndProductOrderid, "_");
+
+		List<Audit> auditInfoList = Lists.newArrayList();
+		Audit audit = new Audit();
+		audit.setAuditStatus("2"); // 已驳回
+		audit.setProductOrderId(productOrderId);
+		audit.setTurnDownNote(turnDownNote);
+		audit.setTurnDownReason(turnDownReason);
+		auditInfoList.add(audit);
+
+		filter.put("auditInfoList", auditInfoList);
+		filter.put("userOrderId", userOrderId);
+		userOrderService.doAuditProductOrder(filter);
+
+		return "redirect:/order/list/customer/approve_view";
+	}
+
 	/**
 	 * 查看导师需要的下单的订单
 	 * 

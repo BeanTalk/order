@@ -40,6 +40,21 @@
 			}
 		);
 	});
+	
+	//点击驳回查看
+	$('.rejectInfo_btn').click(function(event){
+		event.preventDefault();
+		$.blockUI({ message: $('#reject_div') });
+		
+		var productOrderId = $(event.target).attr('id');
+		$.getJSON("${rejectviewURL}", {"productOrderId" : productOrderId}, function(data) {
+			$("#turn_down_reason").empty().append('dsdsds');
+			$("#turn_down_note").empty().append('ddsdsds');
+        });
+	});
+	
+	$('#up_cancel').click($.unblockUI);
+	
 </script>
 </#macro>
 
@@ -49,6 +64,7 @@
 <#assign saveURL = "${base}/order/list/customer/confirm">
 <#assign viewURL = "${base}/order/list/customer/upgrade_view">
 <#assign upgradURL = "${base}/order/list/customer/upgrade">
+<#assign rejectviewURL = "${base}/order/list/customer/get_rejectinfo">
 
 <div class="grid2 m_t">
 	<form id="list-form" method="post">
@@ -95,23 +111,23 @@
 		                    <#list page.content as r>
 			                    <tr>
 						            <th width="30"></th>
-						            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${userName}</th>
-						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
-						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
+						            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId!""}</th>
+						            <th align="left" colspan="2">订货人:${userName!""}</th>
+						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate!""}</th>
+						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr>
 										<td width="30">
 										</td>
 				                        <td width="248" align="left">
-											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
-											<p><b>货号：</b>${productOrderInfo.product.productNum}</p>
-											<p><b>品牌：</b>${productOrderInfo.product.brandId}</p>
+											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
+											<p><b>货号：</b>${productOrderInfo.product.productNum!""}</p>
+											<p><b>品牌：</b>${productOrderInfo.product.brandId!""}</p>
 										</td>
-				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
-				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
-							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
+				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
+				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
+							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
 										<td width="80" align="center"><input type="text" size="2" id="order_num_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="prodOrderIdAndOrderNums" value=${productOrderInfo.orderNum!1}></td>
 										<td width="140" align="center">
@@ -148,5 +164,31 @@
 		 	</div>
 		</div>
 	</form>
+</div>
+
+<div id="reject_div" style="display:none; cursor: default">
+	<form id="reject_info_sumbit" method="post">
+		<input type="hidden" name="reject_userAndProductOrderid" id="reject_userAndProductOrderid" value="">
+		<table width="100%" class="table_none">
+			<tbody>
+	          	<tr>
+	            	<td width="100" nowrap="nowrap"><label>驳回原因：</label></td>
+	            	<td align="left">
+	            		<input type="text" id="turn_down_reason" name="turn_down_reason" value="">
+	              	</td>
+				</tr>
+	          	<tr>
+	            	<td nowrap="nowrap"><label>驳回描述:</label></td>
+	            	<td align="left"><textarea id="turn_down_note" name="turn_down_note"></textarea></td>
+	          	</tr>
+				<tr>
+	            	<td nowrap="nowrap"></td>
+	            	<td align="left">
+	            		<div id="up_cancel" class="button write medium fl du-operation">取消</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+    </form>
 </div>
 </#macro>

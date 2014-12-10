@@ -27,7 +27,9 @@
 			            <th width="100">目录价</th>
 			            <th width="100">订购价</th>
 			            <@shiro.authenticated>
-			            	<th width="130">操作</th>
+			            	<#if Session["session_variable"].isInternalUser?string('true','false') == "false">
+			            		<th width="130">操作</th>
+			            	</#if>
 			            </@shiro.authenticated>
 			        </tr>
 		    	</tbody>
@@ -50,17 +52,18 @@
 				            <td width="60" align="center">${r.unitValue!}</td>
 				            <td width="100" align="center">${r.catalogFee!}</td>
 				            <td width="100" align="center">${r.discountFee!}</td>
-				            
 				            <input type="hidden" id="productId" value="${r.productId}">
 				            <@shiro.authenticated>
-                            <td width="130" align="center">
-                            	<a href="###">
-				            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
-				            	</a>
-				            	<a href="${base}/record/addinfo?productId=${r.productId}">
-	          						<div id="record_btn" class="button orange medium fl">记录</div>
-	          					</a>
-	          				</td>
+					            <#if Session["session_variable"].isInternalUser?string('true','false') == "false">
+		                            <td width="130" align="center">
+		                            	<a href="###">
+						            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
+						            	</a>
+						            	<a href="${base}/record/addinfo?productId=${r.productId}">
+			          						<div id="record_btn" class="button orange medium fl">记录</div>
+			          					</a>
+			          				</td>
+		          				</#if>
 	          				</@shiro.authenticated>
                         </tr>
                         </#list>

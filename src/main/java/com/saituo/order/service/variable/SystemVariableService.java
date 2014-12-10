@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
+import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.utils.StringUtils;
 import com.saituo.order.dao.account.AreaDao;
 import com.saituo.order.dao.account.GroupDao;
 import com.saituo.order.dao.account.UserDao;
@@ -31,6 +33,8 @@ public class SystemVariableService {
 
 	@Autowired
 	private OrderCacheService orderCacheService;
+
+	private static final String UNDEFINE = "未知姓名";
 
 	private static final String AREA_ID_NAME_CACHE = "areaIdAndNameCache";
 	private static final String AREA_TO_GROUP_ID_NAME_CACHE = "areaToGroupIdAndNameCache";
@@ -121,18 +125,21 @@ public class SystemVariableService {
 	public String getUserByOfficeIdData(String officeId, String userId) {
 		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_OFFICE_ID_NAME_CACHE,
 				officeId);
-		if (mapData == null || mapData.size() == 0) {
-			Map<String, String> mapTemp = Maps.newHashMap();
-			mapTemp.put("officeId", officeId);
-			mapTemp.put("userId", userId);
 
-			List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(mapTemp);
-			if (list.size() > 0) {
-				orderCacheService.put(AREA_TO_OFFICE_ID_NAME_CACHE, officeId, list.get(0));
-				return String.valueOf(list.get(0).get("name"));
-			}
+		if (mapData != null && StringUtils.isNotEmpty(VariableUtils.typeCast(mapData.get(userId), String.class))) {
+			return String.valueOf(mapData.get(userId));
 		}
-		return String.valueOf(mapData.get(userId));
+
+		Map<String, String> mapTemp = Maps.newHashMap();
+		mapTemp.put("officeId", officeId);
+		mapTemp.put("userId", userId);
+
+		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(mapTemp);
+		if (list.size() > 0) {
+			orderCacheService.put(AREA_TO_OFFICE_ID_NAME_CACHE, officeId, list.get(0));
+			return String.valueOf(list.get(0).get("name"));
+		}
+		return UNDEFINE;
 	}
 
 	/**
@@ -166,17 +173,19 @@ public class SystemVariableService {
 
 		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE, areaId);
 
-		if (mapData == null || mapData.size() == 0) {
-			Map<String, String> mapTemp = Maps.newHashMap();
-			mapTemp.put("areaId", userId);
-			mapTemp.put("userId", areaId);
-
-			List<Map<String, Object>> list = userDao.findAllofUserByAreaId(mapTemp);
-			if (list.size() > 0) {
-				orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, areaId, list.get(0));
-				return String.valueOf(list.get(0).get("name"));
-			}
+		if (mapData != null && StringUtils.isNotEmpty(VariableUtils.typeCast(mapData.get(userId), String.class))) {
+			return String.valueOf(mapData.get(userId));
 		}
-		return String.valueOf(mapData.get(userId));
+
+		Map<String, String> mapTemp = Maps.newHashMap();
+		mapTemp.put("areaId", userId);
+		mapTemp.put("userId", areaId);
+
+		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(mapTemp);
+		if (list.size() > 0) {
+			orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, areaId, list.get(0));
+			return String.valueOf(list.get(0).get("name"));
+		}
+		return UNDEFINE;
 	}
 }

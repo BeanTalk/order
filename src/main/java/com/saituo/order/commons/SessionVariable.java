@@ -32,7 +32,10 @@ public class SessionVariable implements Serializable {
 	private String groupId;
 	// 当前用户所在地市
 	private String areaId;
-
+	// 当前用户是否为内部用户
+	private Boolean isInternalUser;
+	// 当前用户电话
+	private String mobile;
 	/**
 	 * session 变量对象
 	 *
@@ -132,6 +135,22 @@ public class SessionVariable implements Serializable {
 	 */
 	public void setRoleList(List<String> roleList) {
 		this.roleList = roleList;
+	}
+
+	public Boolean getIsInternalUser() {
+		return isInternalUser;
+	}
+
+	public void setIsInternalUser(Boolean isInternalUser) {
+		this.isInternalUser = isInternalUser;
+	}
+
+	public String getMobile() {
+		return mobile;
+	}
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
 	}
 
 	/**

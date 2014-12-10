@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.enumeration.entity.ResourceType;
+import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.service.ServiceException;
 
 /**
@@ -80,6 +81,13 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		sv.setMenusList(menuList);
 		sv.setRoleList(roleList);
 
+		int userCatagory = VariableUtils.typeCast(currentUser.get("userCatagory"), Integer.class).intValue();
+		if (userCatagory == UserCatagory.INTERNAL.getValue().intValue()) {
+			sv.setIsInternalUser(true);
+		} else {
+			sv.setIsInternalUser(false);
+		}
+
 		Map<String, Object> groupAndareaData = accountService.getUserGroup(userId);
 		sv.setAreaId((String) groupAndareaData.get("areaId"));
 		sv.setGroupId((String) groupAndareaData.get("groupId"));
@@ -87,7 +95,6 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		SecurityUtils.getSubject().getSession().setAttribute(SessionVariable.DEFAULT_SESSION_KEY, sv);
 		return info;
 	}
-
 	/**
 	 * 通过资源集合，将集合中的 permission 字段内容解析后添加到 SimpleAuthorizationInfo 授权信息中
 	 * 
