@@ -4,41 +4,65 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.util.Version;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Maps;
 import com.saituo.order.dao.order.ProductDao;
 import com.saituo.order.entity.order.Product;
 
+@Service
 public class ProductInfoWriter {
 
-	private IndexWriter indexWriter;
-
+	@Autowired
 	private ProductDao productDao;
 
-	public void setIndexWriter(IndexWriter indexWriter) {
-		this.indexWriter = indexWriter;
-	}
+	@Autowired
+	private Analyzer luceneAnalyzer;
 
-	public void setProductDao(ProductDao productDao) {
-		this.productDao = productDao;
-	}
+	@Value("${config.search.indexDir}")
+	private String indexDir;
 
 	public void init() {
-		Map<String, String> mapData = Maps.newHashMap();
-		List<Product> productList = productDao.getProductList(mapData);
 
-		for (Product product : productList) {
-			addDoc(product);
+		FSDirectory directory;
+		IndexWriter indexWriter = null;
+		try {
+			directory = OrderLuceneDirectory.getFSDirectory(indexDir, true);
+			IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_40, luceneAnalyzer);
+			indexWriter = new IndexWriter(directory, config);
+
+			Map<String, String> mapData = Maps.newHashMap();
+			List<Product> productList = productDao.getProductList(mapData);
+			for (Product product : productList) {
+				addDoc(indexWriter, product);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (indexWriter != null) {
+					indexWriter.commit();
+					indexWriter.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
-	private void addDoc(Product product) {
+	private void addDoc(IndexWriter indexWriter, Product product) {
 		Document doc = new Document();
 		doc.add(new TextField("product_allinfo", product.getProductName() + " " + product.getProductNum(),
 				Field.Store.YES));
@@ -54,4 +78,5 @@ public class ProductInfoWriter {
 			e.printStackTrace();
 		}
 	}
+
 }

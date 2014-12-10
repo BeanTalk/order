@@ -1,17 +1,22 @@
 package com.saituo.order.service.variable;
 
+import java.io.File;
 import java.util.List;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
@@ -24,8 +29,8 @@ public class ProductInfoSearcher {
 
 	private static final int MAX_COUNT = 100;
 
-	@Autowired
-	private IndexSearcher indexSearcher;
+	@Value("${config.search.indexDir}")
+	private String indexDir;
 
 	@Autowired
 	private Analyzer luceneAnalyzer;
@@ -43,8 +48,10 @@ public class ProductInfoSearcher {
 		try {
 			Query query = MultiFieldQueryParser.parse(Version.LUCENE_40, queryStr, fields, occ, luceneAnalyzer);
 
+			IndexReader reader = DirectoryReader.open(FSDirectory.open(new File(indexDir)));
+			IndexSearcher searcher = new IndexSearcher(reader);
 			// 之返回前100条记录
-			TopDocs topDocs = indexSearcher.search(query, MAX_COUNT);
+			TopDocs topDocs = searcher.search(query, MAX_COUNT);
 			// 搜索结果总数量
 			int totalCount = Math.min(topDocs.totalHits, MAX_COUNT);
 			// 搜索返回的结果集合
@@ -58,7 +65,7 @@ public class ProductInfoSearcher {
 			// 进行分页查询
 			for (int i = begin; i < end; i++) {
 				int docID = scoreDocs[i].doc;
-				Document doc = indexSearcher.doc(docID);
+				Document doc = searcher.doc(docID);
 				Product product = new Product();
 				product.setProductId(Integer.valueOf(doc.get("product_id")));
 				product.setProductName(doc.get("product_name"));
@@ -73,6 +80,6 @@ public class ProductInfoSearcher {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		return null;
+		return new Page<Product>(pageRequest, productList, 0);
 	}
 }

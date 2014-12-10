@@ -37,6 +37,7 @@
 	<!-- set your Lucene directory -->
 	<!-- in this case I am pulling the location from a properties file -->
 	<!-- also, using the SimpleFSLockFactory -->
+	<!--
 	<bean id="luceneDirectory" class="org.apache.lucene.store.FSDirectory" factory-method="open">
 		<constructor-arg>
 			<bean class="java.io.File">
@@ -47,31 +48,22 @@
 			<bean class="org.apache.lucene.store.NoLockFactory" />
 		</constructor-arg>
 	</bean>
+	-->
 	
-	<!-- now you're ready to define the IndexWriter -->
-	<bean id="indexWriter" class="org.apache.lucene.index.IndexWriter" destroy-method="close">
-		<constructor-arg ref="luceneDirectory" />
-		<constructor-arg>
-			<bean class="org.apache.lucene.index.IndexWriterConfig">
-				<constructor-arg ref="LUCENE_VERSION" />
-				<constructor-arg ref="luceneAnalyzer" />
-				<property name="openMode" ref="OPEN_MODE"></property>  
-			</bean>
-		</constructor-arg>
-	</bean>
- 
-	<!-- define the IndexSearcher -->
-	<bean id="indexSearcher" class="org.apache.lucene.search.IndexSearcher">
-		<constructor-arg ref="indexReader" />
-	</bean>
-	
-	<bean id="indexReader" class="org.apache.lucene.index.IndexReader" factory-method="open" depends-on="indexWriter">
-		<constructor-arg ref="luceneDirectory" />
-	</bean>
-	
-	<bean id="productInfoWriter" class="com.saituo.order.service.variable.ProductInfoWriter" init-method="init">
-		<property name="indexWriter" ref="indexWriter"/>
+	<!--
+	<bean id="productInfoWriter" class="com.saituo.order.service.variable.ProductInfoWriter" init-method="init" destroy-method="close">
 		<property name="productDao" ref="productDao"/>
 	</bean>
+	-->
 
+	<!-- define the IndexSearcher -->
+	
+	<!--
+		<bean id="indexSearcher" class="org.apache.lucene.search.IndexSearcher">
+			<constructor-arg ref="indexReader" />
+		</bean>
+
+		<bean id="indexReader" class="org.apache.lucene.index.IndexReader" />
+		-->
+	
 </beans>
