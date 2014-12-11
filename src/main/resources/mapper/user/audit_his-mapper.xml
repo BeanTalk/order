@@ -54,6 +54,8 @@
 		where
 		register_number =#{registerNumber}
 		and status_cd = 1
+		order by audit_date desc
+		limit 0, 1
 	</select>
 			
 </mapper>

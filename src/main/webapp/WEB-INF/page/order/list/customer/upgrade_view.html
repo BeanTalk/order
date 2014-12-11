@@ -48,13 +48,12 @@
 		
 		var productOrderId = $(event.target).attr('id');
 		$.getJSON("${rejectviewURL}", {"productOrderId" : productOrderId}, function(data) {
-			$("#turn_down_reason").empty().append('dsdsds');
-			$("#turn_down_note").empty().append('ddsdsds');
+			$("#turn_down_reason").empty().append(data.turnDownReason);
+			$("#turn_down_note").empty().append(data.turnDownNote);
         });
 	});
 	
 	$('#up_cancel').click($.unblockUI);
-	
 </script>
 </#macro>
 
@@ -109,7 +108,7 @@
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
-			                    <tr>
+			                    <tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
 						            <th width="30"></th>
 						            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 						            <th align="left" colspan="2">订货人:${userName!""}</th>
@@ -117,7 +116,7 @@
 						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
-				                    <tr>
+				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
 										</td>
 				                        <td width="248" align="left">
@@ -173,13 +172,11 @@
 			<tbody>
 	          	<tr>
 	            	<td width="100" nowrap="nowrap"><label>驳回原因：</label></td>
-	            	<td align="left">
-	            		<input type="text" id="turn_down_reason" name="turn_down_reason" value="">
-	              	</td>
+	            	<td align="left"><div id="turn_down_reason"></div></td>
 				</tr>
 	          	<tr>
 	            	<td nowrap="nowrap"><label>驳回描述:</label></td>
-	            	<td align="left"><textarea id="turn_down_note" name="turn_down_note"></textarea></td>
+	            	<td align="left"><div id="turn_down_note"></div></td>
 	          	</tr>
 				<tr>
 	            	<td nowrap="nowrap"></td>

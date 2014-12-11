@@ -50,7 +50,7 @@
                     </tr>
                 <#else>
                     <#list page.content as r>
-	                    <tr>
+	                    <tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
 	                    	<th width="30"></th>
 				            <th align="left" colspan="1">订单号:${r.userOrderReturn.userOrderId!""}</th>
 				            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName!""}</th>
@@ -58,7 +58,7 @@
 				            <th align="left" colspan="2">当前状态:${states[r.userOrderReturn.statusCd]!""}</th>
 						</tr>
 						<#list r.productOrderReturn as productOrderInfo>
-		                    <tr>
+		                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 								<td width="30">
 								</td>
 		                        <td width="248" align="left">
@@ -77,9 +77,7 @@
 	                    <#if r.addressReturn??>
 	                    	<@address_plugin r.addressReturn />
 	                    <#else>
-	                    	<tr>
-								<td colspan="8" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
-							</tr>
+	                    	<@address_undefine />
 	                    </#if>
                     </#list>
                 </#if>

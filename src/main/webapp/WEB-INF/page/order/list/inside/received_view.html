@@ -72,7 +72,7 @@
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
-			                    <tr>
+			                    <tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
 						            <th width="30">
 						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
 						            </th>
@@ -82,7 +82,7 @@
 						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
-				                    <tr>
+				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
 											<#if productOrderInfo.statusCd == "1">
 												<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
