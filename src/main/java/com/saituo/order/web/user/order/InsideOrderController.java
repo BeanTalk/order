@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
+import com.saituo.order.commons.enumeration.entity.RoleSign;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
@@ -58,7 +59,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "bargain_view", method = RequestMethod.GET)
 	public void bargainViewOrderList(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -150,7 +151,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "take_view", method = RequestMethod.GET)
 	public void getTakeViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -219,7 +220,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "load_view", method = RequestMethod.GET)
 	public void getLoadViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -248,7 +249,7 @@ public class InsideOrderController {
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
-		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, "5"));
+		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, RoleSign.SALE.getValue()));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
@@ -308,7 +309,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "received_view", method = RequestMethod.GET)
 	public void getReceivedViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {

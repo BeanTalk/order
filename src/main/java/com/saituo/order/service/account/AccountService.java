@@ -78,7 +78,7 @@ public class AccountService {
 	 * 
 	 * @return 用户实体 Map
 	 */
-	public Map<String, Object> getUser(String id) {
+	public Map<String, Object> getUser(Integer id) {
 		return userDao.get(id);
 	}
 
@@ -156,7 +156,7 @@ public class AccountService {
 		}
 
 		String newPasswordEntrypt = HexPassword.entryptPassword(newPassword);
-		String id = VariableUtils.typeCast(entity.get("id"), String.class);
+		Integer id = VariableUtils.typeCast(entity.get("id"), Integer.class);
 		userDao.updatePassword(id, newPasswordEntrypt);
 	}
 
@@ -183,7 +183,7 @@ public class AccountService {
 	 * @param roleSign
 	 * @return
 	 */
-	public Map<String, String> findUserByAreaIdAndRole(String areaId, String roleSign) {
+	public Map<String, String> findUserByAreaIdAndRole(Integer areaId, Integer roleSign) {
 
 		List<Map<String, Object>> list = userDao.findUserByAreaIdAndRole(areaId, roleSign);
 		Map<String, String> mapDataRes = Maps.newHashMap();
@@ -391,7 +391,7 @@ public class AccountService {
 	 * 
 	 * @return 组实体 Map 集合
 	 */
-	public Map<String, Object> getUserGroup(String userId) {
+	public Map<String, Object> getUserGroup(Integer userId) {
 		return groupDao.getUserGroup(userId);
 	}
 
@@ -403,7 +403,7 @@ public class AccountService {
 	 * 
 	 * @return 资源实体 Map
 	 */
-	public Map<String, Object> getMenu(String id) {
+	public Map<String, Object> getMenu(Integer id) {
 		return menuDao.get(id);
 	}
 
@@ -424,7 +424,7 @@ public class AccountService {
 	 * 
 	 * @return 资源实体 Map 集合
 	 */
-	public List<Map<String, Object>> getUserMenus(String userId) {
+	public List<Map<String, Object>> getUserMenus(Integer userId) {
 		return menuDao.getUserMenus(userId);
 	}
 
@@ -506,7 +506,7 @@ public class AccountService {
 	 * @return 资源实体 Map 集合
 	 * @return
 	 */
-	public List<String> getUserRoles(String userId) {
+	public List<String> getUserRoles(Integer userId) {
 		return roleDao.getUserRole(userId);
 	}
 

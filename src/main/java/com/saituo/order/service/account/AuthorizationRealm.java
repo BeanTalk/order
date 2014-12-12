@@ -65,7 +65,7 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		}
 
 		Map<String, Object> currentUser = sv.getUser();
-		String userId = VariableUtils.typeCast(currentUser.get("id"));
+		Integer userId = VariableUtils.typeCast(currentUser.get("id"));
 
 		// 加载用户资源信息
 		List<Map<String, Object>> authorizationInfo = accountService.getUserMenus(userId);
@@ -89,9 +89,14 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		}
 
 		Map<String, Object> groupAndareaData = accountService.getUserGroup(userId);
-		sv.setAreaId((String) groupAndareaData.get("areaId"));
-		sv.setGroupId((String) groupAndareaData.get("groupId"));
 
+		if (groupAndareaData.get("areaId") != null) {
+			sv.setAreaId((Integer) groupAndareaData.get("areaId"));
+		}
+
+		if (groupAndareaData.get("groupId") != null) {
+			sv.setGroupId((Integer) groupAndareaData.get("groupId"));
+		}
 		SecurityUtils.getSubject().getSession().setAttribute(SessionVariable.DEFAULT_SESSION_KEY, sv);
 		return info;
 	}

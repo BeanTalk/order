@@ -18,7 +18,7 @@ public interface MenuDao {
 	 * 
 	 * @return 资源实体 Map
 	 */
-	public Map<String, Object> get(@Param("id") String id);
+	public Map<String, Object> get(@Param("id") Integer id);
 
 	/**
 	 * 获取所有资源
@@ -38,7 +38,7 @@ public interface MenuDao {
 	 * 
 	 * @return 资源实体 Map 集合
 	 */
-	public List<Map<String, Object>> getChildren(@Param("id") String id);
+	public List<Map<String, Object>> getChildren(@Param("id") Integer id);
 
 	/**
 	 * 获取用户资源
@@ -48,7 +48,7 @@ public interface MenuDao {
 	 * 
 	 * @return 资源实体 Map 集合
 	 */
-	public List<Map<String, Object>> getUserMenus(@Param("userId") String userId);
+	public List<Map<String, Object>> getUserMenus(@Param("userId") Integer userId);
 
 	/**
 	 * 统计资源数量

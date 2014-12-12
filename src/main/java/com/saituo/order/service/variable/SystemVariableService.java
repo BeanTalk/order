@@ -57,7 +57,7 @@ public class SystemVariableService {
 	private void initAreaIdAndNameData() {
 		List<Map<String, Object>> areaList = areaDao.getAllArea();
 		for (Map<String, Object> mapData : areaList) {
-			orderCacheService.put(AREA_ID_NAME_CACHE, (String) mapData.get("id"), (String) mapData.get("name"));
+			orderCacheService.put(AREA_ID_NAME_CACHE, String.valueOf(mapData.get("id")), (String) mapData.get("name"));
 		}
 	}
 
@@ -91,8 +91,9 @@ public class SystemVariableService {
 		}
 	}
 
-	public Map<String, Object> getGroupByAreaIdData(String areaId) {
-		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_GROUP_ID_NAME_CACHE, areaId);
+	public Map<String, Object> getGroupByAreaIdData(Integer areaId) {
+		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_GROUP_ID_NAME_CACHE,
+				String.valueOf(areaId));
 		return mapData;
 	}
 
@@ -122,21 +123,21 @@ public class SystemVariableService {
 		}
 	}
 
-	public String getUserByOfficeIdData(String officeId, String userId) {
+	public String getUserByOfficeIdData(Integer officeId, Integer userId) {
 		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_OFFICE_ID_NAME_CACHE,
-				officeId);
+				String.valueOf(officeId));
 
 		if (mapData != null && StringUtils.isNotEmpty(VariableUtils.typeCast(mapData.get(userId), String.class))) {
 			return String.valueOf(mapData.get(userId));
 		}
 
 		Map<String, String> mapTemp = Maps.newHashMap();
-		mapTemp.put("officeId", officeId);
-		mapTemp.put("userId", userId);
+		mapTemp.put("officeId", String.valueOf(officeId));
+		mapTemp.put("userId", String.valueOf(userId));
 
 		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(mapTemp);
 		if (list.size() > 0) {
-			orderCacheService.put(AREA_TO_OFFICE_ID_NAME_CACHE, officeId, list.get(0));
+			orderCacheService.put(AREA_TO_OFFICE_ID_NAME_CACHE, String.valueOf(officeId), list.get(0));
 			return String.valueOf(list.get(0).get("name"));
 		}
 		return UNDEFINE;
@@ -169,21 +170,22 @@ public class SystemVariableService {
 		}
 	}
 
-	public String getUserByAreaIdData(String areaId, String userId) {
+	public String getUserByAreaIdData(Integer areaId, Integer userId) {
 
-		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE, areaId);
+		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE,
+				String.valueOf(areaId));
 
 		if (mapData != null && StringUtils.isNotEmpty(VariableUtils.typeCast(mapData.get(userId), String.class))) {
 			return String.valueOf(mapData.get(userId));
 		}
 
 		Map<String, String> mapTemp = Maps.newHashMap();
-		mapTemp.put("areaId", userId);
-		mapTemp.put("userId", areaId);
+		mapTemp.put("areaId", String.valueOf(userId));
+		mapTemp.put("userId", String.valueOf(areaId));
 
 		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(mapTemp);
 		if (list.size() > 0) {
-			orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, areaId, list.get(0));
+			orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, String.valueOf(areaId), list.get(0));
 			return String.valueOf(list.get(0).get("name"));
 		}
 		return UNDEFINE;

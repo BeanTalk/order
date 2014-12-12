@@ -7,13 +7,13 @@ public class UserOrder {
 	// 客户订单编码
 	private Long userOrderId;
 	// 客户编码
-	private String userId;
+	private Integer userId;
 	// 客户名称
 	private String userName;
 	// 受理地市
-	private String areaId;
+	private Integer areaId;
 	// 客户组别编码
-	private String groupId;
+	private Integer groupId;
 	// 地址编码
 	private Long addressId;
 	// 创建时间
@@ -37,19 +37,19 @@ public class UserOrder {
 		this.userOrderId = userOrderId;
 	}
 
-	public String getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 
-	public void setUserId(String userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 
-	public String getAreaId() {
+	public Integer getAreaId() {
 		return areaId;
 	}
 
-	public void setAreaId(String areaId) {
+	public void setAreaId(Integer areaId) {
 		this.areaId = areaId;
 	}
 
@@ -77,11 +77,11 @@ public class UserOrder {
 		this.statusCd = statusCd;
 	}
 
-	public String getGroupId() {
+	public Integer getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(String groupId) {
+	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
 }

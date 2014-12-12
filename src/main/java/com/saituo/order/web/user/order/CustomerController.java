@@ -395,7 +395,7 @@ public class CustomerController {
 	public void customerQueryApproveOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
+		Integer groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
 
 		filter.putAll(pageRequest.getMap());
 		// 客户订单状态必须为待审批状态
@@ -527,7 +527,7 @@ public class CustomerController {
 	@RequestMapping(value = "customer/book_view", method = RequestMethod.GET)
 	public void customerBookViewOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
+		Integer groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
 		filter.putAll(pageRequest.getMap());
 		// 客户订单状态必须为待审批状态
 		filter.put("statusCd", UserOrderingState.ACCEPTED.getValue());
@@ -617,7 +617,7 @@ public class CustomerController {
 	@RequestMapping(value = "all_order", method = RequestMethod.GET)
 	public void getAllOrderingList(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
 		filter.putAll(pageRequest.getMap());
 
 		// 根据用户的角色与类别，来区分用户能看到的订单

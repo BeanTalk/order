@@ -29,9 +29,9 @@ public class SessionVariable implements Serializable {
 	// 当前用户的角色集合
 	private List<String> roleList;
 	// 当前用户所在组
-	private String groupId;
+	private Integer groupId;
 	// 当前用户所在地市
-	private String areaId;
+	private Integer areaId;
 	// 当前用户是否为内部用户
 	private Boolean isInternalUser;
 	// 当前用户电话
@@ -46,19 +46,19 @@ public class SessionVariable implements Serializable {
 		this.user = user;
 	}
 
-	public String getGroupId() {
+	public Integer getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(String groupId) {
+	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
 
-	public String getAreaId() {
+	public Integer getAreaId() {
 		return areaId;
 	}
 
-	public void setAreaId(String areaId) {
+	public void setAreaId(Integer areaId) {
 		this.areaId = areaId;
 	}
 

@@ -52,11 +52,11 @@ public class UserOrderService {
 		Map<String, String> returnMap = new HashMap<String, String>();
 		// 客户订单信息:
 		// 客户编码
-		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-				String.class);
+		Integer userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				Integer.class);
 		// 受理地市
-		String areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
-		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		Integer groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
 		// 地址编码
 		Long addressId = 0l;
 		if (filter.get("addressId") != null && !filter.get("addressId").equals("")) {
@@ -116,15 +116,15 @@ public class UserOrderService {
 			userOrderQuery.setUserOrderId(userOrderId);
 		}
 		// 客户组别编码
-		String groupId = null;
+		Integer groupId = null;
 		if (filter.get("groupId") != null && !filter.get("groupId").equals("")) {
-			groupId = String.valueOf(filter.get("groupId"));
+			groupId = VariableUtils.typeCast(filter.get("groupId"), Integer.class);
 			userOrderQuery.setGroupId(groupId);
 		}
 		// 客户编码
-		String userId = null;
+		Integer userId = null;
 		if (filter.get("userId") != null && !filter.get("userId").equals("")) {
-			userId = String.valueOf(filter.get("userId"));
+			userId = VariableUtils.typeCast(filter.get("userId"), Integer.class);
 			userOrderQuery.setUserId(userId);
 		}
 		// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
@@ -150,15 +150,15 @@ public class UserOrderService {
 			userOrderQuery.setUserOrderId(userOrderId);
 		}
 		// 客户组别编码
-		String groupId = null;
+		Integer groupId = null;
 		if (filter.get("groupId") != null && !filter.get("groupId").equals("")) {
-			groupId = String.valueOf(filter.get("groupId"));
+			groupId = VariableUtils.typeCast(filter.get("groupId"), Integer.class);
 			userOrderQuery.setGroupId(groupId);
 		}
 		// 客户编码
-		String userId = null;
+		Integer userId = null;
 		if (filter.get("userId") != null && !filter.get("userId").equals("")) {
-			userId = String.valueOf(filter.get("userId"));
+			userId = VariableUtils.typeCast(filter.get("userId"), Integer.class);
 			userOrderQuery.setUserId(userId);
 		}
 		// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
