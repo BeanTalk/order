@@ -29,7 +29,7 @@ public class CacheUtils {
 	 * @return
 	 */
 	public static String getUserNameByAreaIdData(String areaId, String userId) {
-		return systemVariableService.getUserByAreaIdData(Integer.valueOf(areaId), Integer.valueOf(userId));
+		return systemVariableService.getUserByAreaIdData(areaId, userId);
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class CacheUtils {
 	 * @return
 	 */
 	public static String getUserNameByOfficeIdData(String officeId, String userId) {
-		return systemVariableService.getUserByOfficeIdData(Integer.valueOf(officeId), Integer.valueOf(userId));
+		return systemVariableService.getUserByOfficeIdData(officeId, userId);
 	}
 
 }

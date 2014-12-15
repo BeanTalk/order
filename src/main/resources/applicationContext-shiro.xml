@@ -12,8 +12,7 @@
 		<property name="name" value="jdbcAuthentication" />
 		<property name="credentialsMatcher">
 			<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
-				<property name="hashAlgorithmName" value="Sha1" />
-				<property name="hashIterations" value="1024" />
+				<property name="hashAlgorithmName" value="Md5" />
 			</bean>
 		</property>
 		<!-- 授权缓存名称 -->

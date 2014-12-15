@@ -46,7 +46,7 @@
 			<h3>开具发票</h3>
 		</div>
 		<div class="panel_body  clearfix">
-			<@headquery offices groupId userInfoMap userId userOrderId/>
+			<@internal_headquery offices groupId userInfoMap userId userOrderId/>
 			<br>
 			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
@@ -128,7 +128,7 @@
 	                </select>
 					<div id="batch_btn" class="button blue fr">所选订单开发票</div>
 		        </div>
-				<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+				<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 			</form>
 	 	</div>

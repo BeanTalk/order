@@ -29,7 +29,7 @@
 			<h3>内勤接单</h3>
 		</div>
 		<div class="panel_body clearfix">
-			<@headquery offices groupId userInfoMap userId userOrderId/>
+			<@internal_headquery offices groupId userInfoMap userId userOrderId/>
 			<br>
 			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
@@ -89,7 +89,7 @@
 		                </#if>
 					</tbody>
 				</table>
-				<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+				<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="batch_btn" class="button blue fr">所选订单接单</div>

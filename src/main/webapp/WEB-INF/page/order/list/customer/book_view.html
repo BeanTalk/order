@@ -26,25 +26,14 @@
 <#assign submitUrl = "${base}/order/list/customer/book">
 
 <div class="grid2 m_t">
-	<form id="list-form" action="" method="post">
-		<div class="panel">
-			<div class="panel_header">
-				<h3>客户下单</h3>
-			</div>
-			<div class="panel_body clearfix">
-				<table width="100%">
-					<tbody>
-						<tr>
-				            <td width="60" nowrap="nowrap">开始时间</td>
-				            <td width="70" nowrap="nowrap"><input name="startTime" type="text" class="datepicker" size="12" /></td>
-				            <td width="60" nowrap="nowrap">结束时间</td>
-				            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
-				            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
-							<td width="398" nowrap="nowrap"></td>
-						</tr>
-					</tbody>
-				</table>
-				<br>
+	<div class="panel">
+		<div class="panel_header">
+			<h3>客户下单</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<@teacher_headquery startDate endDate userOrderId userInfoMap/>
+			<br>
+			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
 					<tbody>
 						<tr>
@@ -100,13 +89,13 @@
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-		    	<#assign parameterMap = { "searchContext":"${searchContext!}"}>
+		    	<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "userOrderId":"${userOrderId!}", "userId":"${userId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="book_order_btn" class="button green fr">所有选择的订单下单</div>
 				</div>
-		 	</div>
-		</div>
-	</form>
+			</form>
+	 	</div>
+	</div>
 </div>
 </#macro>

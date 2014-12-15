@@ -56,9 +56,9 @@ public class InvoicedOrderController {
 	public void getinvoicedViewForProductsOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
-				.get("userCatagory"));
+				.get("userCatagory"), Integer.class);
 
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
 			return;
@@ -75,7 +75,10 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -93,6 +96,8 @@ public class InvoicedOrderController {
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
 		}
@@ -159,7 +164,10 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -176,6 +184,8 @@ public class InvoicedOrderController {
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
 		}
@@ -218,7 +228,7 @@ public class InvoicedOrderController {
 	public void getPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
 		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
-				.get("userCatagory"));
+				.get("userCatagory"), Integer.class);
 		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -237,7 +247,10 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -253,6 +266,8 @@ public class InvoicedOrderController {
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));

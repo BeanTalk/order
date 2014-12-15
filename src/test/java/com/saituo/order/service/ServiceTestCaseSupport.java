@@ -25,7 +25,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * 
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={"classpath:applicationContext-core.xml","classpath:applicationContext-mail.xml"})
+@ContextConfiguration(locations = {"classpath:applicationContext-core.xml", "classpath:applicationContext-shiro.xml",
+		"classpath:applicationContext-mail.xml"})
 public abstract class ServiceTestCaseSupport {
 
 	@SuppressWarnings("unused")

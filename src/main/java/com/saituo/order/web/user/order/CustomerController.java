@@ -30,7 +30,9 @@ import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.Audit;
 import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.service.account.AccountService;
 import com.saituo.order.service.order.BuyCardService;
+import com.saituo.order.service.order.ProductBrandService;
 import com.saituo.order.service.order.ProductService;
 import com.saituo.order.service.user.AddressService;
 import com.saituo.order.service.user.AuditHisService;
@@ -55,10 +57,16 @@ public class CustomerController {
 	private ProductService productService;
 
 	@Autowired
+	private ProductBrandService productBrandService;
+
+	@Autowired
 	private BuyCardService buyCardService;
 
 	@Autowired
 	private SystemVariableService systemVariableService;
+
+	@Autowired
+	private AccountService accountService;
 
 	/**
 	 * 购物车中保存订单
@@ -135,9 +143,13 @@ public class CustomerController {
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
+
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
 	}
 
 	/**
@@ -206,6 +218,9 @@ public class CustomerController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
 	}
 
 	@RequiresPermissions("perms[order:list:upgrade]")
@@ -351,6 +366,9 @@ public class CustomerController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
 	}
 
 	/**
@@ -411,13 +429,21 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByOfficeIdData(groupId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByOfficeIdData(String.valueOf(groupId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(groupId)));
 	}
 
 	/**
@@ -542,13 +568,21 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByOfficeIdData(groupId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByOfficeIdData(String.valueOf(groupId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(groupId)));
 	}
 
 	/**
@@ -577,38 +611,6 @@ public class CustomerController {
 	}
 
 	/**
-	 * 根据所查订单状态，返回所有涉及到本人的订单信息
-	 * 
-	 * @param filter
-	 * @param model
-	 */
-	@RequestMapping(value = "list/customer/orders", method = RequestMethod.GET)
-	public void getOrderingListByStatus(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
-
-		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-				String.class);
-		filter.put("userId", userId);
-		filter.putAll(pageRequest.getMap());
-
-		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
-		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
-		int userOrderCount = userOrderService.getUserOrderCount(filter);
-
-		for (UserOrder userOrder : userOrderList) {
-			String userOrderId = String.valueOf(userOrder.getUserOrderId());
-			Map<String, Object> mapData = Maps.newHashMap();
-			mapData.put("userOrderId", userOrderId);
-			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
-		}
-		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
-				userOrderCount);
-		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
-		model.addAttribute("page", page);
-		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
-
-	}
-
-	/**
 	 * 查看所有的订单
 	 * 
 	 * @param filter
@@ -621,7 +623,7 @@ public class CustomerController {
 		filter.putAll(pageRequest.getMap());
 
 		// 根据用户的角色与类别，来区分用户能看到的订单
-		filter = watchOrderListPipline(filter);
+		filter = watchOrderListPipline(filter, model);
 
 		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
 		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
@@ -631,14 +633,20 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("statusCd", filter.get("statusCd"));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 	}
 
 	/**
@@ -647,26 +655,39 @@ public class CustomerController {
 	 * @param filter
 	 * @return
 	 */
-	private Map<String, Object> watchOrderListPipline(Map<String, Object> filter) {
+	private Map<String, Object> watchOrderListPipline(Map<String, Object> filter, Model model) {
 
 		Integer useCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 
 		// 外部用户
-		if (useCatagory == UserCatagory.EXTERNAL.getValue()) {
+		if (UserCatagory.EXTERNAL.getValue().equals(useCatagory)) {
 			List<String> roleSign = SessionVariable.getCurrentSessionVariable().getRoleList();
 			// 当其为学生时,只能看到本人的订单
-			if (roleSign.contains(RoleSign.STUDENT.getValue())) {
+			if (roleSign.contains(String.valueOf(RoleSign.STUDENT.getValue()))) {
 				String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 						String.class);
 				filter.put("userId", userId);
+				model.addAttribute("role", "student");
 			}
 			// 当其为老师和PI时，能看到该组下面的所有的订单
-			if (roleSign.contains(RoleSign.TEACHER.getValue()) || roleSign.contains(RoleSign.PI.getValue())) {
-				filter.put("groupId", SessionVariable.getCurrentSessionVariable().getGroupId());
+			if (roleSign.contains(String.valueOf(RoleSign.TEACHER.getValue())) || roleSign.contains(String.valueOf(RoleSign.PI.getValue()))) {
+				filter.put("groupId", String.valueOf(SessionVariable.getCurrentSessionVariable().getGroupId()));
+				model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
+						.getCurrentSessionVariable().getGroupId())));
+				model.addAttribute("role", "teacher");
 			}
+		// 内部用户
+		} else {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
+					.getCurrentSessionVariable().getGroupId())));
+			model.addAttribute("role", "internal");
 		}
 
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("offices",
+				systemVariableService.getGroupByAreaIdData(SessionVariable.getCurrentSessionVariable().getAreaId()));
+		model.addAttribute("groupId", VariableUtils.typeCast(filter.get("groupId")));
 		// 内部用户可以看到本地市的所有的订单，在UserOrderService 中已经默认设置
 		return filter;
 	}

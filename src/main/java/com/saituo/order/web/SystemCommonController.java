@@ -173,14 +173,14 @@ public class SystemCommonController {
 	 * @return
 	 */
 
-	@RequestMapping(value = "/index", method = RequestMethod.GET)
+	@RequestMapping(value = "index", method = RequestMethod.GET)
 	public void redirectToPageByRole(Model model) {
-		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-				String.class);
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(),
-				String.class);
-		String groupId  = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
-				String.class);
+		Integer userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				Integer.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
+		Integer groupId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
+				Integer.class);
+		System.out.println("userId:" + userId);
 	}
 
 }

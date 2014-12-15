@@ -9,11 +9,9 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.util.ByteSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.saituo.order.commons.SessionVariable;
-import com.saituo.order.commons.utils.Encodes;
 
 /**
  * 认证（登录）类，用于 apache shiro 在执行认证（登录）时，通过该类对登录信息认证（登录）是否通过。
@@ -39,10 +37,6 @@ public class JdbcAuthenticationRealm extends AuthorizationRealm {
 		}
 
 		SessionVariable model = new SessionVariable(user);
-		
-		byte[] salt = Encodes.decodeHex(String.valueOf(user.get("password")).substring(0, 16));
-		return new SimpleAuthenticationInfo(model, String.valueOf(user.get("password")).substring(16),
-				ByteSource.Util.bytes(salt), getName());
+		return new SimpleAuthenticationInfo(model, user.get("password"), getName());
 	}
-
 }

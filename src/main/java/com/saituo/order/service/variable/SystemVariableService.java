@@ -123,7 +123,13 @@ public class SystemVariableService {
 		}
 	}
 
-	public String getUserByOfficeIdData(Integer officeId, Integer userId) {
+	public Map<String, String> getUserMapsDataByOfficeId(String officeId) {
+		Map<String, String> mapData = (Map<String, String>) orderCacheService.get(AREA_TO_OFFICE_ID_NAME_CACHE,
+				officeId);
+		return mapData;
+	}
+
+	public String getUserByOfficeIdData(String officeId, String userId) {
 		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_OFFICE_ID_NAME_CACHE,
 				String.valueOf(officeId));
 
@@ -170,18 +176,18 @@ public class SystemVariableService {
 		}
 	}
 
-	public String getUserByAreaIdData(Integer areaId, Integer userId) {
+	public String getUserByAreaIdData(String areaId, String userId) {
 
 		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE,
 				String.valueOf(areaId));
 
-		if (mapData != null && StringUtils.isNotEmpty(VariableUtils.typeCast(mapData.get(userId), String.class))) {
+		if (mapData != null && StringUtils.isNotEmpty(String.valueOf(mapData.get(userId)))) {
 			return String.valueOf(mapData.get(userId));
 		}
 
 		Map<String, String> mapTemp = Maps.newHashMap();
-		mapTemp.put("areaId", String.valueOf(userId));
-		mapTemp.put("userId", String.valueOf(areaId));
+		mapTemp.put("areaId", String.valueOf(areaId));
+		mapTemp.put("userId", String.valueOf(userId));
 
 		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(mapTemp);
 		if (list.size() > 0) {

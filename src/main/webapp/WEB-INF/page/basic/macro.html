@@ -106,17 +106,24 @@
 	</#if>
 </#macro>
 
-<#--需要按条件进行查询的功能-->
-<#macro headquery offices groupId="" userInfoMap={} userId="" userOrderId="">
+<#--内部员工需要按条件进行查询的功能-->
+<#macro internal_headquery offices groupId="" userInfoMap={} userId="" userOrderId="">
 	<form id="head_query_form">
 		<table width="100%">
 			<tbody>
 				<tr>
+					<td width="60" nowrap="nowrap">开始时间</td>
+		            <td width="70" nowrap="nowrap"><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
+		            <td width="60" nowrap="nowrap">结束时间</td>
+		            <td width="70" nowrap="nowrap"><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
+		            <td width="60" nowrap="nowrap">订单号:
+		            	<input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!""}">
+		            </td>
 		            <td width="60" nowrap="nowrap">课题组:
 		            	<select name="groupId" id="groupId">
 	                        <option value="">请选择...</option>
 	                        <#list offices?keys as key>  
-				            	<option value="${key}" <#if key == groupId>selected</#if>>${offices[key]}</option>
+				            	<option value="${key}" <#if key == groupId>selected</#if>>${offices[key]!""}</option>
 							</#list> 
 	                    </select>
 		            </td>
@@ -126,13 +133,10 @@
 	                        	<option value="">请选择...</option>
 	                        <#else>
 	                        	<#list userInfoMap?keys as key>  
-	                        		<option value="${key}" <#if key == userId>selected</#if>> ${userInfoMap[key]}</option>
+	                        		<option value="${key}" <#if key == userId>selected</#if>> ${userInfoMap[key]!""}</option>
 	                        	</#list>
 	                        </#if>
 	                    </select>
-		            </td>
-		            <td width="60" nowrap="nowrap">订单号:
-		            	<input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}">
 		            </td>
 		            <td width="58" nowrap="nowrap">
 		            	<div id="query_btn" class="button white medium">检索</div>
@@ -144,45 +148,56 @@
 	</form>
 </#macro>
 
-<#--需要按条件进行查询的功能-->
-<#macro st_headquery brand productNum userId="" userOrderId="">
+<#--学生,需要按条件进行查询的功能-->
+<#macro st_headquery startDate="" endDate="" userOrderId="">
 	<form id="head_query_form">
 		<table width="100%">
 			<tbody>
 				<tr>
-		            <td width="60" nowrap="nowrap">课题组:
-		            	<select name="groupId" id="groupId">
-	                        <option value="">请选择...</option>
-	                        <#list offices?keys as key>  
-				            	<option value="${key}" <#if key == groupId>selected</#if>>${offices[key]}</option>
-							</#list> 
-	                    </select>
-		            </td>
-		            <td width="60" nowrap="nowrap">订购人:
-		            	<select name="userId" id="userId">
-		            		<#if userInfoMap?size == 0>
-	                        	<option value="">请选择...</option>
-	                        <#else>
-	                        	<#list userInfoMap?keys as key>  
-	                        		<option value="${key}" <#if key == userId>selected</#if>> ${userInfoMap[key]}</option>
-	                        	</#list>
-	                        </#if>
-	                    </select>
-		            </td>
-		            <td width="60" nowrap="nowrap">订单号:
-		            	<input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}">
-		            </td>
-		            <td width="58" nowrap="nowrap">
-		            	<div id="query_btn" class="button white medium">检索</div>
-		            </td>
-		            <td width="398" nowrap="nowrap"></td>
+		            <td width="60" nowrap="nowrap">开始时间</td>
+		            <td width="70" nowrap="nowrap"><input name="startDate" type="text" class="datepicker" size="12" value="${startDate}"/></td>
+		            <td width="60" nowrap="nowrap">结束时间</td>
+		            <td width="70" nowrap="nowrap"><input name="endDate" type="text" class="datepicker" size="12" value="${endDate}"/></td>
+		            <td width="60" nowrap="nowrap">订单号</td>
+		            <td width="70" nowrap="nowrap"><input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}"></td>
+		            <td width="58" nowrap="nowrap"><div id="query_btn" class="button white medium">检索</div></td>
+					<td width="398" nowrap="nowrap"></td>
 				</tr>
 			</tbody>
 		</table>
 	</form>
 </#macro>
 
-
+<#--教师与PI,需要按条件进行查询的功能-->
+<#macro teacher_headquery startDate="" endDate="" userOrderId="" userInfoMap={}>
+	<form id="head_query_form">
+		<table width="100%">
+			<tbody>
+				<tr>
+		            <td width="60" nowrap="nowrap">开始时间</td>
+		            <td width="70" nowrap="nowrap"><input name="startDate" type="text" class="datepicker" size="12" value="${startDate}"/></td>
+		            <td width="60" nowrap="nowrap">结束时间</td>
+		            <td width="70" nowrap="nowrap"><input name="endDate" type="text" class="datepicker" size="12" value="${endDate}"/></td>
+		            <td width="60" nowrap="nowrap">订单号</td>
+		            <td width="70" nowrap="nowrap"><input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}"></td>
+		            <td width="60" nowrap="nowrap">订购人:
+		            	<select name="userId" id="userId">
+		            		<#if userInfoMap?size == 0>
+	                        	<option value="">请选择...</option>
+	                        <#else>
+	                        	<#list userInfoMap?keys as key>
+	                        		<option value="${key}" <#if key == userId!"">selected</#if>> ${userInfoMap[key]}</option>
+	                        	</#list>
+	                        </#if>
+	                    </select>
+		            </td>
+		            <td width="58" nowrap="nowrap"><div id="query_btn" class="button white medium">检索</div></td>
+					<td width="398" nowrap="nowrap"></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</#macro>
 
 <#--需要按条件进行查询的功能-->
 <#macro salemenselect salemens saleSelectId="saleId">

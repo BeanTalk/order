@@ -16,6 +16,13 @@
 		$("#list-form").attr("action", "${submitUrl}");
 		$("#list-form").submit();
 	});
+	
+	//检索
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewURL}");
+		$("#head_query_form").submit();
+	});
+	
 </script>
 </#macro>
 
@@ -30,18 +37,7 @@
 			<h3>取消订单</h3>
 		</div>
 		<div class="panel_body clearfix">
-			<table width="100%">
-				<tbody>
-					<tr>
-			            <td width="60" nowrap="nowrap">开始时间</td>
-			            <td width="70" nowrap="nowrap"><input name="startTime" type="text" class="datepicker" size="12" /></td>
-			            <td width="60" nowrap="nowrap">结束时间</td>
-			            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
-			            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
-						<td width="398" nowrap="nowrap"></td>
-					</tr>
-				</tbody>
-			</table>
+			<@st_headquery startDate endDate userOrderId />
 			<br>
 			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
@@ -101,7 +97,7 @@
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-		    	<#assign parameterMap = { "searchContext":"${searchContext!}"}>
+		    	<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="batch_btn" class="button green fr">取消选中的订单</div>
