@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.ProductRecordDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="recordNumber">
+		insert into st_product_record(
+		user_record_id,
+		area_id,
+		user_id,
+		product_id,
+		order_fee,
+		order_num,
+		supplier_id,
+		accept_date
+		) values (
+		#{userRecordId},
+		#{areaId},
+		#{userId},
+		#{productId},
+		#{orderFee},
+		#{orderNum},
+		#{supplierId},
+		now()
+		)
+	</insert>
+
+	<select id="queryListByUserOrderId" resultType="productOrder">
+		select
+		record_number as recordNumber,
+		user_record_id as userRecordId,
+		area_id as areaId,
+		user_id as userId,
+		product_id as productId,
+		order_fee as orderFee,
+		order_num as orderNum,
+		supplier_id as supplierId,
+		accept_date as acceptDate
+		from st_product_record
+		where
+		user_record_id =
+		#{userRecordId}
+	</select>
+
+</mapper>
