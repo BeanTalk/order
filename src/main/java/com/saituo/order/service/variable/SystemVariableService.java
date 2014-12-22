@@ -36,65 +36,26 @@ public class SystemVariableService {
 
 	private static final String UNDEFINE = "未知姓名";
 
-	private static final String AREA_ID_NAME_CACHE = "areaIdAndNameCache";
-	private static final String AREA_TO_GROUP_ID_NAME_CACHE = "areaToGroupIdAndNameCache";
 	private static final String AREA_TO_OFFICE_ID_NAME_CACHE = "officeToUserIdAndNameCache";
 	private static final String AREA_TO_USER_ID_NAME_CACHE = "areaToUserIdAndNameCache";
 
 	public void init() {
-		initAreaIdAndNameData();
-		initGroupByAreaIdData();
 		initUserByOfficeIdData();
 		initUserByAreaIdData();
 	}
 
-	/**
-	 * AreaId and AreaName
-	 * 
-	 * @param id
-	 * @return
-	 */
-	private void initAreaIdAndNameData() {
-		List<Map<String, Object>> areaList = areaDao.getAllArea();
-		for (Map<String, Object> mapData : areaList) {
-			orderCacheService.put(AREA_ID_NAME_CACHE, String.valueOf(mapData.get("id")), (String) mapData.get("name"));
-		}
-	}
-
 	public String getAreaIdAndNameData(String areaId) {
-		return (String) orderCacheService.get(AREA_ID_NAME_CACHE, areaId);
+		return (String) areaDao.getAreaNameById(areaId);
 	}
 
-	/**
-	 * 通过groupId 获取所在本地市信息
-	 * 
-	 * @param areaId
-	 * @return
-	 */
-	private void initGroupByAreaIdData() {
-		List<Map<String, Object>> groupList = groupDao.get(null);
+	public Map<String, Object> getGroupNameByAreaIdAndGroupIdData(Integer areaId) {
 
-		Map<String, Map<String, String>> mapRes = Maps.newConcurrentMap();
+		List<Map<String, Object>> groupList = groupDao.get(areaId);
+		Map<String, Object> officeIdAndNameMap = Maps.newHashMap();
 		for (Map<String, Object> mapData : groupList) {
-
-			String areaId = String.valueOf(mapData.get("areaId"));
-			Map<String, String> mapTemp = mapRes.get(areaId);
-			if (mapTemp == null) {
-				mapTemp = Maps.newHashMap();
-			}
-			mapTemp.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
-			mapRes.put(areaId, mapTemp);
+			officeIdAndNameMap.put(String.valueOf(mapData.get("id")), mapData.get("name"));
 		}
-
-		for (Entry<String, Map<String, String>> entry : mapRes.entrySet()) {
-			orderCacheService.put(AREA_TO_GROUP_ID_NAME_CACHE, entry.getKey(), entry.getValue());
-		}
-	}
-
-	public Map<String, Object> getGroupByAreaIdData(Integer areaId) {
-		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_GROUP_ID_NAME_CACHE,
-				String.valueOf(areaId));
-		return mapData;
+		return officeIdAndNameMap;
 	}
 
 	/**

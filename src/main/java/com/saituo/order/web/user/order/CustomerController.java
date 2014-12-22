@@ -686,7 +686,7 @@ public class CustomerController {
 
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		model.addAttribute("offices",
-				systemVariableService.getGroupByAreaIdData(SessionVariable.getCurrentSessionVariable().getAreaId()));
+				systemVariableService.getGroupNameByAreaIdAndGroupIdData(SessionVariable.getCurrentSessionVariable().getAreaId()));
 		model.addAttribute("groupId", VariableUtils.typeCast(filter.get("groupId")));
 		// 内部用户可以看到本地市的所有的订单，在UserOrderService 中已经默认设置
 		return filter;

@@ -128,7 +128,7 @@
 	                </select>
 					<div id="batch_btn" class="button blue fr">所选订单开发票</div>
 		        </div>
-				<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+				<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 			</form>
 	 	</div>
