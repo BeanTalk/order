@@ -97,7 +97,7 @@
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-		    	<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "userOrderId":"${userOrderId!}" }>
+		    	<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="batch_btn" class="button green fr">取消选中的订单</div>

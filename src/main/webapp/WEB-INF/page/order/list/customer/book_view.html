@@ -89,7 +89,7 @@
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-		    	<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "userOrderId":"${userOrderId!}", "userId":"${userId!}" }>
+		    	<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "userOrderId":"${userOrderId!}", "userId":"${userId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="book_order_btn" class="button green fr">所有选择的订单下单</div>

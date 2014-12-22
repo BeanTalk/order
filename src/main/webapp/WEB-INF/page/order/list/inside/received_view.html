@@ -117,7 +117,7 @@
 		                </#if>
 					</tbody>
 				</table>
-				<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+				<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="batch_btn" class="button blue fr">所选订单收货</div>

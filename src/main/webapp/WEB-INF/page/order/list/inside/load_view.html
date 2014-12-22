@@ -137,7 +137,7 @@
 					</tbody>
 				</table>
 				
-				<#assign parameterMap = { "startDate": "${startDate}", "endDate": "${endDate}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+				<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					批量送货的销售人员:
