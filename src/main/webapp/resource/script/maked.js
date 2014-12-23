@@ -2,6 +2,10 @@ $.post('/order/order/buycard/get/productconut/', function(data) {
 	$('#productInBagCount').text(data);
 });
 
+$.post('/order/order/record/get/productconut/', function(data) {
+	$('#recordInBagCount').text(data);
+});
+
 // 时间插件
 $(".datepicker").datepicker({
 	dateFormat : 'yy-mm-dd'

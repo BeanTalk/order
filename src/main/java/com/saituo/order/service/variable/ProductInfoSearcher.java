@@ -41,8 +41,8 @@ public class ProductInfoSearcher {
 		int currentPage = pageRequest.getPageNumber();
 
 		// 待查找字符串对应的字段
-		String[] fields = {"product_num", "product_name"};
-		Occur[] occ = {Occur.SHOULD, Occur.SHOULD};
+		String[] fields = {"product_num", "product_name", "brand_name"};
+		Occur[] occ = {Occur.SHOULD, Occur.SHOULD, Occur.SHOULD};
 
 		List<Product> productList = Lists.newArrayList();
 		try {
@@ -72,7 +72,7 @@ public class ProductInfoSearcher {
 				product.setProductNum(doc.get("product_num"));
 				product.setSpecValue(doc.get("spec_value"));
 				product.setUnitValue(doc.get("unit_value"));
-				product.setBrandId(doc.get("brand_id"));
+				product.setBrandId(doc.get("brand_name"));
 				product.setCatalogFee(Double.valueOf(doc.get("catalog_fee")));
 				productList.add(product);
 			}

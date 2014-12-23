@@ -73,14 +73,18 @@
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
-			                    <tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
-						            <th width="30">
-						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
-						            </th>
-						            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId!""}</th>
-						            <th align="left" colspan="3">订货人:${r.userOrderReturn.userName!""}</th>
-						            <th align="left" colspan="3">时间:${r.userOrderReturn.acceptDate!""}</th>
-						            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]!""}</th>
+		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
+			                    	<td colspan="10">
+							            <table width="100%">
+							            	<th width="30">
+							            		<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
+							            	</th>
+								            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId!""}</th>
+								            <th align="left" colspan="3">订货人:${r.userOrderReturn.userName!""}</th>
+								            <th align="left" colspan="3">时间:${r.userOrderReturn.acceptDate!""}</th>
+								            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]!""}</th>
+							            </table>
+							        </td>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">

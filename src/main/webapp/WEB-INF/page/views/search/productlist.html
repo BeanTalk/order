@@ -3,6 +3,7 @@
 <script type="text/javascript">
 	$(function(){
 		$('.Q-buy-btn').shoping();
+		$('.Q-record-btn').record();
 	});
 </script>
 </#macro>
@@ -56,11 +57,11 @@
 				            <@shiro.authenticated>
 					            <#if Session["session_variable"].isInternalUser?string('true','false') == "false">
 		                            <td width="130" align="center">
-		                            	<a href="###">
+		                            	<a href="#">
 						            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
 						            	</a>
-						            	<a href="${base}/record/addinfo?productId=${r.productId}">
-			          						<div id="record_btn" class="button orange medium fl">记录</div>
+						            	<a href="#">
+			          						<div id="${r.productId}" class="button orange medium fl Q-record-btn">记录</div>
 			          					</a>
 			          				</td>
 		          				</#if>

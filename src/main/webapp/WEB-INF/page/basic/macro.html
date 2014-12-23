@@ -112,23 +112,26 @@
 		<table width="100%">
 			<tbody>
 				<tr>
-					<td width="60" nowrap="nowrap">开始时间</td>
-		            <td width="70" nowrap="nowrap"><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
-		            <td width="60" nowrap="nowrap">结束时间</td>
-		            <td width="70" nowrap="nowrap"><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
-		            <td width="60" nowrap="nowrap">订单号:
+					<td width="60" nowrap="nowrap" height='40'>开始时间</td>
+		            <td  nowrap="nowrap" align='left'><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
+		            <td width="60" nowrap="nowrap" align='left'>结束时间</td>
+		            <td  nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
+		            <td width="60" nowrap="nowrap" align='left'>订单号:
 		            	<input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!""}">
 		            </td>
-		            <td width="60" nowrap="nowrap">课题组:
-		            	<select name="groupId" id="groupId">
+		            <td width='150'></td>
+		         </tr>
+		         <tr>
+		            <td  nowrap="nowrap"  width="60" align='left' >课题组:</td>
+		            	<td align='left' ><select class="select_choose" name="groupId" id="groupId"  style='width:170px'>
 	                        <option value="">请选择...</option>
 	                        <#list offices?keys as key>  
 				            	<option value="${key}" <#if key == groupId>selected</#if>>${offices[key]!""}</option>
 							</#list> 
 	                    </select>
-		            </td>
-		            <td width="60" nowrap="nowrap">订购人:
-		            	<select name="userId" id="userId">
+</td>
+		            <td  nowrap="nowrap"  align='left'>订购人:</td>
+		            	<td align='left' ><select class="select_choose" name="userId" id="userId" style='width:170px'>
 		            		<#if userInfoMap?size == 0>
 	                        	<option value="">请选择...</option>
 	                        <#else>
@@ -136,12 +139,12 @@
 	                        		<option value="${key}" <#if key == userId>selected</#if>> ${userInfoMap[key]!""}</option>
 	                        	</#list>
 	                        </#if>
-	                    </select>
+	                    </select></td>
 		            </td>
-		            <td width="58" nowrap="nowrap">
+		            <td nowrap="nowrap" align='left'>
 		            	<div id="query_btn" class="button white medium">检索</div>
 		            </td>
-		            <td width="398" nowrap="nowrap"></td>
+		            
 				</tr>
 			</tbody>
 		</table>

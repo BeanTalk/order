@@ -1,19 +1,19 @@
 (function($){
 	$.extend($.fn,{
 
-		shoping:function(options){
+		record:function(options){
 			
 			var self=this,
-				$shop=$('.shopping'),
-				$num=$('#productInBagCount');
+				$shop=$('.record'),
+				$num=$('#recordInBagCount');
 			
 			var S={
-					
+
 				init:function(){
-					$(self).data('click',true).live('click',this.addShoping);
+					$(self).data('click',true).live('click',this.addRecord);
 				},
 				
-				addShoping:function(e){
+				addRecord:function(e){
 					e.stopPropagation();
 					
 					var $target=$(e.target),
@@ -26,7 +26,7 @@
 					
 					// click the float
 					if(dis){
-						$.post('/order/order/buycard/addProductToBag/'+id, function(data) {
+						$.post('/order/order/record/addProductToBag/'+id, function(data) {
 							if(data.msg == "had"){
 								alert("对不起，您已经将该产品添加到购物车里");
 							}
@@ -39,7 +39,7 @@
 									$obj.stop(false, false).animate({'top': Y-20,'opacity':0}, 500, function(){
 										$obj.fadeOut(300,function(){
 											$obj.remove();	
-											$target.data('click', false).addClass('gray').removeClass('green');
+											$target.data('click', false).addClass('gray').removeClass('orange');
 										});
 									});
 								});	

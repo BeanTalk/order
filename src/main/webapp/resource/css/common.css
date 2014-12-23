@@ -1,11 +1,17 @@
 input[type=text]{
-	padding:5px;
+	padding:2px;
 	
 }
+
 select{
 	padding:2px;
 	
 }
+
+.select_choose {
+	padding:5px;
+}
+
 .message{
 	padding:10px;
 	background-color:#eee;

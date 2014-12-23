@@ -17,7 +17,7 @@ import com.saituo.order.entity.order.Product;
 import com.saituo.order.service.cache.RedisCacheService;
 
 @Service
-public class BuyCardService {
+public class RecordCardService {
 
 	@Autowired
 	private RedisCacheService redisCacheService;
@@ -25,7 +25,7 @@ public class BuyCardService {
 	@Autowired
 	private ProductDao productDao;
 
-	private static final String ADD_BAG_FOR_BUY_CARD_CACHE_KEY = "addedbag";
+	private static final String ADD_BAG_FOR_RECORD_CACHE_KEY = "addedrecord";
 
 	/**
 	 * 加入购物车
@@ -34,7 +34,7 @@ public class BuyCardService {
 	 * @param productId
 	 */
 	public void putProductIntoBag(String userId, String productId) {
-		redisCacheService.putProductIntoBagAboutBuyCard(ADD_BAG_FOR_BUY_CARD_CACHE_KEY, userId, productId, "1");
+		redisCacheService.putProductIntoBagAboutBuyCard(ADD_BAG_FOR_RECORD_CACHE_KEY, userId, productId, "1");
 	}
 
 	/**
@@ -44,7 +44,7 @@ public class BuyCardService {
 	 * @param productIds
 	 */
 	public void removeProductListFromBuyCard(String userId, String... productIds) {
-		redisCacheService.removeProductListFromBuyCard(ADD_BAG_FOR_BUY_CARD_CACHE_KEY, userId, productIds);
+		redisCacheService.removeProductListFromBuyCard(ADD_BAG_FOR_RECORD_CACHE_KEY, userId, productIds);
 	}
 
 	/**
@@ -54,7 +54,7 @@ public class BuyCardService {
 	 * @return
 	 */
 	public Long countProductInBagAboutBuyCard(String userId) {
-		return redisCacheService.countProductInBagAboutBuyCard(ADD_BAG_FOR_BUY_CARD_CACHE_KEY, userId);
+		return redisCacheService.countProductInBagAboutBuyCard(ADD_BAG_FOR_RECORD_CACHE_KEY, userId);
 	}
 
 	/**
@@ -64,7 +64,7 @@ public class BuyCardService {
 	 * @return
 	 */
 	public Long getBuyProductCount(String userId) {
-		return redisCacheService.countProductInBagAboutBuyCard(ADD_BAG_FOR_BUY_CARD_CACHE_KEY, userId);
+		return redisCacheService.countProductInBagAboutBuyCard(ADD_BAG_FOR_RECORD_CACHE_KEY, userId);
 	}
 
 	/**
@@ -75,7 +75,7 @@ public class BuyCardService {
 	 * @return
 	 */
 	public boolean isAddedIntoBuyCard(String userId, String productId) {
-		return redisCacheService.isAddedIntoBuyCard(ADD_BAG_FOR_BUY_CARD_CACHE_KEY, userId, productId);
+		return redisCacheService.isAddedIntoBuyCard(ADD_BAG_FOR_RECORD_CACHE_KEY, userId, productId);
 	}
 
 	/**
@@ -85,8 +85,8 @@ public class BuyCardService {
 	public List<CustomerOrdering> getProductListFromBag(String userId) {
 
 		List<CustomerOrdering> result = new ArrayList<CustomerOrdering>();
-		Map<Object, Object> mapData = redisCacheService.getProductIdAndBuyNumMapFromCache(
-				ADD_BAG_FOR_BUY_CARD_CACHE_KEY, userId);
+		Map<Object, Object> mapData = redisCacheService.getProductIdAndBuyNumMapFromCache(ADD_BAG_FOR_RECORD_CACHE_KEY,
+				userId);
 
 		if (mapData == null || mapData.size() == 0) {
 			return result;
@@ -102,7 +102,7 @@ public class BuyCardService {
 			for (Product product : productList) {
 				CustomerOrdering customerOrdering = new CustomerOrdering();
 				BeanUtils.copyProperties(customerOrdering, product);
-				customerOrdering.setDiscountPrice(99);
+				customerOrdering.setDiscountPrice(0);// XXX
 				customerOrdering.setSubscriptCount(VariableUtils.typeCast(
 						mapData.get(String.valueOf(product.getProductId())), Integer.class));
 				result.add(customerOrdering);

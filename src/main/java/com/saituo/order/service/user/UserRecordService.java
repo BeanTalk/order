@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
@@ -13,7 +15,10 @@ import com.saituo.order.dao.user.UserRecordDao;
 import com.saituo.order.entity.user.ProductRecord;
 import com.saituo.order.entity.user.UserRecord;
 
+@Service
+@Transactional
 public class UserRecordService {
+
 	@Autowired
 	private UserRecordDao userRecordDao;
 	@Autowired

@@ -16,14 +16,14 @@
 	<div class="container">
 		<div class="header_fr">
 				<ul class="topnav">
-					<li><a href=""><div class="fl icon icon_user"></div>个人中心</a></li>
-						<@shiro.authenticated>
+					<@shiro.authenticated>
 						<!-- 内部用户时 -->
 						<#if Session["session_variable"].isInternalUser?string('true','false') == "true">
+							<li>&nbsp;</li>
 							<li>
 								<a href="${base}/order/buycard/list">
 								<div class="shopping fl icon icon_cart"></div>
-									备货<span id="productInBagCount" class="fontred">0</span>
+									备货<span id="storeInBagCount" class="fontred">0</span>
 								</a>
 							</li>
 						<#else>
@@ -33,8 +33,14 @@
 									购物车<span id="productInBagCount" class="fontred">0</span>
 								</a>
 							</li>
+							<li>
+								<a href="${base}/order/record/list">
+									<div class="record fl icon icon_cart"></div>
+									记录<span id="recordInBagCount" class="fontred">0</span>
+								</a>
+							</li>
 						</#if>
-						</@shiro.authenticated>
+					</@shiro.authenticated>
 	      		</ul>
       		<p><img src="${base}/resource/images/hotfont.gif"></p>
 		</div>
