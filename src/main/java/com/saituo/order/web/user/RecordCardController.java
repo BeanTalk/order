@@ -93,10 +93,11 @@ public class RecordCardController {
 
 		model.addAttribute("customerOrderingList", recordCardService.getProductListFromBag(userId));
 		model.addAttribute("addressList", addressService.queryList(userId));
+		model.addAttribute("agents", recordCardService.getAgentList());
 	}
 
 	@RequestMapping(value = "save", method = RequestMethod.POST)
-	public void saveRecordInfo(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
+	public String saveRecordInfo(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
 			@RequestParam List<String> discountPrices, @RequestParam List<String> subscripts,
 			@RequestParam List<String> supplys, Model model) {
 
@@ -114,30 +115,37 @@ public class RecordCardController {
 		// productRecordList : 产品编号~订购价格～数量~供应商id
 		userRecordService.doCreateUserRecord(filter);
 		recordCardService.removeProductListFromBuyCard(userId, productIds.toArray(new String[productIds.size()]));
-		model.addAttribute("info", "保存成功");
+		return "redirect:/order/record/list";
 	}
 
-	// @RequestMapping(value = "record_view", method = RequestMethod.GET)
-	// public String viewRecordInfo(@RequestParam Map<String, Object> filter,
-	// Model model) {
-	//
-	// String userId =
-	// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-	// String.class);
-	//
-	// List<String> productOrderList = new ArrayList<String>();
-	// for (int i = 0; i < productIds.size(); i++) {
-	// StringBuilder sb = new StringBuilder(120);
-	// sb.append(productIds.get(i)).append("~").append(discountPrices.get(i)).append("~")
-	// .append(subscripts.get(i)).append("~").append(supplys.get(i));
-	// productOrderList.add(sb.toString());
-	// }
-	// filter.put("productOrderList", productOrderList);
-	// // productRecordList : 产品编号~订购价格～数量~供应商id
-	// userRecordService.doCreateUserRecord(filter);
-	// recordCardService.removeProductListFromBuyCard(userId,
-	// productIds.toArray(new String[productIds.size()]));
-	// return "redirect:/order/record/record_view";
-	// }
+//	@RequiresPermissions("perms[order:record:record_view]")
+//	@RequestMapping(value = "record_view", method = RequestMethod.GET)
+//	public void getReviewRecordInfoList(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
+//			Model model) {
+//
+//		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+//				String.class);
+//		filter.put("userId", userId);
+//		filter.putAll(pageRequest.getMap());
+//		List<UserRecord> userRecordList = userRecordService.getUserRecordList(filter);
+//		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
+//		int userRecordCount = userRecordService.getUserRecordCount(filter);
+//
+//		for (UserRecord userRecord : userRecordList) {
+//			String userOrderId = String.valueOf(userRecord.getUserRecordId());
+//			Map<String, Object> mapData = Maps.newHashMap();
+//			mapData.put("userOrderId", userOrderId);
+//			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+//		}
+//		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
+//				userOrderCount);
+//
+//		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+//		model.addAttribute("page", page);
+//		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+//		model.addAttribute("startDate", filter.get("startDate"));
+//		model.addAttribute("endDate", filter.get("endDate"));
+//		model.addAttribute("userOrderId", filter.get("userOrderId"));
+//	}
 
 }

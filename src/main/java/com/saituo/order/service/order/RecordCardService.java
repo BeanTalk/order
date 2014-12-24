@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.dao.order.AgentDao;
 import com.saituo.order.dao.order.ProductDao;
+import com.saituo.order.entity.order.Agent;
 import com.saituo.order.entity.order.CustomerOrdering;
 import com.saituo.order.entity.order.Product;
 import com.saituo.order.service.cache.RedisCacheService;
@@ -24,6 +27,9 @@ public class RecordCardService {
 
 	@Autowired
 	private ProductDao productDao;
+
+	@Autowired
+	private AgentDao agentDao;
 
 	private static final String ADD_BAG_FOR_RECORD_CACHE_KEY = "addedrecord";
 
@@ -109,6 +115,17 @@ public class RecordCardService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public Map<String, String> getAgentList() {
+		Map<String, String> filter = Maps.newHashMap();
+		filter.put("delFlag", "0");
+		List<Agent> agentList = agentDao.getAgentListByIdAndDelFlag(filter);
+		Map<String, String> result = Maps.newHashMap();
+		for (Agent agent : agentList) {
+			result.put(String.valueOf(agent.getAgentId()), agent.getAgentName());
 		}
 		return result;
 	}

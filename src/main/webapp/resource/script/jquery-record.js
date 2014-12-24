@@ -37,7 +37,7 @@
 								var $obj=$('#floatOrder');
 								$obj.css({'left': x,'top': y}).animate({'left': X,'top': Y-80}, 500, function() {
 									$obj.stop(false, false).animate({'top': Y-20,'opacity':0}, 500, function(){
-										$obj.fadeOut(300,function(){
+										$obj.fadeOut(100,function(){
 											$obj.remove();	
 											$target.data('click', false).addClass('gray').removeClass('orange');
 										});
