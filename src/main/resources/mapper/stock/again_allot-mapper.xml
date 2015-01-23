@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.stock.AgainAllotDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="againAllot">
+		insert into st_again_allot(
+			stock_number,
+			again_allot_reason,
+			accept_person,
+			accept_date
+		) values (
+			#{stockNumber},
+			#{againAllotReason},
+			#{acceptPerson},
+			now()
+		)
+	</insert>
+	
+	<select id="query" resultType="againAllot">
+		select
+			id as id,
+			stock_number as stockNumber,
+			again_allot_reason as againAllotReason,
+			accept_person as acceptPerson,
+			accept_date as acceptDate
+		from st_again_allot
+		where stock_number = #{stockNumber}
+	</select>
+</mapper>

@@ -1,5 +1,6 @@
 package com.saituo.order.commons.utils;
 
+import org.apache.commons.codec.digest.DigestUtils;
 
 public class HexPassword {
 
@@ -14,6 +15,6 @@ public class HexPassword {
 	// }
 
 	public static String entryptPassword(String plainPassword) {
-		return plainPassword;
+		return DigestUtils.md5Hex(plainPassword);
 	}
 }

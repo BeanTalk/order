@@ -99,7 +99,7 @@ public class CustomerController {
 			StringBuilder sb = new StringBuilder(120);
 			String productId = productIds.get(i);
 			sb.append(productId).append("~").append(productPriceMap.get(productId)).append("~")
-					.append(subscripts.get(0));
+					.append(subscripts.get(i));
 			productOrderList.add(sb.toString());
 		}
 		filter.put("productOrderList", productOrderList);

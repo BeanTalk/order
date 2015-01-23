@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.dao.order.ProductDao;
@@ -857,5 +858,18 @@ public class UserOrderService {
 			productOrder.setProduct(product);
 		}
 		return productOrderList;
+	}
+
+	public List<Product> getProductList(Long userOrderId) {
+
+		// 根据客户订单编码查询产品订单项信息列表
+		ProductOrder productOrderQuery = new ProductOrder();
+		productOrderQuery.setUserOrderId(userOrderId);
+		List<ProductOrder> productOrderList = productOrderDao.queryListByUserOrderId(productOrderQuery);
+		List<String> productIds = Lists.newArrayList();
+		for (ProductOrder productOrder : productOrderList) {
+			productIds.add(String.valueOf(productOrder.getProductId()));
+		}
+		return productDao.getProductListByProductIds(productIds);
 	}
 }

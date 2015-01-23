@@ -6,6 +6,11 @@ $.post('/order/order/record/get/productconut/', function(data) {
 	$('#recordInBagCount').text(data);
 });
 
+$.post('/order/order/stock/get/productconut/', function(data) {
+	$('#storeInBagCount').text(data);
+});
+
+
 // 时间插件
 $(".datepicker").datepicker({
 	dateFormat : 'yy-mm-dd'

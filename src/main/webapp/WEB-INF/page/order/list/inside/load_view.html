@@ -45,6 +45,11 @@
 			}
 		);
 	});
+	
+	$(' .stockbtn ').click(function(event){
+		window.location.href="${addStockCardUrl}?userOrderId="+this.id;
+	});
+	
 </script>
 </#macro>
 
@@ -52,6 +57,8 @@
 
 <#assign viewUrl = "${base}/order/list/inside/load_view">
 <#assign submitUrl = "${base}/order/list/inside/load">
+<#assign addStockCardUrl = "${base}/order/stock/userOrder/list">
+<#assign getStockCountUrl = "${base}/order/stock/get/productconut/">
 
 <div class="grid2 m_t">
 	<div class="panel">
@@ -96,7 +103,7 @@
 							            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
 							            <th align="left">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 							            <th align="left">
-							            	<div class="button green medium fl D-operation load">备货</div>
+							            	<div id="${r.userOrderReturn.userOrderId!""}" class="button green medium fl D-operation stockbtn">备货</div>
 							            </th>
 							            </table>
 							        </td>

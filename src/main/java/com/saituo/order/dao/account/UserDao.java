@@ -23,6 +23,13 @@ public interface UserDao {
 	public Map<String, Object> get(@Param("id") Integer id);
 
 	/**
+	 * 获取所有用户 包括已删除用户
+	 * 
+	 * @return
+	 */
+	public List<Map<String, String>> getAllofUser();
+
+	/**
 	 * 获取用户
 	 * 
 	 * @param usernameOrEmail

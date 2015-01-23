@@ -1,0 +1,60 @@
+<#include "*/basic/default.html"/>
+
+<#macro body>
+<#assign viewUrl = "${base}/order/list/buy/query_view">
+
+<div class="grid2 m_t">
+	<form id="buycard-list-form" method="post">
+		<div class="panel">
+			<div class="panel_header">
+		        <h3>采购查询</h3>
+		     </div>
+			<div class="panel_body clearfix">
+		    	<table width="100%" class="table_pro_header">
+		      		<tbody>
+		          		<tr>
+		          			<th width="80">备货号</th>
+							<th width="218">产品</th>
+							<th width="80">地市</th>
+							<th width="80">备货人</th>
+							<th width="80">备货价</th>
+							<th width="80">数量</th>
+							<th width="80">供应商</th>
+							<th width="80">状态</th>
+				        </tr>
+			    	</tbody>
+				</table>
+		    	<table width="100%" class="table_pro_body">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="8">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+								<tr>
+									<td width="80" align="center">${r.stockNumber!""}</td>
+									<td width="218" align="left">
+										<p><span class="pro_name">${r.product.productName!""}</span></p>
+										<p><b>货号：</b>${r.product.productNum!""}</p>
+										<p><b>品牌：</b>${r.product.brandId!""}</p>
+									</td>
+			                        <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
+			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
+						            <td width="80" align="center">${r.stockFee!""}</td>
+						            <td width="80" align="center">${r.orderNum!""}</td>
+						            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+						            <td width="80" align="center">${status[r.statusCd]!""}</td>
+			                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+	        	<p class="pageBar"></p>
+				<@pager page "${viewUrl}" />
+			</div>
+		</div>
+	</form>
+</div>
+
+</#macro>

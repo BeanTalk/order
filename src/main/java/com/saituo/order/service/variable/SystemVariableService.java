@@ -12,6 +12,8 @@ import com.saituo.order.commons.utils.StringUtils;
 import com.saituo.order.dao.account.AreaDao;
 import com.saituo.order.dao.account.GroupDao;
 import com.saituo.order.dao.account.UserDao;
+import com.saituo.order.dao.order.SupplyDao;
+import com.saituo.order.entity.order.Supply;
 import com.saituo.order.service.ehcache.OrderCacheService;
 
 /**
@@ -32,6 +34,9 @@ public class SystemVariableService {
 	private UserDao userDao;
 
 	@Autowired
+	private SupplyDao supplyDao;
+
+	@Autowired
 	private OrderCacheService orderCacheService;
 
 	private static final String UNDEFINE = "未知姓名";
@@ -42,6 +47,34 @@ public class SystemVariableService {
 	public void init() {
 		initUserByOfficeIdData();
 		initUserByAreaIdData();
+	}
+
+	public Map<String, String> getAreaIdAndName() {
+		Map<String, String> mapData = Maps.newHashMap();
+		List<Map<String, String>> list = areaDao.getAreaIdAndName();
+		for (Map<String, String> mapDataTemp : list) {
+			mapData.put(String.valueOf(mapDataTemp.get("id")), mapDataTemp.get("name"));
+		}
+		return mapData;
+	}
+
+	public Map<String, String> getSupplyIdAndName() {
+		Map<String, String> mapData = Maps.newHashMap();
+		Map<String, Object> filter = Maps.newHashMap();
+		List<Supply> supplyList = supplyDao.getSupplyListByIdAndDelFlag(filter);
+		for (Supply supply : supplyList) {
+			mapData.put(supply.getSupplierId(), supply.getSupplierName());
+		}
+		return mapData;
+	}
+
+	public Map<String, String> getUserIdAndName() {
+		Map<String, String> mapData = Maps.newHashMap();
+		List<Map<String, String>> list = userDao.getAllofUser();
+		for (Map<String, String> mapDataTemp : list) {
+			mapData.put(String.valueOf(mapDataTemp.get("id")), mapDataTemp.get("name"));
+		}
+		return mapData;
 	}
 
 	public String getAreaIdAndNameData(String areaId) {

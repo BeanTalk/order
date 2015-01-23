@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.stock.StockOrderDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="stockOrderId">
+		insert into st_stock_order(
+			user_id,
+			area_id,
+			accept_date,
+			status_cd
+		) values (
+			#{userId},
+			#{areaId},
+			now(),
+			#{statusCd}
+		)
+	</insert>
+
+	<update id="update">
+		update st_stock_order set
+			status_Cd = #{statusCd}
+		where stock_order_id = #{stockOrderId}
+	</update>
+
+	<select id="query" resultType="stockOrder">
+		select
+			stock_order_id as stockOrderId,
+			user_id as userId,
+			area_id as areaId,
+			accept_date as acceptDate,
+			status_cd as statusCd
+		from st_stock_order
+		where
+			stock_order_id = #{stockOrderId}
+	</select>
+
+	<select id="queryList" resultType="stockOrder">
+		select
+			stock_order_id as stockOrderId,
+			user_id as userId,
+			area_id as areaId,
+			accept_date as acceptDate,
+			status_cd as statusCd
+		from st_stock_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
+			<if test="stockOrder.areaId!=null and stockOrder.areaId!=''">
+				area_id =#{stockOrder.areaId}
+			</if>
+			<if test="stockOrder.stockOrderId !=null and stockOrder.stockOrderId != ''">
+				and stock_order_id =#{stockOrder.stockOrderId}
+			</if>
+			<if test="stockOrder.userId != null and stockOrder.userId != ''">
+			    and user_id =#{stockOrder.userId}
+			</if>
+			<if test="stockOrder.statusCd !=null and stockOrder.statusCd != ''">
+			    and status_cd =#{stockOrder.statusCd}
+			</if>
+		</trim> 
+		order by accept_date desc
+		<if test="filter.first != null and filter.last != null">
+            LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+	
+	<select id="count" resultType="int">
+		select
+			count(stock_order_id)
+		from st_stock_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
+			<if test="areaId!=null and areaId!=''">
+				area_id =#{areaId}
+			</if>
+			<if test="stockOrderId !=null and stockOrderId != ''">
+				and stock_order_id =#{stockOrderId}
+			</if>
+			<if test="userId != null and userId != ''">
+			    and user_id =#{userId}
+			</if>
+			<if test="statusCd !=null and statusCd != ''">
+			    and status_cd =#{statusCd}
+			</if>
+		</trim> 
+	</select>
+	
+	<delete id="delete">
+		delete from st_stock_order
+		where stock_order_id = #{stockOrderId}
+	</delete>
+	
+</mapper>

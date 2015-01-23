@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.order.SupplyDao" >
+
+	<select id="getSupplyListByIdAndDelFlag" resultType="supply">
+        SELECT 
+          id as "supplierId", 
+          supplier_name as "supplierName", 
+          create_by as "createBy", 
+          create_date as "createDate", 
+          update_by as "updateBy", 
+          update_date as "updateDate", 
+          remarks as "remarks"
+        FROM
+          st_supplier
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="filter.id != null and filter.id !='' ">
+				id = #{filter.id}
+			</if>
+			<if test="filter.delFlag != null and filter.delFlag !='' ">
+				del_flag = #{filter.delFlag}
+			</if>
+		</trim>
+	</select>
+	
+</mapper>

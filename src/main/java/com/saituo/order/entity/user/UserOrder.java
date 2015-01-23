@@ -1,6 +1,5 @@
 package com.saituo.order.entity.user;
 
-import java.util.List;
 
 public class UserOrder {
 

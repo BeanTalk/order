@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.stock.BrandBuyerRelationDao">
+	<select id="query" resultType="brandBuyerRelation">
+		select
+		brand_id as brandId,
+		user_id
+		as userId
+		from st_brand_buyer_relation
+		where
+		brand_id = #{brandId}
+	</select>
+</mapper>
