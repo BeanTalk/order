@@ -9,6 +9,11 @@
 	});
 	
 	$("#batch_btn").click(function(){
+		var length = $("#list-form").find("input[type='checkbox'][name='userOrderIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个订单");
+            return;
+        }
 		$("#list-form").attr("action", "${submitUrl}?auditCd=3");
 		$("#list-form").submit();
 	});
@@ -105,7 +110,7 @@
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
 											<p><b>货号：</b>${productOrderInfo.product.productNum!""}</p>
-											<p><b>品牌：</b>${productOrderInfo.product.brandId!""}</p>
+											<p><b>品牌：</b>${productOrderInfo.product.brandName!""}</p>
 										</td>
 				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>

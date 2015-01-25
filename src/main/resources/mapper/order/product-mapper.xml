@@ -24,19 +24,21 @@
 	
 	<select id="getProductListByProductIds" resultType="product">
         SELECT 
-          id AS "productId",
+          p.id AS "productId",
+          brand_name AS "brandName",
           product_name AS "productName",
           product_num AS "productNum",
           brand_id AS "brandId",
           spec_value AS "specValue",
           unit_value AS "unitValue",
           catalog_fee AS "catalogFee",
-          del_flag AS "delFlag"
+          p.del_flag AS "delFlag"
         FROM
-          st_product
+           st_product p left join st_product_brand pb
+        ON (p.brand_id = pb.id)
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="productIds != null and productIds.size > 0">
-	            AND id IN
+	            AND p.id IN
 				<foreach collection="productIds" item="id" index="index" open="(" separator="," close=")" >
 	                #{id}
 				</foreach>
@@ -46,18 +48,20 @@
 	
 	<select id="getProductByProductId" resultType="product">
         SELECT
-          id AS "productId",
+          p.id AS "productId",
+          brand_name AS "brandName",
           product_name AS "productName",
           product_num AS "productNum",
           brand_id AS "brandId",
           spec_value AS "specValue",
           unit_value AS "unitValue",
           catalog_fee AS "catalogFee",
-          del_flag AS "delFlag"
+          p.del_flag AS "delFlag"
         FROM
-          st_product
+           st_product p left join st_product_brand pb
+        ON (p.brand_id = pb.id)
 		WHERE
-		  id = #{productId}
+		  p.id = #{productId}
 	</select>
 
 </mapper>

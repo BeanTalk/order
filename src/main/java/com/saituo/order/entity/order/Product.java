@@ -14,6 +14,8 @@ public class Product {
 	// 产品品牌编码
 	private String brandId;
 
+	private String brandName;
+
 	// 规格
 	private String specValue;
 
@@ -88,6 +90,14 @@ public class Product {
 
 	public void setDiscoutFee(Double discoutFee) {
 		this.discoutFee = discoutFee;
+	}
+
+	public String getBrandName() {
+		return brandName;
+	}
+
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
 	}
 
 }
