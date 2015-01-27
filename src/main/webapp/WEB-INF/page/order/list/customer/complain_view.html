@@ -1,0 +1,74 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+<script type="text/javascript">
+	
+</script>
+</#macro>
+
+<#macro body>
+
+<#assign viewURL = "${base}/order/list/customer/complain_view">
+
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+			<h3>投诉单</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<form id="list-form" method="post">
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+				            <th width="248" align="left">产品</th>
+				            <th width="100" align="left">目录价</th>
+				            <th width="100" align="left">订购价</th>
+				            <th width="80" align="left">数量</th>
+				            <th width="140" align="left">投诉内容</th>
+				            <th width="140" align="left">处理意见</th>
+						</tr>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="8">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+		                    	<tr class="user_order_toggle_tr" id="${r.id!""}">
+			                    	<td colspan="8">
+							            <table width="100%">
+							            	<th width="30"></th>
+								            <th align="left">投诉单号:${r.id!""}</th>
+								            <th align="left">投诉类型:${complainType[r.complaintType]}</th>
+								            <th align="left">投诉状态:${complainStatus[r.statusCd]}</th>
+								            <th align="left">处理结果:<#if r.handleResult??>${complainProcessType[r.handleResult]}</#if></th>
+							            </table>
+							        </td>
+								</tr>
+			                    <tr class="tr_${r.product.productId!""}">
+									<td width="30"></td>
+			                        <td width="248" align="left">
+										<p><span class="pro_name">${r.product.productName!""}</span></p>
+										<p><b>货号:</b>${r.product.productNum!""}</p>
+										<p><b>品牌:</b>${r.product.brandName!""}</p>
+									</td>
+									<td width="100" align="center">${r.product.catalogFee!""}</td>
+						            <td width="100" align="center">${r.orderFee!0}</td>
+									<td width="80" align="center">${r.orderNum!1}</td>
+									<td width="140" align="center">${r.complaintNote!""}</td>
+									<td width="140" align="center">${r.handleNote!""}</td>
+			                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<p class="pageBar"></p>
+				<@pager page "${viewURL}" />
+			</form>
+	 	</div>
+	</div>
+</div>
+</#macro>

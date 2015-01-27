@@ -2,11 +2,11 @@ package com.saituo.order.commons.enumeration.entity;
 
 import com.saituo.order.commons.enumeration.ValueEnum;
 
-public enum CompaintProcessType implements ValueEnum<Integer> {
+public enum ComplainStatus implements ValueEnum<Integer> {
 
-	SETTLE(1, "协商解决"), EXCHANGE(2, "换货"), RETURN(3, "退货"), CANCEL(4, "投诉取消");
+	NOT_FINISH(0, "未完成"), DOING(1, "处理中"), COMPLATED(2, "已完成"), CANCEL(-1, "已取消");
 
-	CompaintProcessType(Integer value, String name) {
+	ComplainStatus(Integer value, String name) {
 		this.name = name;
 		this.value = value;
 	}
@@ -32,5 +32,4 @@ public enum CompaintProcessType implements ValueEnum<Integer> {
 	public Integer getValue() {
 		return value;
 	}
-
 }

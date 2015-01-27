@@ -1,0 +1,138 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+<script type="text/javascript">
+	
+	//点击处理
+	$('.complain_process').click(function(){
+		$('#complain_id').attr('value', this.id);
+		$.blockUI({ message: $('#complain_process_div') });
+	});
+	
+	$('#up_submit').click(function(){
+		$("#complain_info_sumbit").attr("action", "${processURL}");
+		$("#complain_info_sumbit").submit();
+	});
+	
+	$('#up_cancel').click($.unblockUI);
+	
+</script>
+</#macro>
+
+<#macro body>
+
+<#assign processURL = "${base}/order/list/support/complain_process">
+<#assign viewURL = "${base}/order/list/support/complain_view">
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+			<h3>投诉单</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<form id="list-form" method="post">
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+							<th width="30"></th>
+				            <th width="248" align="left">产品</th>
+				            <th width="100" align="left">目录价</th>
+				            <th width="100" align="left">订购价</th>
+				            <th width="80" align="left">数量</th>
+				            <th width="140" align="left">投诉内容</th>
+				            <th width="140" align="left">处理结果</th>
+				            <th width="140" align="left">处理意见</th>
+				            <th width="80" align="left">操作</th>
+						</tr>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="10">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+		                    	<tr class="user_order_toggle_tr" id="${r.id!""}">
+			                    	<td colspan="10">
+							            <table width="100%">
+								            <th align="left">投诉单号:${r.id!""}</th>
+								            <th align="left">投诉类型:${complainType[r.complaintType]}</th>
+								            <th align="left">投诉状态:${complainStatus[r.statusCd]}</th>
+							            </table>
+							        </td>
+								</tr>
+			                    <tr class="tr_${r.product.productId!""}">
+									<td width="30"></td>
+			                        <td width="248" align="left">
+										<p><span class="pro_name">${r.product.productName!""}</span></p>
+										<p><b>货号:</b>${r.product.productNum!""}</p>
+										<p><b>品牌:</b>${r.product.brandName!""}</p>
+									</td>
+									<td width="100" align="center">${r.product.catalogFee!""}</td>
+						            <td width="100" align="center">${r.orderFee!0}</td>
+									<td width="80" align="center">${r.orderNum!1}</td>
+									<td width="140" align="center">${r.complaintNote!""}</td>
+									<td width="140" align="center"><#if r.handleResult??>${complainProcessType[r.handleResult]}</#if></td>
+									<td width="140" align="center">${r.handleNote!""}</td>
+									<td width="80" align="center">
+										<#if r.statusCd != "2" && r.statusCd != "-1">
+											<div id="${r.id}" class="button orange medium fl D-operation complain_process">处理</div>
+										</#if>
+									</td>
+			                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<p class="pageBar"></p>
+				<@pager page "${viewURL}" />
+			</form>
+	 	</div>
+	</div>
+</div>
+
+<div id="complain_process_div" style="display:none; cursor: default; padding: 10px">
+	<form id="complain_info_sumbit" method="post">
+		<input type="hidden" name="complain_id" id="complain_id" value="">
+		<table width="100%" class="table_none">
+			<tbody>
+	          	<tr>
+	            	<td width="100" nowrap="nowrap"><label>处理结果：</label></td>
+	            	<td align="left">
+	            		<select name="handleResult">
+	            			<option value="1">协商解决</option>
+	            			<option value="2">换货</option>
+	            			<option value="3">退货</option>
+	            			<option value="4">投诉取消</option>
+	            		</select>
+	              	</td>
+				</tr>
+				<tr>
+	            	<td width="100" nowrap="nowrap"><label>当前状态：</label></td>
+	            	<td align="left">
+	            		<select name="statusCd">
+	            			<option value="0">未完成</option>
+	            			<option value="1">处理中</option>
+	            			<option value="2">已完成</option>
+	            			<option value="-1">已取消</option>
+	            		</select>
+	              	</td>
+				</tr>
+	          	<tr>
+	            	<td nowrap="nowrap"><label>处理意见:</label></td>
+	            	<td align="left"><textarea id="handleNote" name="handleNote" cols="40"></textarea></td>
+	          	</tr>
+				<tr>
+	            	<td nowrap="nowrap"></td>
+	            	<td align="left">
+	            		<div id="up_submit" class="button orange large fl du-operation">确认</div>
+	            		<div id="up_cancel" class="button write large fl du-operation">取消</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+    </form>
+</div>
+
+</#macro>

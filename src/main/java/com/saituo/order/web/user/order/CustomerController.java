@@ -20,6 +20,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.CompaintProcessType;
+import com.saituo.order.commons.enumeration.entity.CompaintType;
+import com.saituo.order.commons.enumeration.entity.ComplainStatus;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
 import com.saituo.order.commons.enumeration.entity.RoleSign;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
@@ -29,6 +32,7 @@ import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.Audit;
 import com.saituo.order.entity.user.AuditHis;
+import com.saituo.order.entity.user.OrderComplaint;
 import com.saituo.order.entity.user.UserOrder;
 import com.saituo.order.service.account.AccountService;
 import com.saituo.order.service.order.BuyCardService;
@@ -36,6 +40,7 @@ import com.saituo.order.service.order.ProductBrandService;
 import com.saituo.order.service.order.ProductService;
 import com.saituo.order.service.user.AddressService;
 import com.saituo.order.service.user.AuditHisService;
+import com.saituo.order.service.user.OrderComplainService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
 
@@ -67,6 +72,9 @@ public class CustomerController {
 
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	private OrderComplainService orderComplainService;
 
 	/**
 	 * 购物车中保存订单
@@ -229,7 +237,6 @@ public class CustomerController {
 		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"), String.class);
 		return auditHisService.getAuditHisByProductOrderId(productOrderId);
 	}
-	
 
 	/**
 	 * 客户修改产品订单
@@ -445,6 +452,71 @@ public class CustomerController {
 		model.addAttribute("endDate", filter.get("endDate"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(groupId)));
+	}
+
+	/**
+	 * 客户查看内勤修改完价格的订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "customer/complain", method = RequestMethod.POST)
+	public String customerComplainForOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter) {
+
+		String userOrderId = StringUtils.substringBefore(
+				VariableUtils.typeCast(filter.get("userOrderAndProductOrderId"), String.class), "_");
+		String registerNumber = StringUtils.substringAfter(
+				VariableUtils.typeCast(filter.get("userOrderAndProductOrderId"), String.class), "_");
+
+		filter.put("userOrderId", userOrderId);
+		filter.put("registerNumber", registerNumber);
+		orderComplainService.doCreateOrderComplaint(filter);
+		return "redirect:/order/list/customer/complain_view";
+	}
+
+	/**
+	 * 客户查看内勤修改完价格的订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "customer/complain_view", method = RequestMethod.GET)
+	public void customerComplainViewForOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
+			Model model) {
+
+		filter.putAll(pageRequest.getMap());
+
+		if (!SessionVariable.getCurrentSessionVariable().getIsInternalUser()) {
+			filter.put("userId", VariableUtils.typeCast(
+					SessionVariable.getCurrentSessionVariable().getUser().get("id"), String.class));
+		}
+		List<OrderComplaint> orderComplainList = orderComplainService.getOrderComplaintList(filter);
+		for (OrderComplaint orderComplaint : orderComplainList) {
+			Product product = productService.getProductByProductId(VariableUtils.typeCast(
+					orderComplaint.getProductId(), Integer.class));
+			orderComplaint.setProduct(product);
+		}
+
+		int orderComplainCount = orderComplainService.getOrderComplaintCount(filter);
+		Page<OrderComplaint> page = new Page<OrderComplaint>(pageRequest, orderComplainList, orderComplainCount);
+
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("complainType", VariableUtils.getVariables(CompaintType.class));
+		model.addAttribute("complainProcessType", VariableUtils.getVariables(CompaintProcessType.class));
+		model.addAttribute("complainStatus", VariableUtils.getVariables(ComplainStatus.class));
+		model.addAttribute("page", page);
 	}
 
 	/**
@@ -672,13 +744,14 @@ public class CustomerController {
 				model.addAttribute("role", "student");
 			}
 			// 当其为老师和PI时，能看到该组下面的所有的订单
-			if (roleSign.contains(String.valueOf(RoleSign.TEACHER.getValue())) || roleSign.contains(String.valueOf(RoleSign.PI.getValue()))) {
+			if (roleSign.contains(String.valueOf(RoleSign.TEACHER.getValue()))
+					|| roleSign.contains(String.valueOf(RoleSign.PI.getValue()))) {
 				filter.put("groupId", String.valueOf(SessionVariable.getCurrentSessionVariable().getGroupId()));
 				model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
 						.getCurrentSessionVariable().getGroupId())));
 				model.addAttribute("role", "teacher");
 			}
-		// 内部用户
+			// 内部用户
 		} else {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
 					.getCurrentSessionVariable().getGroupId())));
@@ -686,8 +759,8 @@ public class CustomerController {
 		}
 
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
-		model.addAttribute("offices",
-				systemVariableService.getGroupNameByAreaIdAndGroupIdData(SessionVariable.getCurrentSessionVariable().getAreaId()));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(SessionVariable
+				.getCurrentSessionVariable().getAreaId()));
 		model.addAttribute("groupId", VariableUtils.typeCast(filter.get("groupId")));
 		// 内部用户可以看到本地市的所有的订单，在UserOrderService 中已经默认设置
 		return filter;

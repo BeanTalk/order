@@ -4,7 +4,7 @@ import com.saituo.order.commons.enumeration.ValueEnum;
 
 public enum CompaintType implements ValueEnum<Integer> {
 
-	QUALITY(1, "产品质量问题"), DOSE(2, "产品剂量问题"), PACKAGE(2, "产品包装问题"), LIVETIME(2, "产品保质期问题");
+	QUALITY(1, "产品质量问题"), DOSE(2, "产品剂量问题"), PACKAGE(3, "产品包装问题"), LIVETIME(4, "产品保质期问题");
 
 	CompaintType(Integer value, String name) {
 		this.name = name;

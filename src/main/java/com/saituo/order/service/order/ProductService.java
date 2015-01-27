@@ -27,4 +27,8 @@ public class ProductService {
 	public List<Product> getProductInfoListByProductId(List<String> productIds) {
 		return productDao.getProductListByProductIds(productIds);
 	}
+
+	public Product getProductByProductId(Integer productId) {
+		return productDao.getProductByProductId(productId);
+	}
 }
