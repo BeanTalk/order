@@ -110,10 +110,10 @@
 		                        <td width="100" align="center">${r.specValue!""}</td>
 					            <td width="60" align="center">${r.unitValue!""}</td>
 					            <td width="80" align="center">${r.catalogFee!""}</td>
-					            <td width="80" align="center">${r.discountPrice!""}</td>
-								<td width="80" align="center">
+					            <td width="80" align="center" class="price-per-products">${r.discountPrice!""}</td>
+								<td width="80" align="center" class="num-products">
 									<label for="textfield"></label>
-									<input type="text" class="right" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
+									<input type="text" class="right num-products-input" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
 								</td>
 								<td width="80">大连赛拓</td>
 								<td width="50" align="center">
@@ -130,8 +130,8 @@
 				<div class="actionBar">
 	          		<div style="width:400px;" class="fr right m_t">
 		            	<div class="font14">共
-		            		<span class="fb">${customerOrderingList?size}</span>&nbsp;件产品&nbsp;
-		            		&nbsp;总价: <span class="font16 fb"></span>元</div>
+		            		<span class="fb" id="total-num-products"></span>&nbsp;件产品&nbsp;
+		            		&nbsp;总价: <span class="font16 fb" id="total-products"></span>元</div>
 		            	<br>
 		            	<div id="save_btn" class="button orange">生成</div>
 	            	</div>

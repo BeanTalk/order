@@ -149,6 +149,12 @@ a:hover {
 .icon_cart {
 	background:url(../images/icon_cart.gif)
 }
+.icon_1 {
+	background:url(../images/icon1.gif)
+}
+.icon_2 {
+	background:url(../images/icon2.gif)
+}
 .subnav {
 	border:1px solid #D6DFEA;
 	text-align:left;
@@ -598,4 +604,8 @@ ul.lr li h3 {
 	padding:6px 2px;
 	color:#030;
 	font-weight:bold;
+}
+.num-pro-input{
+	text-align:right;
+	
 }
