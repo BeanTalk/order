@@ -16,6 +16,17 @@ public class UserPeasHis {
 	private String acceptPerson;
 	//创建时间
 	private String acceptDate;
+	//礼品ID
+	private Long giftId;
+	
+	public Long getGiftId() {
+		return giftId;
+	}
+	public void setGiftId(Long giftId) {
+		this.giftId = giftId;
+	}
+
+	
 	public Long getPeasId() {
 		return peasId;
 	}
