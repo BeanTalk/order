@@ -47,7 +47,7 @@
         where id = #{id}  
 	</update>  
 	
-		<select id="count" resultType="int">
+	<select id="count" resultType="int">
 		select
 			count(b.id)
 		from st_product_order a, st_order_complaint b
@@ -59,11 +59,29 @@
 		<if test=" orderComplaint.statusCd != null">  
             and b.status_cd= #{orderComplaint.statusCd}
 		</if>
-		<if test="orderComplaint.userId != null">  
+		<if test=" orderComplaint.userId != null">  
             and b.user_id= #{orderComplaint.userId}
 		</if>
 		<if test=" orderComplaint.complaintType != null">  
             and b.complaint_type= #{orderComplaint.complaintType}
+		</if>
+		<if test="filter.complainId !=null and filter.complainId != ''">
+			and b.id = #{filter.complainId}
+		</if>
+		<if test="filter.statusCd !=null and filter.statusCd != ''">
+			and b.status_cd= #{filter.statusCd}
+		</if>
+		<if test="filter.handlerResult !=null and filter.handlerResult != ''">
+			and b.handle_result= #{filter.handlerResult}
+		</if>
+		<if test="filter.complainTypeId !=null and filter.complainTypeId != ''">
+			and b.complaint_type = #{filter.complainTypeId}
+		</if>
+		<if test="filter.startDate !=null and filter.startDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="filter.endDate !=null and filter.endDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
 		</if>
 	</select>
 
@@ -104,6 +122,24 @@
 		</if>
 		<if test=" orderComplaint.complaintType != null">  
             and b.complaint_type= #{orderComplaint.complaintType}
+		</if>
+		<if test="filter.complainId !=null and filter.complainId != ''">
+			and b.id = #{filter.complainId}
+		</if>
+		<if test="filter.statusCd !=null and filter.statusCd != ''">
+			and b.status_cd= #{filter.statusCd}
+		</if>
+		<if test="filter.handlerResult !=null and filter.handlerResult != ''">
+			and b.handle_result= #{filter.handlerResult}
+		</if>
+		<if test="filter.complainTypeId !=null and filter.complainTypeId != ''">
+			and b.complaint_type = #{filter.complainTypeId}
+		</if>
+		<if test="filter.startDate !=null and filter.startDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="filter.endDate !=null and filter.endDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
 		</if>
 			order by complaint_date desc
 		<if test="filter.first != null and filter.last != null">

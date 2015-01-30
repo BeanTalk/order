@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
-import com.saituo.order.commons.enumeration.entity.CompaintProcessType;
 import com.saituo.order.commons.enumeration.entity.CompaintType;
 import com.saituo.order.commons.enumeration.entity.ComplainStatus;
+import com.saituo.order.commons.enumeration.entity.HandlerResult;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.order.Product;
@@ -98,9 +98,10 @@ public class SupportController {
 		Page<OrderComplaint> page = new Page<OrderComplaint>(pageRequest, orderComplainList, orderComplainCount);
 
 		model.addAttribute("complainType", VariableUtils.getVariables(CompaintType.class));
-		model.addAttribute("complainProcessType", VariableUtils.getVariables(CompaintProcessType.class));
+		model.addAttribute("handlerResults", VariableUtils.getVariables(HandlerResult.class));
 		model.addAttribute("complainStatus", VariableUtils.getVariables(ComplainStatus.class));
 		model.addAttribute("page", page);
+		model.addAllAttributes(filter);
 	}
 
 }

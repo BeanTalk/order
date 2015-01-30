@@ -20,7 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
-import com.saituo.order.commons.enumeration.entity.CompaintProcessType;
+import com.saituo.order.commons.enumeration.entity.HandlerResult;
 import com.saituo.order.commons.enumeration.entity.CompaintType;
 import com.saituo.order.commons.enumeration.entity.ComplainStatus;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
@@ -497,11 +497,9 @@ public class CustomerController {
 			Model model) {
 
 		filter.putAll(pageRequest.getMap());
+		filter.put("userId",
+				VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"), String.class));
 
-		if (!SessionVariable.getCurrentSessionVariable().getIsInternalUser()) {
-			filter.put("userId", VariableUtils.typeCast(
-					SessionVariable.getCurrentSessionVariable().getUser().get("id"), String.class));
-		}
 		List<OrderComplaint> orderComplainList = orderComplainService.getOrderComplaintList(filter);
 		for (OrderComplaint orderComplaint : orderComplainList) {
 			Product product = productService.getProductByProductId(VariableUtils.typeCast(
@@ -514,9 +512,10 @@ public class CustomerController {
 
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("complainType", VariableUtils.getVariables(CompaintType.class));
-		model.addAttribute("complainProcessType", VariableUtils.getVariables(CompaintProcessType.class));
+		model.addAttribute("handlerResults", VariableUtils.getVariables(HandlerResult.class));
 		model.addAttribute("complainStatus", VariableUtils.getVariables(ComplainStatus.class));
 		model.addAttribute("page", page);
+		model.addAllAttributes(filter);
 	}
 
 	/**

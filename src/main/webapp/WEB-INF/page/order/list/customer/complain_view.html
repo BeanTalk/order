@@ -3,6 +3,11 @@
 <#macro head>
 <script type="text/javascript">
 
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewURL}");
+		$("#head_query_form").submit();
+	});
+	
 </script>
 </#macro>
 
@@ -48,8 +53,8 @@
 			            <td width="60" nowrap="nowrap" align='left'>处理结果</td>
 			            	<td width='80'><select name="handlerResult" id="handlerResult" style='width:90px'>
 		                        <option value="">请选择...</option>
-		                        <#list complainProcessType?keys as key>
-					            	<option value="${key}" <#if key == complainProcessTypeId!"">selected</#if>>${complainProcessType[key]!""}</option>
+		                        <#list handlerResults?keys as key>
+					            	<option value="${key}" <#if key == handlerResult!"">selected</#if>>${handlerResults[key]!""}</option>
 								</#list>
 		                    </select>
 			            </td>
@@ -89,7 +94,7 @@
 								            <th align="left">投诉单号:${r.id!""}</th>
 								            <th align="left">投诉类型:${complainType[r.complaintType]}</th>
 								            <th align="left">投诉状态:${complainStatus[r.statusCd]}</th>
-								            <th align="left">处理结果:<#if r.handleResult??>${complainProcessType[r.handleResult]}</#if></th>
+								            <th align="left">处理结果:<#if r.handleResult??>${handlerResults[r.handleResult]}</#if></th>
 							            </table>
 							        </td>
 								</tr>
@@ -103,7 +108,7 @@
 									<td width="100" align="center">${r.product.catalogFee!""}</td>
 						            <td width="100" align="center">${r.orderFee!0}</td>
 									<td width="80" align="center">${r.orderNum!1}</td>
-									<td width="80" align="left"> ${r.complaintDate!""}</td>
+									<td width="80" align="center"> ${r.complaintDate!""}</td>
 									<td width="140" align="center">${r.complaintNote!""}</td>
 									<td width="140" align="center">${r.handleNote!""}</td>
 			                    </tr>
@@ -112,7 +117,8 @@
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-				<@pager page "${viewURL}" />
+				<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "complainId" : "${complainId!}", "complainTypeId" :"${complainTypeId!}", "statusCd": "${statusCd!}", "complainProcessTypeId" : "${complainProcessTypeId!}"}>
+				<@pager page "${viewURL}" parameterMap />
 			</form>
 	 	</div>
 	</div>

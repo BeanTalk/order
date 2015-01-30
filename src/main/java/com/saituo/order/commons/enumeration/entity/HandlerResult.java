@@ -2,11 +2,11 @@ package com.saituo.order.commons.enumeration.entity;
 
 import com.saituo.order.commons.enumeration.ValueEnum;
 
-public enum CompaintProcessType implements ValueEnum<Integer> {
+public enum HandlerResult implements ValueEnum<Integer> {
 
 	SETTLE(1, "协商解决"), EXCHANGE(2, "换货"), RETURN(3, "退货"), CANCEL(4, "投诉取消");
 
-	CompaintProcessType(Integer value, String name) {
+	HandlerResult(Integer value, String name) {
 		this.name = name;
 		this.value = value;
 	}
