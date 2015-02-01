@@ -876,9 +876,9 @@ public class UserOrderService {
 			ProductOrder productOrder = null;
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
-			// 客户编码
-			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-					String.class);
+			// 财务编码
+			String userId ="200200"; /*VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+					String.class);*/
 			String prodcutString[];
 			Double consumptionPoints = 0d;// 消费积分
 			Double collectionPoints = 0d;// 回款积分
@@ -909,8 +909,8 @@ public class UserOrderService {
 				productOrderHisDao.insert(productOrderHis);
 
 				// 豆豆 客户豆豆=实收金额*1 取整
-				userBeans.setBeansNum(VariableUtils.typeCast(
-						Math.floor(VariableUtils.typeCast(prodcutString[1], Long.class)), Long.class));// 豆豆数量
+				 userBeans=new UserBeans();
+				userBeans.setBeansNum(VariableUtils.typeCast(Math.floor(VariableUtils.typeCast(prodcutString[1], float.class)), Long.class));// 豆豆数量
 				userBeans.setUserId(prodcutString[2]);// 客户
 				userBeansDao.updateAdd(userBeans);
 
@@ -918,9 +918,9 @@ public class UserOrderService {
 				userPeasHis = new UserPeasHis();
 				userPeasHis.setAcceptPerson(userId);
 				userPeasHis.setPeasBalance(VariableUtils.typeCast(
-						Math.floor(VariableUtils.typeCast(prodcutString[1], Long.class)), Long.class)); // 本次累计豆豆数
+						Math.floor(VariableUtils.typeCast(prodcutString[1], float.class)), Long.class)); // 本次累计豆豆数
 				userPeasHis.setPeasType("1");// 操作类型:1.累积积分2.使用积分
-				userPeasHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));// 累积豆豆时是客户订购产品的订单编号；使用豆豆时是客户积分兑换时使用的订单编号
+				userPeasHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));// 累积豆豆时是客户订购产品的订单编号；
 				userPeasHis.setUserId(prodcutString[2]);// 客户编码
 				userPeasHisDao.insert(userPeasHis);
 
@@ -931,7 +931,7 @@ public class UserOrderService {
 				 * ，回款积分=实收金额*2，》=30《=90的，回款积分=实收金额*1.
 				 */
 				// 消费积分 消费积分=实收金额*1
-				consumptionPoints = Math.floor(VariableUtils.typeCast(prodcutString[1], Long.class));// 根据实收价算消费积分
+				consumptionPoints = Math.floor(VariableUtils.typeCast(prodcutString[1], float.class));// 根据实收价算消费积分
 				// 回款积分
 				userGroupPointAccount = new UserGroupPointAccount();
 				userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(prodcutString[3], String.class));// 客户组编号
@@ -942,33 +942,46 @@ public class UserOrderService {
 				if (null != userGroupPointAccount && null != userGroupPointAccount.getAccountFee()
 						&& userGroupPointAccount.getAccountFee() > 0) {
 					// 判断客户组账户钱是否大于实收价，如果大于实收价则认为是预付费客户。
-					if (userGroupPointAccount.getAccountFee() > VariableUtils.typeCast(prodcutString[0], Long.class)) {
+					if (userGroupPointAccount.getAccountFee() > VariableUtils.typeCast(prodcutString[0], Double.class)) {
 						ifPre = true;
 					}
 				}
+				collectionPoints=0d;// 回款积分
 				// 是预付费客户
 				if (ifPre) {
 					// 判断如果是预付款客户，回款积分=实收金额*4
-					collectionPoints = Math.floor(VariableUtils.typeCast(prodcutString[1], Long.class)) * 4;
+					collectionPoints = Math.floor(VariableUtils.typeCast(prodcutString[1], float.class)) * 4;
 				} else {
-					deliveryDate = VariableUtils.typeCast(prodcutString[1], String.class);
+					deliveryDate = VariableUtils.typeCast(prodcutString[4], String.class);
 					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					try {
 						custDate = sdf.parse(deliveryDate);
 					} catch (ParseException e) {
 						e.printStackTrace();
-					}
+					} 
 					// 计算当前时间和客户收货时间差
 					dayFlag = DateBetweenUtils.getDays(custDate, date);
+				//回款积分=实收金额*2，》=30《=90的，回款积分=实收金额*1.
 					if(dayFlag<=30){
-						
+						collectionPoints = Math.floor(VariableUtils.typeCast(prodcutString[1], float.class)) * 2;
 					}else if(30< dayFlag &&dayFlag<=90){
-						
-					}else{
-						
+						collectionPoints = Math.floor(VariableUtils.typeCast(prodcutString[1], float.class)) ;
 					}
 				}
-
+				
+				//最终积分时消费积分+回款积分
+				userGroupPointAccount.setPointBalance(VariableUtils.typeCast(collectionPoints+consumptionPoints, Long.class));
+				userGroupPointAccount.setAccountFee(null);
+				userGroupPointAccountDao.updateAdd(userGroupPointAccount);
+				
+				// 记录积分历史表
+				UserGroupPointHis userGroupPointHis = new UserGroupPointHis();
+				userGroupPointHis.setAcceptPerson(userId);// 创建者
+				userGroupPointHis.setGroupId(VariableUtils.typeCast(prodcutString[3], String.class));// 客户组编号
+				userGroupPointHis.setPointBalance(VariableUtils.typeCast(collectionPoints+consumptionPoints, Long.class)); // 本次使用或累计豆豆数
+				userGroupPointHis.setPointType("2"); // 操作类型:1.使用积分 2.累积积分
+				userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
+				userGroupPointHisDao.insert(userGroupPointHis);
 			}
 		}
 

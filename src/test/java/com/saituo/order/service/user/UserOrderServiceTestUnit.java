@@ -132,12 +132,20 @@ public class UserOrderServiceTestUnit extends ServiceTestCaseSupport {
 		filter.put("productOrderList", productOrderList);
 		userOrderService.doProductOrderShipment(filter);
 	}
-	@Test
+	//@Test
 	public void doProductOrderReceipt() {
 		Map<String, Object> filter = new HashMap<String, Object>();
 		List<String> productOrderList = new ArrayList<String>();
 		productOrderList.add("5");
 		filter.put("productOrderList", productOrderList);
 		userOrderService.doProductOrderReceipt(filter);
+	}
+	@Test
+	public void doProductOrderReceivables() {
+		Map<String, Object> filter = new HashMap<String, Object>();
+		List<String> productOrderList = new ArrayList<String>();
+		productOrderList.add("5~300.05~10010~11~2015-01-28 20:27:16");
+		filter.put("productOrderList", productOrderList);
+		userOrderService.doProductOrderReceivables(filter);
 	}
 }
