@@ -79,7 +79,9 @@
 			invoice_status as invoiceStatus,
 			accept_date as acceptDate,
 			change_date as changeDate,
-			delivery_date as deliveryDate
+			delivery_date as deliveryDate,
+			price_paid_fee as pricePaidFee,  
+			point_balance_fee as pointBalanceFee
 		from st_product_order
 		where
 		register_number = #{registerNumber}  
@@ -99,7 +101,9 @@
 			invoice_status as invoiceStatus,
 			accept_date as acceptDate,
 			change_date as changeDate,
-			delivery_date as deliveryDate
+			delivery_date as deliveryDate,
+			price_paid_fee as pricePaidFee,  
+			point_balance_fee as pointBalanceFee
 		from st_product_order
 		where
 		user_order_id = #{userOrderId}
