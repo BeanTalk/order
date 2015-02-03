@@ -46,16 +46,14 @@ public class RedisCacheService {
 	 * 购物车对应的一系列Cache
 	 *********************************************************************************************************************/
 
-	private static final String ADD_BAG_FOR_BUY_CARD_CACHE_KEY = "addedbag";
-
 	/**
 	 * 加入购物车功能对应的Cache，格式为 KEY+userId : LIST(productId:num)
 	 * 
 	 * @param loginName
 	 * @param productId
 	 */
-	public void putProductIntoBagAboutBuyCard(String userId, String productId, String num) {
-		redisTemplate.boundHashOps(ADD_BAG_FOR_BUY_CARD_CACHE_KEY + userId).put(productId, num);
+	public void putProductIntoBagAboutBuyCard(String cacheType, String userId, String productId, String num) {
+		redisTemplate.boundHashOps(cacheType + userId).put(productId, num);
 	}
 
 	/**
@@ -64,8 +62,8 @@ public class RedisCacheService {
 	 * @param userId
 	 * @return
 	 */
-	public Long countProductInBagAboutBuyCard(String userId) {
-		return redisTemplate.boundHashOps(ADD_BAG_FOR_BUY_CARD_CACHE_KEY + userId).size();
+	public Long countProductInBagAboutBuyCard(String cacheType, String userId) {
+		return redisTemplate.boundHashOps(cacheType + userId).size();
 	}
 
 	/**
@@ -74,8 +72,8 @@ public class RedisCacheService {
 	 * @param userId
 	 * @return
 	 */
-	public Map<Object, Object> getProductIdAndBuyNumMapFromCache(String userId) {
-		Map<Object, Object> mapData = redisTemplate.boundHashOps(ADD_BAG_FOR_BUY_CARD_CACHE_KEY + userId).entries();
+	public Map<Object, Object> getProductIdAndBuyNumMapFromCache(String cacheType, String userId) {
+		Map<Object, Object> mapData = redisTemplate.boundHashOps(cacheType + userId).entries();
 		return mapData;
 	}
 
@@ -86,8 +84,8 @@ public class RedisCacheService {
 	 * @param productId
 	 * @return
 	 */
-	public boolean isAddedIntoBuyCard(String userId, String productId) {
-		return redisTemplate.boundHashOps(ADD_BAG_FOR_BUY_CARD_CACHE_KEY + userId).hasKey(productId);
+	public boolean isAddedIntoBuyCard(String cacheType, String userId, String productId) {
+		return redisTemplate.boundHashOps(cacheType + userId).hasKey(productId);
 	}
 
 	/**
@@ -96,7 +94,7 @@ public class RedisCacheService {
 	 * @param userId
 	 * @param productId
 	 */
-	public void removeProductListFromBuyCard(String userId, String... productIds) {
-		redisTemplate.boundHashOps(ADD_BAG_FOR_BUY_CARD_CACHE_KEY + userId).delete(productIds);
+	public void removeProductListFromBuyCard(String cacheType, String userId, String... productIds) {
+		redisTemplate.boundHashOps(cacheType + userId).delete(productIds);
 	}
 }

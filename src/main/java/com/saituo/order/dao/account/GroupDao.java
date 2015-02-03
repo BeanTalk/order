@@ -18,7 +18,7 @@ public interface GroupDao {
 	 * 
 	 * @return 组实体 Map
 	 */
-	public List<Map<String, Object>> get(@Param("areaId") String areaId);
+	public List<Map<String, Object>> get(@Param("areaId") Integer areaId);
 
 	/**
 	 * 获取用户所在的组
@@ -28,6 +28,6 @@ public interface GroupDao {
 	 * 
 	 * @return 组实体 Map 集合
 	 */
-	public Map<String, Object> getUserGroup(@Param("userId") String userId);
+	public Map<String, Object> getUserGroup(@Param("userId") Integer userId);
 
 }

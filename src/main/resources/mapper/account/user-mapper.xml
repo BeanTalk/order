@@ -21,6 +21,14 @@
           WHERE
             id = #{id}
 	</select>
+	
+	<select id="getAllofUser" resultType="hashmap">
+          SELECT
+            id AS "id",
+            name AS "name"
+          FROM
+            sys_user
+	</select>
 
 	<select id="getByUsernameOrEmail" resultType="hashmap">
           SELECT
@@ -28,7 +36,11 @@
             email AS "email",
             name AS "name",
             password AS "password",
-            login_name AS "login_name"
+            login_name AS "login_name",
+            user_catagory AS "userCatagory",
+            company_id AS "companyId",
+  			office_id AS "officeId",
+  			mobile AS "mobile"
           FROM
             sys_user
           WHERE

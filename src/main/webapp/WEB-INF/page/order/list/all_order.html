@@ -2,95 +2,210 @@
 
 <#macro head>
 <script type="text/javascript">
-    $(document).ready(function() {
-		//按条件进行查询
-		$("#query_all_order_btn").click(function(){
-			alert("test");
-		});
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewURL}");
+		$("#head_query_form").submit();
+	});
+	
+	$(".complain_btn").click(function(){
+		$('#userOrderAndProductOrderId').attr('value', this.id);
+		$.blockUI({ message: $('#complain_div') });
+	});
+	
+	/** 投诉提交 **/
+	$('#complain_submit').click(function() {
+        $("#complain_info_form").attr("action", "${complianURL}");
+		$("#complain_info_form").submit();
     });
+    
+	$('#complain_cancel').click($.unblockUI);
+	
+	/* 退货 */
+	$('.return_btn').click(function(){
+		alert(this.id);
+	});
+	
 </script>
 </#macro>
 
 <#macro body>
+
+<#assign viewURL = "${base}/order/list/all_order">
+<#assign complianURL = "${base}/order/list/customer/complain">
 <div class="grid2 m_t">
-<div class="panel">
-	<div class="panel_header">
-		<h3>所有订单</h3>
-	</div>
-	<div class="panel_body clearfix">
-		<table width="100%">
-			<tbody>
-				<tr>
-		            <td width="60" nowrap="nowrap">开始时间</td>
-		            <td width="70" nowrap="nowrap"><input name="startTime" type="text" class="datepicker" size="12" /></td>
-		            <td width="60" nowrap="nowrap">结束时间</td>
-		            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
-		            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
-					<td width="398" nowrap="nowrap"></td>
-				</tr>
-			</tbody>
-		</table>
-		<br>
-        <table width="100%" class="table_pro_header">
-			<tbody>
-				<tr>
-		            <th width="238" align="left">产品</th>
-		            <th width="80" align="left">规格</th>
-		            <th width="60" align="left">单位</th>
-		            <th width="100" align="left">目录价</th>
-		            <th width="100" align="left">订购价</th>
-		            <th width="80" align="left">数量</th>
-		            <th width="80" align="left">订单状态</th>
-				</tr>
-			</tbody>
-		</table>
-        <table width="100%" class="table_pro_body_t">
-			<tbody>
-				<#if page.content?size == 0>
-                    <tr>
-                        <td colspan="6">没有记录</td>
-                    </tr>
-                <#else>
-                    <#list page.content as r>
-	                    <tr>
-	                    	<th width="30"></th>
-				            <th align="left" colspan="1">订单号:${r.userOrderReturn.userOrderId}</th>
-				            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName}</th>
-				            <th align="left" colspan="2">下单时间:${r.userOrderReturn.acceptDate}</th>
-				            <th align="left" colspan="2">当前状态:${states[r.userOrderReturn.statusCd]}</th>
+	<div class="panel">
+		<div class="panel_header">
+			<h3>所有订单</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<form id="head_query_form">
+				<table width="100%" height='40px'>
+					<tr>
+						<td width="60" nowrap="nowrap" >开始时间</td>
+			            <td width="80" nowrap="nowrap" align='left'><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
+			            <td width="60" nowrap="nowrap" >结束时间</td>
+			            <td width="80" nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
+			            <td width="60" nowrap="nowrap" >订单号:</td>
+			            <td width="70" align='left'><input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!""}">
+			            </td>
+			            <td>&nbsp;</td>
+			        </tr>
+				 </table>
+				 <table width="100%">
+			        <tr>
+				        <td width="60" nowrap="nowrap" align='left'>订单状态</td>
+			            	<td width='80'><select name="statusCd" id="statusCd" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list states?keys as key>  
+					            	<option value="${key}" <#if key == statusCd!"">selected</#if>>${states[key]!""}</option>
+								</#list> 
+		                    </select>
+			            </td>
+			            <#if role=="teacher">
+				            <td width="60" nowrap="nowrap" >订购人</td>
+				            <td width='80' >
+				            	<select name="userId" id="userId" style='width:90px'>
+				            		<#if userInfoMap?size == 0>
+			                        	<option value="">请选择...</option>
+			                        <#else>
+			                        	<#list userInfoMap?keys as key>  
+			                        		<option value="${key}" <#if key == userId!"">selected</#if>> ${userInfoMap[key]!""}</option>
+			                        	</#list>
+			                        </#if>
+			                    </select>
+				            </td>
+				        </#if>
+			            <#if role=="internal">
+				            <td width="60" nowrap="nowrap" >课题组</td>
+				            	<td align='left' width='140' align='left'><select name="groupId" id="groupId" style='width:180px'>
+			                        <option value="">请选择...</option>
+			                        <#list offices?keys as key>  
+						            	<option value="${key}" <#if key == groupId!"">selected</#if>>${offices[key]!""}</option>
+									</#list> 
+			                    </select>
+				            </td>
+				            <td width="60" nowrap="nowrap">订购人</td>
+				            	<td align='left' width="80"><select name="userId" id="userId" style='width:100px'>
+				            		<option value="">请选择...</option>
+			                    </select>
+				            </td>
+				           
+			          
+				        </#if>
+				        <td nowrap="nowrap">
+			            	<div id="query_btn" class="button white medium">检索</div>
+			            </td>
+				   </tr>
+				  
+				</table>
+			</form>
+			<br>
+			<form id="list-form" action="" method="post">
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+				            <th width="238" align="left">产品</th>
+				            <th width="80" align="left">规格</th>
+				            <th width="60" align="left">单位</th>
+				            <th width="100" align="left">目录价</th>
+				            <th width="100" align="left">订购价</th>
+				            <th width="80" align="left">数量</th>
+				            <th width="80" align="left">订单状态</th>
+				            <th width="80" align="left">操作</th>
 						</tr>
-						<#list r.productOrderReturn as productOrderInfo>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
 		                    <tr>
-								<td width="30">
-								</td>
-		                        <td width="248" align="left">
-									<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
-									<p><b>货号：</b>${productOrderInfo.product.productNum}</p>
-									<p><b>品牌：</b>${productOrderInfo.product.brandId}</p>
-								</td>
-		                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
-		                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
-		                        <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
-					            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-								<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
-								<td width="80" align="center">${productStates[productOrderInfo.statusCd]}</td>
+		                        <td colspan="8">没有记录</td>
 		                    </tr>
-	                    </#list>
-	                    <#if r.addressReturn??>
-	                    	<@address_plugin r.addressReturn />
-	                    <#else>
-	                    	<tr>
-								<td colspan="8" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
-							</tr>
-	                    </#if>
-                    </#list>
-                </#if>
+		                <#else>
+		                    <#list page.content as r>
+		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
+				                    <td colspan="9">
+							            <table width="100%">
+							            	<th width="30"></th>
+								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
+								            <th align="left">订货人:${r.userOrderReturn.userName!""}</th>
+								            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
+								            <th align="left">状态:${states[r.userOrderReturn.statusCd]!""}</th>
+							            </table>
+							        </td>
+								</tr>
+								<#list r.productOrderReturn as productOrderInfo>
+				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
+										<td width="30">
+										</td>
+				                        <td width="248" align="left">
+											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
+											<p><b>货号：</b>${productOrderInfo.product.productNum!""}</p>
+											<p><b>品牌：</b>${productOrderInfo.product.brandName!""}</p>
+										</td>
+				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
+				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
+				                        <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
+							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
+										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+										<td width="80" align="center">${productStates[productOrderInfo.statusCd]!""}</td>
+										<td width="80" align="center">
+											<#if !Session["session_variable"].isInternalUser && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3")>
+												<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl D-operation complain_btn">投诉</div>
+											</#if>
+											<#if Session["session_variable"].isInternalUser && (r.userOrderReturn.statusCd == "7" && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3")) && (Session["session_variable"].roleList?seq_contains("9"))>
+												<div id="${productOrderInfo.registerNumber}" class="button orange medium fl D-operation return_btn">退货</div>
+											</#if>
+										</td>
+				                    </tr>
+			                    </#list>
+			                    <#if r.addressReturn??>
+			                    	<@address_plugin r.addressReturn />
+			                    <#else>
+			                    	<@address_undefine />
+			                    </#if>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<p class="pageBar"></p>
+		    	<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "userOrderId" : "${userOrderId!}", "statusCd" :"${statusCd!}", "userId": "${userId!}", "groupId" : "${groupId!}"}>
+				<@pager page "${viewURL}" parameterMap />
+			</form>
+	 	</div>
+	</div>
+</div>
+
+<div id="complain_div" style="display:none; cursor: default; padding: 10px">
+	<form id="complain_info_form" method="post">
+		<input type="hidden" name="userOrderAndProductOrderId" id="userOrderAndProductOrderId" value="">
+		<table width="100%" class="table_none">
+			<tbody>
+	          	<tr>
+	            	<td width="100" nowrap="nowrap"><label>投诉类型:</label></td>
+	            	<td align="left">
+	            		<select name="complaintType">
+	            			<option value="1">质量问题</option>
+	            			<option value="2">剂量问题</option>
+	            			<option value="3">包装问题</option>
+	            			<option value="4">保质期问题</option>
+	            		</select>
+	              	</td>
+				</tr>
+	          	<tr>
+	            	<td nowrap="nowrap"><label>投诉描述:</label></td>
+	            	<td align="left"><textarea id="complaintNote" name="complaintNote" cols="40"></textarea></td>
+	          	</tr>
+				<tr>
+	            	<td nowrap="nowrap"></td>
+	            	<td align="left">
+	            		<div id="complain_submit" class="button orange large fl du-operation">确认</div>
+	            		<div id="complain_cancel" class="button write large fl du-operation">取消</div>
+					</td>
+				</tr>
 			</tbody>
 		</table>
-		<p class="pageBar"></p>
-    	<#assign parameterMap = { "searchContext":"${searchContext!}"}>
-		<@pager page "${base}/order/list/all_order" parameterMap />
- 	</div>
+    </form>
 </div>
-</div>
+
 </#macro>

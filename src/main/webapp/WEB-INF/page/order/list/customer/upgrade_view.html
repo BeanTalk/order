@@ -40,6 +40,26 @@
 			}
 		);
 	});
+	
+	//点击驳回查看
+	$('.rejectInfo_btn').click(function(event){
+		event.preventDefault();
+		$.blockUI({ message: $('#reject_div') });
+		
+		var productOrderId = $(event.target).attr('id');
+		$.getJSON("${rejectviewURL}", {"productOrderId" : productOrderId}, function(data) {
+			$("#turn_down_reason").empty().append(data.turnDownReason);
+			$("#turn_down_note").empty().append(data.turnDownNote);
+        });
+	});
+	
+	$('#up_cancel').click($.unblockUI);
+	
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewURL}");
+		$("#head_query_form").submit();
+	});
+	
 </script>
 </#macro>
 
@@ -49,28 +69,17 @@
 <#assign saveURL = "${base}/order/list/customer/confirm">
 <#assign viewURL = "${base}/order/list/customer/upgrade_view">
 <#assign upgradURL = "${base}/order/list/customer/upgrade">
+<#assign rejectviewURL = "${base}/order/list/customer/get_rejectinfo">
 
 <div class="grid2 m_t">
-	<form id="list-form" method="post">
-		<div class="panel">
-			<div class="panel_header">
-				<h3>修改订单</h3>
-			</div>
-			<div class="panel_body clearfix">
-				<table width="100%">
-					<tbody>
-						<tr>
-				            <td width="60" nowrap="nowrap">开始时间</td>
-				            <td width="70" nowrap="nowrap"><input name="startTime" type="text" class="datepicker" size="12" /></td>
-				            <td width="60" nowrap="nowrap">结束时间</td>
-				            <td width="70" nowrap="nowrap"><input name="endTime" type="text" class="datepicker" size="12" /></td>
-				            <td width="58" nowrap="nowrap"><div id="query_all_order_btn" class="button white medium">检索</div></td>
-							<td width="398" nowrap="nowrap"></td>
-				            <td width="100" nowrap="nowrap"><div class="button white medium">导出EXCEL</div></td>
-						</tr>
-					</tbody>
-				</table>
-				<br>
+	<div class="panel">
+		<div class="panel_header">
+			<h3>修改订单</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<@st_headquery startDate endDate userOrderId />
+			<br>
+			<form id="list-form" method="post">
 		        <table width="100%" class="table_pro_header">
 					<tbody>
 						<tr>
@@ -89,37 +98,47 @@
 					<tbody>
 						<#if page.content?size == 0>
 		                    <tr>
-		                        <td colspan="6">没有记录</td>
+		                        <td colspan="8">没有记录</td>
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
-			                    <tr>
-						            <th width="30"></th>
-						            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${userName}</th>
-						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
-						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
+		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
+			                    	<td colspan="8">
+							            <table width="100%">
+							            	<th width="30"></th>
+								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
+								            <th align="left">订货人:${userName!""}</th>
+								            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
+								            <th align="left">状态:${states[r.userOrderReturn.statusCd]!""}</th>
+							            </table>
+							        </td>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
-				                    <tr>
+				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
 										</td>
 				                        <td width="248" align="left">
-											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
-											<p><b>货号：</b>${productOrderInfo.product.productNum}</p>
-											<p><b>品牌：</b>${productOrderInfo.product.brandId}</p>
+											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
+											<p><b>货号：</b>${productOrderInfo.product.productNum!""}</p>
+											<p><b>品牌：</b>${productOrderInfo.product.brandName!""}</p>
 										</td>
-				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
-				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
-							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
+				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
+				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
+							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
 										<td width="80" align="center"><input type="text" size="2" id="order_num_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="prodOrderIdAndOrderNums" value=${productOrderInfo.orderNum!1}></td>
 										<td width="140" align="center">
 											<!--需要userOrderId修改状态-->
-							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl cancel_btn">取消</div>
-							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium fl update_btn">修改</div>
+											<#if productOrderInfo.auditCd == "2" || productOrderInfo.auditCd == "0">
+								            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl cancel_btn">取消</div>
+								            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium fl update_btn">修改</div>
+							            	<#elseif productOrderInfo.auditCd == "1">
+												<div>待审批</div>  	
+							            	<#elseif productOrderInfo.auditCd == "3">
+												<div>已审批通过</div>  	
+							            	</#if>
 							            	<#if productOrderInfo.auditCd == "2">
-												<div id="${productOrderInfo.registerNumber}" class="button orange medium fl rejectInfo_btn">驳回原因</div>
+												<div id="${productOrderInfo.registerNumber}" style="margin-top:5px;" class="button red medium fl rejectInfo_btn">驳回原因</div>
 											</#if>
 										</td>
 				                    </tr>
@@ -136,10 +155,34 @@
 					</tbody>
 				</table>
 				<p class="pageBar"></p>
-		    	<#assign parameterMap = {"searchContext":"${searchContext!}"}>
+		    	<#assign parameterMap = {"startDate": "${startDate!}", "endDate": "${endDate!}", "userOrderId":"${userOrderId!}"}>
 				<@pager page "${viewURL}" parameterMap />
-		 	</div>
-		</div>
-	</form>
+			</form>
+	 	</div>
+	</div>
+</div>
+
+<div id="reject_div" style="display:none; cursor: default; padding: 10px">
+	<form id="reject_info_sumbit" method="post">
+		<input type="hidden" name="reject_userAndProductOrderid" id="reject_userAndProductOrderid" value="">
+		<table width="100%" class="table_none">
+			<tbody>
+	          	<tr>
+	            	<td width="100" nowrap="nowrap"><label>驳回原因:</label></td>
+	            	<td align="left"><div id="turn_down_reason"></div></td>
+				</tr>
+	          	<tr>
+	            	<td width="100" nowrap="nowrap"><label>驳回描述:</label></td>
+	            	<td align="left"><div id="turn_down_note"></div></td>
+	          	</tr>
+				<tr>
+	            	<td nowrap="nowrap"></td>
+	            	<td align="left">
+	            		<div id="up_cancel" class="button orange large fl du-operation">取消</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+    </form>
 </div>
 </#macro>

@@ -8,19 +8,33 @@ import com.saituo.order.entity.user.AuditHis;
  */
 public interface AuditHisDao {
 	/**
-	 * <p>Description: 新增数据</p>
+	 * <p>
+	 * Description: 新增数据
+	 * </p>
+	 * 
 	 * @Method: insert
 	 * @param UserGroupPointAccount
-	 * @return void 
-	 * @throws 
-	*/
-	public void insert (AuditHis auditHis);
+	 * @return void
+	 * @throws
+	 */
+	public void insert(AuditHis auditHis);
 	/**
-	 * <p>Description: 查询数据:根据产品订单编码查询集合</p>
+	 * <p>
+	 * Description: 查询数据:根据产品订单编码查询集合
+	 * </p>
+	 * 
 	 * @Method: query
 	 * @param UserGroupPointAccount
-	 * @return UserGroupPointAccount 
-	 * @throws 
-	*/
-	public List<AuditHis> queryList (AuditHis auditHis);
+	 * @return UserGroupPointAccount
+	 * @throws
+	 */
+	public List<AuditHis> queryList(AuditHis auditHis);
+
+	/**
+	 * 获取最新的审批结果
+	 * 
+	 * @param productOrderId
+	 * @return
+	 */
+	public AuditHis getAuditByProductOrderId(String productOrderId);
 }

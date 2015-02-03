@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.dao.order.ProductDao;
@@ -18,6 +19,7 @@ import com.saituo.order.dao.user.ProductOrderHisDao;
 import com.saituo.order.dao.user.UserOrderDao;
 import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.Address;
+import com.saituo.order.entity.user.Audit;
 import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.ProductOrder;
 import com.saituo.order.entity.user.ProductOrderHis;
@@ -51,11 +53,11 @@ public class UserOrderService {
 		Map<String, String> returnMap = new HashMap<String, String>();
 		// 客户订单信息:
 		// 客户编码
-		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-				String.class);
+		Integer userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				Integer.class);
 		// 受理地市
-		String areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
-		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		Integer groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
 		// 地址编码
 		Long addressId = 0l;
 		if (filter.get("addressId") != null && !filter.get("addressId").equals("")) {
@@ -115,15 +117,15 @@ public class UserOrderService {
 			userOrderQuery.setUserOrderId(userOrderId);
 		}
 		// 客户组别编码
-		String groupId = null;
+		Integer groupId = null;
 		if (filter.get("groupId") != null && !filter.get("groupId").equals("")) {
-			groupId = String.valueOf(filter.get("groupId"));
+			groupId = VariableUtils.typeCast(filter.get("groupId"), Integer.class);
 			userOrderQuery.setGroupId(groupId);
 		}
 		// 客户编码
-		String userId = null;
+		Integer userId = null;
 		if (filter.get("userId") != null && !filter.get("userId").equals("")) {
-			userId = String.valueOf(filter.get("userId"));
+			userId = VariableUtils.typeCast(filter.get("userId"), Integer.class);
 			userOrderQuery.setUserId(userId);
 		}
 		// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
@@ -149,15 +151,15 @@ public class UserOrderService {
 			userOrderQuery.setUserOrderId(userOrderId);
 		}
 		// 客户组别编码
-		String groupId = null;
+		Integer groupId = null;
 		if (filter.get("groupId") != null && !filter.get("groupId").equals("")) {
-			groupId = String.valueOf(filter.get("groupId"));
+			groupId = VariableUtils.typeCast(filter.get("groupId"), Integer.class);
 			userOrderQuery.setGroupId(groupId);
 		}
 		// 客户编码
-		String userId = null;
+		Integer userId = null;
 		if (filter.get("userId") != null && !filter.get("userId").equals("")) {
-			userId = String.valueOf(filter.get("userId"));
+			userId = VariableUtils.typeCast(filter.get("userId"), Integer.class);
 			userOrderQuery.setUserId(userId);
 		}
 		// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
@@ -313,11 +315,10 @@ public class UserOrderService {
 	public void doAuditProductOrder(Map<String, Object> filter) {
 
 		// 产品订单项列表
-		List<String> productOrderList = (List<String>) filter.get("productOrderList");
+		List<Audit> auditInfoList = (List<Audit>) filter.get("auditInfoList");
 		// 前台页面传的订购的产品订单串，格式：产品订单编号~审批结果~驳回原因～处理意见
-		String prodcutString[];
 
-		if (productOrderList != null && productOrderList.size() > 0) {
+		if (auditInfoList != null && auditInfoList.size() > 0) {
 			ProductOrder productOrder = null;
 			AuditHis auditHis = null;
 
@@ -327,12 +328,11 @@ public class UserOrderService {
 			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 					String.class);
 
-			for (String productOrderString : productOrderList) {
-				prodcutString = productOrderString.split("~");
+			for (Audit auditInfo : auditInfoList) {
 				productOrder = new ProductOrder();
-				productOrder.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
+				productOrder.setRegisterNumber(VariableUtils.typeCast(auditInfo.getProductOrderId(), Long.class));
 				// 审批状态:0未处理;1.待审批;2.已驳回;3.审批通过;
-				productOrder.setAuditCd(VariableUtils.typeCast(prodcutString[1], String.class));
+				productOrder.setAuditCd(VariableUtils.typeCast(auditInfo.getAuditStatus(), String.class));
 				// 根据产品订单编码更新审批结果
 				productOrderDao.update(productOrder);
 
@@ -340,22 +340,20 @@ public class UserOrderService {
 				auditHis = new AuditHis();
 				auditHis.setAuditPerson(VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
 						.get("id"), String.class));// 审批人
-				auditHis.setAuditResult(VariableUtils.typeCast(prodcutString[1], String.class));
-				auditHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
+				auditHis.setAuditResult(VariableUtils.typeCast(auditInfo.getAuditStatus(), String.class));
+				auditHis.setRegisterNumber(VariableUtils.typeCast(auditInfo.getProductOrderId(), Long.class));
 				// 状态:1.代表当前最新审批结果。0代表旧版本审批结果
 				auditHis.setStatusCd("1");
-				if (prodcutString.length > 2) {
-					auditHis.setTurnDownReason(VariableUtils.typeCast(prodcutString[2], String.class));
-					auditHis.setTurnDownNote(VariableUtils.typeCast(prodcutString[3], String.class));
-				}
+				auditHis.setTurnDownReason(VariableUtils.typeCast(auditInfo.getTurnDownReason(), String.class));
+				auditHis.setTurnDownNote(VariableUtils.typeCast(auditInfo.getTurnDownNote(), String.class));
 				auditHisDao.insert(auditHis);
 
 				// 记录产品订单项的操作历史
-				orderResult = "审批结果为:" + VariableUtils.typeCast(prodcutString[1], String.class);
+				orderResult = "审批结果为:" + VariableUtils.typeCast(auditInfo.getAuditStatus(), String.class);
 				productOrderHis = new ProductOrderHis();
 				productOrderHis.setAcceptPerson(userId);// 当前操作人
 				productOrderHis.setOrderResult(orderResult);
-				productOrderHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
+				productOrderHis.setRegisterNumber(VariableUtils.typeCast(auditInfo.getProductOrderId(), Long.class));
 				productOrderHisDao.insert(productOrderHis);
 			}
 		}
@@ -546,8 +544,10 @@ public class UserOrderService {
 			for (ProductOrder productOrder2 : productOrderReturnList) {
 				// 审批状态:0未处理;1.待审批;2.已驳回;3.审批通过;
 				if (!productOrder2.getAuditCd().equals("1")) {
-					flag = false;
-					break;
+					if (!productOrder2.getAuditCd().equals("3")) {
+						flag = false;
+						break;
+					}
 				}
 			}
 			// 只有全部产品订单的审批状态更改为待审批时，才将客户订单的状态改为待审批
@@ -858,5 +858,18 @@ public class UserOrderService {
 			productOrder.setProduct(product);
 		}
 		return productOrderList;
+	}
+
+	public List<Product> getProductList(Long userOrderId) {
+
+		// 根据客户订单编码查询产品订单项信息列表
+		ProductOrder productOrderQuery = new ProductOrder();
+		productOrderQuery.setUserOrderId(userOrderId);
+		List<ProductOrder> productOrderList = productOrderDao.queryListByUserOrderId(productOrderQuery);
+		List<String> productIds = Lists.newArrayList();
+		for (ProductOrder productOrder : productOrderList) {
+			productIds.add(String.valueOf(productOrder.getProductId()));
+		}
+		return productDao.getProductListByProductIds(productIds);
 	}
 }

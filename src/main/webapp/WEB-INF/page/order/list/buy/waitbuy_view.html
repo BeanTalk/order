@@ -1,0 +1,151 @@
+<#include "*/basic/default.html"/>
+<#macro head>
+<script type="text/javascript">
+
+	var isCheckAll=true;
+	$("#checkboxAll").click(function(){
+		if(isCheckAll){
+			$(".table_pro_body input[type=checkbox]").attr("checked",true);
+			isCheckAll=false;	
+		}else{
+			$(".table_pro_body input[type=checkbox]").attr("checked",false);
+			isCheckAll=true;
+		}
+	});
+	
+	//批量确认
+	$('#save_btn').click(function(){
+		var length = $("#buycard-list-form").find("input[type='checkbox'][name='stockNumbers']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个备货单");
+            return;
+        }
+		
+		$("#buycard-list-form").attr("action", "${submitUrl}");
+		$('#buycard-list-form').submit();
+	});
+	
+	//单击确认
+	$(".pass").click(function(){
+		$.post("${submitUrl}", {"stockNumber" : this.id})
+		.success(
+			function(){
+				alert("确认成功!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
+	});
+	
+	//重分配
+	$(".reject").click(function(){
+		$('#reject_stock_number').attr('value', this.id);
+		$.blockUI({ message: $('#reject_div'), css: { width: '400px' } });
+	});
+	
+	/***************************弹出窗口js*********************************************/
+	$('#up_submit').click(function() {
+        $("#reject_info_sumbit").attr("action", "${rejectUrl}");
+		$("#reject_info_sumbit").submit();
+    });
+
+    $('#up_cancel').click($.unblockUI);
+</script>
+</#macro>
+
+<#macro body>
+
+<#assign viewUrl = "${base}/order/list/buy/list">
+<#assign submitUrl = "${base}/order/list/buy/save">
+<#assign rejectUrl = "${base}/order/list/buy/reject">
+
+<div class="grid2 m_t">
+	<form id="buycard-list-form" method="post">
+		<div class="panel">
+			<div class="panel_header">
+		        <h3>已分配待采购</h3>
+		     </div>
+			<div class="panel_body clearfix">
+		    	<table width="100%" class="table_pro_header">
+		      		<tbody>
+		          		<tr>
+							<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
+							<th width="60">备货号</th>
+							<th width="218">产品</th>
+							<th width="80">地市</th>
+							<th width="80">备货人</th>
+							<th width="80">备货价</th>
+							<th width="80">数量</th>
+							<th width="80">供应商</th>
+							<th width="100">操作</th>
+				        </tr>
+			    	</tbody>
+				</table>
+		    	<table width="100%" class="table_pro_body">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="8">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+								<tr>
+									<td width="30">
+										<input type="checkbox" name="stockNumbers" id="check_stocknumber_${r.stockNumber}" value="${r.stockNumber}">
+									</td>
+									<td width="60" align="center">${r.stockNumber}</td>
+									<td width="218" align="left">
+										<p><span class="pro_name">${r.product.productName!""}</span></p>
+										<p><b>货号：</b>${r.product.productNum!""}</p>
+										<p><b>品牌：</b>${r.product.brandName!""}</p>
+									</td>
+			                        <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
+			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
+						            <td width="80" align="center">${r.stockFee!""}</td>
+						            <td width="80" align="center">${r.orderNum!""}</td>
+						            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+									<td width="100" align="center">
+										<div id="${r.stockNumber}" class="button orange medium fl D-operation pass">确认</div>
+						            	<div id="${r.stockNumber}" class="button green medium fl D-operation reject">重分配</div>
+									</td>
+			                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<div class="actionBar">
+	          		<div style="width:400px;" class="fr right m_t">
+		            	<div id="save_btn" class="button orange">确认</div>
+	            	</div>
+	        	</div>
+	        	<p class="pageBar"></p>
+				<@pager page "${viewUrl}" />
+			</div>
+		</div>
+	</form>
+</div>
+
+<div id="reject_div" style="display:none; cursor: default; padding: 10px">
+	<form id="reject_info_sumbit" method="post">
+		<input type="hidden" name="reject_stock_number" id="reject_stock_number" value="">
+		<table width="100%" class="table_none">
+			<tbody>
+	          	<tr>
+	            	<td nowrap="nowrap"><label>重分配原因:</label></td>
+	            	<td align="left"><textarea id="redistribution_note" name="redistribution_note" cols="40"></textarea></td>
+	          	</tr>
+				<tr>
+	            	<td nowrap="nowrap"></td>
+	            	<td align="left">
+	            		<div id="up_submit" class="button orange large fl du-operation">确认</div>
+	            		<div id="up_cancel" class="button write large fl du-operation">取消</div>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+    </form>
+</div>
+
+</#macro>

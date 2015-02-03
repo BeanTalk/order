@@ -19,6 +19,7 @@ import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
+import com.saituo.order.commons.enumeration.entity.RoleSign;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
@@ -58,7 +59,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "bargain_view", method = RequestMethod.GET)
 	public void bargainViewOrderList(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -76,7 +77,10 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -84,12 +88,14 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
-		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
 		}
@@ -150,7 +156,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "take_view", method = RequestMethod.GET)
 	public void getTakeViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -168,7 +174,10 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -176,11 +185,13 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
-		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
@@ -219,7 +230,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "load_view", method = RequestMethod.GET)
 	public void getLoadViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -238,7 +249,10 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 
@@ -247,12 +261,14 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
-		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, "5"));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, RoleSign.SALE.getValue()));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
@@ -308,7 +324,7 @@ public class InsideOrderController {
 	@RequestMapping(value = "received_view", method = RequestMethod.GET)
 	public void getReceivedViewOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -326,7 +342,10 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -334,10 +353,12 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		model.addAttribute("userId", filter.get("userId"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		if (StringUtils.isNotEmpty(groupId)) {

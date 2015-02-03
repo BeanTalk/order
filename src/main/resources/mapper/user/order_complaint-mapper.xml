@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.OrderComplaintDao">
+
+	<insert id="insert" useGeneratedKeys="true"  keyProperty="id">
+		insert into st_order_complaint(
+			user_order_id,
+			register_number,
+			area_id,
+			user_id,
+			complaint_type,
+			complaint_note,
+			status_cd,
+			complaint_date
+		) values (
+			#{userOrderId},
+			#{registerNumber},
+			#{areaId},
+			#{userId},
+			#{complaintType},
+			#{complaintNote},
+			#{statusCd},
+			now()
+		)
+	</insert>
+	
+	<update id="update">  
+        update st_order_complaint
+		<trim prefix="set" suffixOverrides=",">  
+			<if test="statusCd != null">  
+                  status_cd = #{statusCd},  
+			</if>  
+			<if test="handlePersonId != null">  
+                   handle_person_id = #{handlePersonId},  
+			</if>
+			<if test="handleNote != null">  
+                   handle_note = #{handleNote},  
+			</if>
+			<if test="handleResult != null">  
+                   handle_result = #{handleResult},  
+			</if>
+		</trim>
+		,handle_date =now()
+        where id = #{id}  
+	</update>  
+	
+	<select id="count" resultType="int">
+		select
+			count(b.id)
+		from st_product_order a, st_order_complaint b
+		where
+		a.register_number = b.register_number
+		<if test=" orderComplaint.areaId != null">  
+            and b.area_id= #{orderComplaint.areaId}
+		</if>
+		<if test=" orderComplaint.statusCd != null">  
+            and b.status_cd= #{orderComplaint.statusCd}
+		</if>
+		<if test=" orderComplaint.userId != null">  
+            and b.user_id= #{orderComplaint.userId}
+		</if>
+		<if test=" orderComplaint.complaintType != null">  
+            and b.complaint_type= #{orderComplaint.complaintType}
+		</if>
+		<if test="filter.complainId !=null and filter.complainId != ''">
+			and b.id = #{filter.complainId}
+		</if>
+		<if test="filter.statusCd !=null and filter.statusCd != ''">
+			and b.status_cd= #{filter.statusCd}
+		</if>
+		<if test="filter.handlerResult !=null and filter.handlerResult != ''">
+			and b.handle_result= #{filter.handlerResult}
+		</if>
+		<if test="filter.complainTypeId !=null and filter.complainTypeId != ''">
+			and b.complaint_type = #{filter.complainTypeId}
+		</if>
+		<if test="filter.startDate !=null and filter.startDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="filter.endDate !=null and filter.endDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
+		</if>
+	</select>
+
+	<select id="queryList" resultType="orderComplaint">
+		select
+			a.register_number as registerNumber,
+			a.user_order_id as userOrderId,
+			a.area_id as areaId,
+			b.user_id as userId,
+			a.product_id as productId,
+			a.order_fee as orderFee,
+			a.order_num as orderNum,
+			a.audit_cd as auditCd,
+			a.status_cd as productStatusCd,
+			a.invoice_status as invoiceStatus,
+			a.accept_date as acceptDate,
+			a.change_date as changeDate,
+			b.id as id,
+			b.complaint_type as complaintType,
+			b.complaint_note as complaintNote,
+			b.status_cd as statusCd,
+			b.complaint_date as complaintDate,
+			b.handle_person_id as handlePersonId,
+			b.handle_note as handleNote,
+			b.handle_result as handleResult,
+			b.handle_date as handleDate
+		from st_product_order a, st_order_complaint b
+		where
+		a.register_number = b.register_number
+		<if test=" orderComplaint.areaId != null">  
+            and b.area_id= #{orderComplaint.areaId}
+		</if>
+		<if test=" orderComplaint.statusCd != null">  
+            and b.status_cd= #{orderComplaint.statusCd}
+		</if>
+		<if test=" orderComplaint.userId != null">  
+            and b.user_id= #{orderComplaint.userId}
+		</if>
+		<if test=" orderComplaint.complaintType != null">  
+            and b.complaint_type= #{orderComplaint.complaintType}
+		</if>
+		<if test="filter.complainId !=null and filter.complainId != ''">
+			and b.id = #{filter.complainId}
+		</if>
+		<if test="filter.statusCd !=null and filter.statusCd != ''">
+			and b.status_cd= #{filter.statusCd}
+		</if>
+		<if test="filter.handlerResult !=null and filter.handlerResult != ''">
+			and b.handle_result= #{filter.handlerResult}
+		</if>
+		<if test="filter.complainTypeId !=null and filter.complainTypeId != ''">
+			and b.complaint_type = #{filter.complainTypeId}
+		</if>
+		<if test="filter.startDate !=null and filter.startDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="filter.endDate !=null and filter.endDate != ''">
+			<![CDATA[ and DATE_FORMAT(b.complaint_date, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
+		</if>
+			order by complaint_date desc
+		<if test="filter.first != null and filter.last != null">
+			LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+	
+</mapper>

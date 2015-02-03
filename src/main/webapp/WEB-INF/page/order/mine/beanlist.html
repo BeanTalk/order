@@ -1,0 +1,126 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+
+<script type="text/javascript">
+
+	$("#usual1 ul").idTabs(); 
+	
+	//点击兑换
+	$('#exchangeDD').click(function(){
+		$.getJSON("${giftViewURL}", function(data) {
+			$("#giftTableList").empty();
+			var html = "<tbody>";
+			$.each(data.content, function(key) {
+				var peasBalance = data.content[key].needPea;
+				var giftId = data.content[key].id;
+				var exchangeId = peasBalance +"&" +giftId;
+				html += "<tr>"
+						   +"<td width='100' align='center'>"+data.content[key].giftName+"</td>"
+						   +"<td width='200' align='center'>"+data.content[key].remarks+"</td>"
+						   +"<td width='50' align='center'>"+data.content[key].needPea+"</td>"
+						   +"<td width='120' align='center'><div id= "+ exchangeId + " class='button green exchangeBtn'>兑换</div></td>"
+					 +"</tr>";
+			});
+			html += "</tbody>";
+			$("#giftTableList").append(html);
+        });
+	});
+	
+	$('.exchangeBtn').live('click', function() {
+		
+		var haveBeans = $('#havebeanNum').text();
+		var needBeans = this.id.split("&")[0];
+		var giftId = this.id.split("&")[1];
+		var giftNum = 1;
+			
+		if(haveBeans < parseInt(needBeans) ){
+			alert("您的豆豆数量不足!");
+			return;			
+		}
+		
+		if($(".exchangeBtn").confirm()){
+			$.post("${giftExchangeURL}", {"peasBalance" : needBeans, "giftId": giftId, "beansNum" : haveBeans, "giftNum": giftNum})
+			.success(
+				function(){
+					alert("兑换成功!");
+				}
+			).done(
+				function(){
+					window.location.reload();
+				}
+			);
+		}
+	});
+	
+</script>
+</#macro>
+
+<#macro body>
+<#assign viewURL = "${base}/order/mine/beanlist">
+<#assign giftViewURL = "${base}/order/mine/giftList">
+<#assign giftExchangeURL = "${base}/order/mine/exchange/gift">
+
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+			<h3>我的豆豆</h3>
+		</div>
+		<div class="panel_body">
+			<p class="left">您当前的豆豆为: <span id="havebeanNum">${beanNums!0}</span></p>
+				<div class="usual" id="usual1">
+	          		<ul>
+	            		<li><a href="#tab1" class="selected">豆豆明细</a></li>
+	            		<li><a href="#tab2" class="" id="exchangeDD">兑换豆豆</a></li>
+	          		</ul>
+          			<div class="tab_content" id="tab1" style="display: block;">
+			            <table width="100%" class="table_s_header">
+			            	<tbody>
+			              		<tr>
+			                		<th width="20%" align="center">日期</th>
+			                		<th width="10%" align="center">豆豆</th>
+			                		<th width="20%" align="center">操作类型</th>
+			              		</tr>
+							</tbody>
+						</table>
+            			<table width="100%" class="table_s_body">
+              				<tbody>
+              					<#if page.content?size == 0>
+				                    <tr>
+				                        <td colspan="4">没有记录</td>
+				                    </tr>
+				                <#else>
+				                    <#list page.content as r>
+					                    <tr>
+					                        <td width="20%" align="center">${r.acceptDate!""}</td>
+					                        <td width="10%" align="center">${r.peasBalance!0}</td>
+					                		<td width="20%" align="center"><#if r.peasType == "1">累积豆豆<#elseif r.peasType == "2">使用豆豆<#elseif r.peasType == "3">回退豆豆</#if></td>
+					                    </tr>
+			                    	</#list>
+				                </#if>
+            				</tbody>
+            			</table>
+            			<p class="pageBar"></p>
+            			<@pager page "${viewURL}" />
+          			</div>
+					<div class="tab_content" id="tab2" style="display: none;">
+						<table width="100%" class="table_s_header">
+							<tbody>
+								<tr>
+					                <th width="100" align="center">兑换商品</th>
+					                <th width="200" align="center">描述</th>
+					                <th width="50"  align="center">需要豆豆</th>
+					                <th width="120" align="center">操作</th>
+								</tr>
+							</tbody>
+						</table>
+						<table width="100%" id="giftTableList" class="table_s_body">
+						</table>
+						<p class="pageBar"></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</#macro>

@@ -7,9 +7,13 @@ import java.util.Map.Entry;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
+import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.utils.StringUtils;
 import com.saituo.order.dao.account.AreaDao;
 import com.saituo.order.dao.account.GroupDao;
 import com.saituo.order.dao.account.UserDao;
+import com.saituo.order.dao.order.SupplyDao;
+import com.saituo.order.entity.order.Supply;
 import com.saituo.order.service.ehcache.OrderCacheService;
 
 /**
@@ -30,66 +34,61 @@ public class SystemVariableService {
 	private UserDao userDao;
 
 	@Autowired
+	private SupplyDao supplyDao;
+
+	@Autowired
 	private OrderCacheService orderCacheService;
 
-	private static final String AREA_ID_NAME_CACHE = "areaIdAndNameCache";
-	private static final String AREA_TO_GROUP_ID_NAME_CACHE = "areaToGroupIdAndNameCache";
+	private static final String UNDEFINE = "未知姓名";
+
 	private static final String AREA_TO_OFFICE_ID_NAME_CACHE = "officeToUserIdAndNameCache";
 	private static final String AREA_TO_USER_ID_NAME_CACHE = "areaToUserIdAndNameCache";
 
 	public void init() {
-		initAreaIdAndNameData();
-		initGroupByAreaIdData();
 		initUserByOfficeIdData();
 		initUserByAreaIdData();
 	}
 
-	/**
-	 * AreaId and AreaName
-	 * 
-	 * @param id
-	 * @return
-	 */
-	private void initAreaIdAndNameData() {
-		List<Map<String, Object>> areaList = areaDao.getAllArea();
-		for (Map<String, Object> mapData : areaList) {
-			orderCacheService.put(AREA_ID_NAME_CACHE, (String) mapData.get("id"), (String) mapData.get("name"));
+	public Map<String, String> getAreaIdAndName() {
+		Map<String, String> mapData = Maps.newHashMap();
+		List<Map<String, String>> list = areaDao.getAreaIdAndName();
+		for (Map<String, String> mapDataTemp : list) {
+			mapData.put(String.valueOf(mapDataTemp.get("id")), mapDataTemp.get("name"));
 		}
+		return mapData;
+	}
+
+	public Map<String, String> getSupplyIdAndName() {
+		Map<String, String> mapData = Maps.newHashMap();
+		Map<String, Object> filter = Maps.newHashMap();
+		List<Supply> supplyList = supplyDao.getSupplyListByIdAndDelFlag(filter);
+		for (Supply supply : supplyList) {
+			mapData.put(supply.getSupplierId(), supply.getSupplierName());
+		}
+		return mapData;
+	}
+
+	public Map<String, String> getUserIdAndName() {
+		Map<String, String> mapData = Maps.newHashMap();
+		List<Map<String, String>> list = userDao.getAllofUser();
+		for (Map<String, String> mapDataTemp : list) {
+			mapData.put(String.valueOf(mapDataTemp.get("id")), mapDataTemp.get("name"));
+		}
+		return mapData;
 	}
 
 	public String getAreaIdAndNameData(String areaId) {
-		return (String) orderCacheService.get(AREA_ID_NAME_CACHE, areaId);
+		return (String) areaDao.getAreaNameById(areaId);
 	}
 
-	/**
-	 * 通过groupId 获取所在本地市信息
-	 * 
-	 * @param areaId
-	 * @return
-	 */
-	private void initGroupByAreaIdData() {
-		List<Map<String, Object>> groupList = groupDao.get(null);
+	public Map<String, Object> getGroupNameByAreaIdAndGroupIdData(Integer areaId) {
 
-		Map<String, Map<String, String>> mapRes = Maps.newConcurrentMap();
+		List<Map<String, Object>> groupList = groupDao.get(areaId);
+		Map<String, Object> officeIdAndNameMap = Maps.newHashMap();
 		for (Map<String, Object> mapData : groupList) {
-
-			String areaId = String.valueOf(mapData.get("areaId"));
-			Map<String, String> mapTemp = mapRes.get(areaId);
-			if (mapTemp == null) {
-				mapTemp = Maps.newHashMap();
-			}
-			mapTemp.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
-			mapRes.put(areaId, mapTemp);
+			officeIdAndNameMap.put(String.valueOf(mapData.get("id")), mapData.get("name"));
 		}
-
-		for (Entry<String, Map<String, String>> entry : mapRes.entrySet()) {
-			orderCacheService.put(AREA_TO_GROUP_ID_NAME_CACHE, entry.getKey(), entry.getValue());
-		}
-	}
-
-	public Map<String, Object> getGroupByAreaIdData(String areaId) {
-		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_GROUP_ID_NAME_CACHE, areaId);
-		return mapData;
+		return officeIdAndNameMap;
 	}
 
 	/**
@@ -118,21 +117,30 @@ public class SystemVariableService {
 		}
 	}
 
+	public Map<String, String> getUserMapsDataByOfficeId(String officeId) {
+		Map<String, String> mapData = (Map<String, String>) orderCacheService.get(AREA_TO_OFFICE_ID_NAME_CACHE,
+				officeId);
+		return mapData;
+	}
+
 	public String getUserByOfficeIdData(String officeId, String userId) {
 		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_OFFICE_ID_NAME_CACHE,
-				officeId);
-		if (mapData == null || mapData.size() == 0) {
-			Map<String, String> mapTemp = Maps.newHashMap();
-			mapTemp.put("officeId", officeId);
-			mapTemp.put("userId", userId);
+				String.valueOf(officeId));
 
-			List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(mapTemp);
-			if (list.size() > 0) {
-				orderCacheService.put(AREA_TO_OFFICE_ID_NAME_CACHE, officeId, list.get(0));
-				return String.valueOf(list.get(0).get("name"));
-			}
+		if (mapData != null && StringUtils.isNotEmpty(VariableUtils.typeCast(mapData.get(userId), String.class))) {
+			return String.valueOf(mapData.get(userId));
 		}
-		return String.valueOf(mapData.get(userId));
+
+		Map<String, String> mapTemp = Maps.newHashMap();
+		mapTemp.put("officeId", String.valueOf(officeId));
+		mapTemp.put("userId", String.valueOf(userId));
+
+		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(mapTemp);
+		if (list.size() > 0) {
+			orderCacheService.put(AREA_TO_OFFICE_ID_NAME_CACHE, String.valueOf(officeId), list.get(0));
+			return String.valueOf(list.get(0).get("name"));
+		}
+		return UNDEFINE;
 	}
 
 	/**
@@ -164,19 +172,22 @@ public class SystemVariableService {
 
 	public String getUserByAreaIdData(String areaId, String userId) {
 
-		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE, areaId);
+		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE,
+				String.valueOf(areaId));
 
-		if (mapData == null || mapData.size() == 0) {
-			Map<String, String> mapTemp = Maps.newHashMap();
-			mapTemp.put("areaId", userId);
-			mapTemp.put("userId", areaId);
-
-			List<Map<String, Object>> list = userDao.findAllofUserByAreaId(mapTemp);
-			if (list.size() > 0) {
-				orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, areaId, list.get(0));
-				return String.valueOf(list.get(0).get("name"));
-			}
+		if (mapData != null && StringUtils.isNotEmpty(String.valueOf(mapData.get(userId)))) {
+			return String.valueOf(mapData.get(userId));
 		}
-		return String.valueOf(mapData.get(userId));
+
+		Map<String, String> mapTemp = Maps.newHashMap();
+		mapTemp.put("areaId", String.valueOf(areaId));
+		mapTemp.put("userId", String.valueOf(userId));
+
+		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(mapTemp);
+		if (list.size() > 0) {
+			orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, String.valueOf(areaId), list.get(0));
+			return String.valueOf(list.get(0).get("name"));
+		}
+		return UNDEFINE;
 	}
 }

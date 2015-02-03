@@ -19,6 +19,7 @@ import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.enumeration.entity.BillStatus;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
+import com.saituo.order.commons.enumeration.entity.RoleSign;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
@@ -55,9 +56,9 @@ public class InvoicedOrderController {
 	public void getinvoicedViewForProductsOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
-				.get("userCatagory"));
+				.get("userCatagory"), Integer.class);
 
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
 			return;
@@ -74,7 +75,10 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -83,8 +87,8 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
-		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, "5"));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, RoleSign.SALE.getValue()));
 		model.addAttribute("page", page);
 
 		// 查询条件
@@ -92,6 +96,8 @@ public class InvoicedOrderController {
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
 		}
@@ -140,7 +146,7 @@ public class InvoicedOrderController {
 	public void getInvoicedNoPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer userCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -158,7 +164,10 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -167,7 +176,7 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
 		model.addAttribute("page", page);
 
 		// 查询条件
@@ -175,6 +184,8 @@ public class InvoicedOrderController {
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
 		}
@@ -193,7 +204,6 @@ public class InvoicedOrderController {
 			@RequestParam(required = false) List<String> productOrderIds) {
 
 		String productOrderId = (String) filter.get("productOrderId");
-
 		if (StringUtils.isNotEmpty(productOrderId)) {
 			List<String> list = Lists.newArrayList();
 			list.add(productOrderId);
@@ -201,7 +211,6 @@ public class InvoicedOrderController {
 		} else {
 			filter.put("productOrderList", productOrderIds);
 		}
-
 		userOrderService.doProductOrderAlreadySend(filter);
 		return "redirect:/order/list/finance/invoiced_nopay_view";
 	}
@@ -219,8 +228,8 @@ public class InvoicedOrderController {
 	public void getPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
 		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
-				.get("userCatagory"));
-		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId());
+				.get("userCatagory"), Integer.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
 			return;
@@ -238,7 +247,10 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
@@ -247,13 +259,15 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-		model.addAttribute("offices", systemVariableService.getGroupByAreaIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
 		model.addAttribute("page", page);
 
 		// 查询条件
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
 		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
@@ -271,19 +285,44 @@ public class InvoicedOrderController {
 	@RequiresPermissions("perms[order:list:pay]")
 	@RequestMapping(value = "pay", method = RequestMethod.POST)
 	public String payForOrder(@RequestParam Map<String, Object> filter,
-			@RequestParam(required = false) List<String> productOrderIds) {
+			@RequestParam(required = false) List<String> userOrderIdAndProductOrderIds) {
 
-		String productOrderId = (String) filter.get("productOrderId");
+		String userOrderAndProductOrderId = (String) filter.get("userOrderAndProductOrderId");
 
-		if (StringUtils.isNotEmpty(productOrderId)) {
+		if (StringUtils.isNotEmpty(userOrderAndProductOrderId)) {
+
+			String userOrderId = StringUtils.substringBefore(userOrderAndProductOrderId, "_");
+			String productOrderId = StringUtils.substringAfter(userOrderAndProductOrderId, "_");
 			List<String> list = Lists.newArrayList();
 			list.add(productOrderId);
 			filter.put("productOrderList", list);
-		} else {
-			filter.put("productOrderList", productOrderIds);
-		}
+			filter.put("userOrderId", userOrderId);
+			userOrderService.doProductOrderReceivables(filter);
 
-		userOrderService.doProductOrderReceivables(filter);
+		} else {
+
+			Map<String, List<String>> mapData = Maps.newHashMap();
+			for (String userOrderAndProductOrderIdTemp : userOrderIdAndProductOrderIds) {
+
+				String userOrderId = StringUtils.substringBefore(userOrderAndProductOrderIdTemp, "_");
+				String productOrderId = StringUtils.substringAfter(userOrderAndProductOrderIdTemp, "_");
+
+				List<String> list = mapData.get(userOrderId);
+				if (list == null || list.size() == 0) {
+					list = Lists.newArrayList();
+				}
+				list.add(productOrderId);
+				mapData.put(userOrderId, list);
+			}
+
+			for (Map.Entry<String, List<String>> entry : mapData.entrySet()) {
+				String userOrderId = entry.getKey();
+				List<String> productOrderIdList = entry.getValue();
+				filter.put("userOrderId", userOrderId);
+				filter.put("productOrderList", productOrderIdList);
+				userOrderService.doProductOrderReceivables(filter);
+			}
+		}
 		return "redirect:/order/list/finance/pay_view";
 	}
 }

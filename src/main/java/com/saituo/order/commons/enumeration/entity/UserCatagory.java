@@ -14,7 +14,11 @@ public enum UserCatagory implements ValueEnum<Integer> {
 	/**
 	 * 内部用户
 	 */
-	INTERNAL(2, "内部用户");
+	INTERNAL(2, "内部用户"),
+	/**
+	 * 系统用户
+	 */
+	SYSTEM(3, "系统用户");
 
 	// 值
 	private Integer value;

@@ -28,8 +28,6 @@
 	
 	<root level="ERROR">
 		<appender-ref ref="console" />
-		<appender-ref ref="com.saituo.order" />
-		<appender-ref ref="com.ibatis" />
 		<appender-ref ref="rollingFile" />
 	</root>
 	

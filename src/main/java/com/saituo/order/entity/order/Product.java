@@ -14,6 +14,8 @@ public class Product {
 	// 产品品牌编码
 	private String brandId;
 
+	private String brandName;
+
 	// 规格
 	private String specValue;
 
@@ -22,6 +24,9 @@ public class Product {
 
 	// 目录价
 	private Double catalogFee;
+
+	// 折扣价
+	private Double discoutFee;
 
 	public Integer getProductId() {
 		return productId;
@@ -77,6 +82,22 @@ public class Product {
 
 	public void setCatalogFee(Double catalogFee) {
 		this.catalogFee = catalogFee;
+	}
+
+	public Double getDiscoutFee() {
+		return discoutFee;
+	}
+
+	public void setDiscoutFee(Double discoutFee) {
+		this.discoutFee = discoutFee;
+	}
+
+	public String getBrandName() {
+		return brandName;
+	}
+
+	public void setBrandName(String brandName) {
+		this.brandName = brandName;
 	}
 
 }

@@ -85,7 +85,6 @@ public class BuyCardController {
 
 		model.addAttribute("customerOrderingList", buyCardService.getProductListFromBag(userId));
 		model.addAttribute("addressList", addressService.queryList(userId));
-		return;
 	}
 
 }

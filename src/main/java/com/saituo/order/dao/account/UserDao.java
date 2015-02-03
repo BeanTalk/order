@@ -20,7 +20,14 @@ public interface UserDao {
 	 * 
 	 * @return 用户实体 Map
 	 */
-	public Map<String, Object> get(@Param("id") String id);
+	public Map<String, Object> get(@Param("id") Integer id);
+
+	/**
+	 * 获取所有用户 包括已删除用户
+	 * 
+	 * @return
+	 */
+	public List<Map<String, String>> getAllofUser();
 
 	/**
 	 * 获取用户
@@ -48,7 +55,7 @@ public interface UserDao {
 	 * @param password
 	 *            密码
 	 */
-	public void updatePassword(@Param("id") String id, @Param("password") String password);
+	public void updatePassword(@Param("id") Integer id, @Param("password") String password);
 
 	/**
 	 * 统计用户
@@ -113,6 +120,6 @@ public interface UserDao {
 	 * @param areaId
 	 * @return
 	 */
-	public List<Map<String, Object>> findUserByAreaIdAndRole(@Param(value = "areaId") String areaId,
-			@Param(value = "roleSign") String roleSign);
+	public List<Map<String, Object>> findUserByAreaIdAndRole(@Param(value = "areaId") Integer areaId,
+			@Param(value = "roleSign") Integer roleSign);
 }

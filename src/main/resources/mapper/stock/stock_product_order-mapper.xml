@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.stock.StockProductOrderDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="stockNumber">
+		insert
+		into st_stock_product_order(
+		stock_order_id,
+		area_id ,
+		user_id ,
+		product_id,
+		brand_id,
+		stock_fee,
+		supplier_id,
+		if_user_oder_transition,
+		register_number,
+		user_order_id,
+		order_num,
+		status_cd,
+		accept_date,
+		change_date,
+		if_auto_allot,
+		allot_user_id,
+		buyer_user_id
+		) values (
+		#{stockOrderId},
+		#{areaId},
+		#{userId},
+		#{productId},
+		#{brandId},
+		#{stockFee},
+		#{supplierId},
+		#{ifUserOderTransition},
+		#{registerNumber},
+		#{userOrderId},
+		#{orderNum},
+		#{statusCd},
+		now(),
+		now(),
+		#{ifAutoAllot},
+		#{allotUserId},
+		#{buyerUserId}
+		)
+	</insert>
+	<update id="update">
+		update st_stock_product_order
+		<trim prefix="set" suffixOverrides=",">
+			<if test=" stockFee!= null">
+				stock_fee= #{stockFee},
+			</if>
+			<if test=" supplierId!= null">
+				supplier_id= #{supplierId},
+			</if>
+			<if test=" orderNum!= null">
+				order_num= #{orderNum},
+			</if>
+			<if test=" statusCd!= null">
+				status_cd= #{statusCd},
+			</if>
+			<if test="allotUserId!= null">
+				allot_user_id= #{allotUserId},
+			</if>
+			<if test="buyerUserId!= null">
+				buyer_user_id= #{buyerUserId},
+			</if>
+			<if test="ifAutoAllot!= null">
+				if_auto_allot= #{ifAutoAllot},
+			</if>
+		</trim>
+		,change_date= now()
+		where stock_number = #{stockNumber}
+	</update>
+
+
+	<select id="query" resultType="stockProductOrder">
+		select
+		stock_number as stockNumber,
+		stock_order_id as stockOrderId ,
+		area_id as areaId,
+		user_id as userId,
+		product_id as productId ,
+		brand_id as brandId,
+		stock_fee as stockFee ,
+		supplier_id as
+		supplierId ,
+		if_user_oder_transition as ifUserOderTransition ,
+		register_number as registerNumber ,
+		user_order_id as userOrderId,
+		order_num as orderNum ,
+		status_cd as statusCd ,
+		accept_date as
+		acceptDate ,
+		change_date as changeDate,
+		if_auto_allot as ifAutoAllot ,
+		allot_user_id as allotUserId,
+		buyer_user_id as buyerUserId
+		from
+		st_stock_product_order
+		where
+		stock_number =
+		#{stockNumber}
+	</select>
+
+	<select id="queryListByStockOrderId" resultType="stockProductOrder">
+		SELECT
+			stock_number as stockNumber,
+			stock_order_id as stockOrderId,
+			area_id as areaId,
+			user_id as userId,
+			product_id as productId ,
+			brand_id as brandId,
+			stock_fee as stockFee ,
+			supplier_id as supplierId ,
+			if_user_oder_transition as ifUserOderTransition ,
+			register_number as registerNumber ,
+			user_order_id as userOrderId,
+			order_num as orderNum ,
+			status_cd as statusCd ,
+			accept_date as acceptDate ,
+			change_date as changeDate,
+			if_auto_allot as ifAutoAllot ,
+			allot_user_id as allotUserId,
+			buyer_user_id as buyerUserId
+		FROM
+			st_stock_product_order
+		WHERE 1= 1
+		<if
+			test="stockProductOrder.stockNumber!=null and stockProductOrder.stockNumber!=''">
+			and stock_number =#{stockProductOrder.stockNumber}
+		</if>
+		<if
+			test="stockProductOrder.stockOrderId !=null and stockProductOrder.stockOrderId!= ''">
+			and stock_order_id =#{stockProductOrder.stockOrderId}
+		</if>
+		<if
+			test="stockProductOrder.statusCd != null and stockProductOrder.statusCd != ''">
+			and status_cd =#{stockProductOrder.statusCd}
+		</if>
+		<if test="stockProductOrder.brandId != null and stockProductOrder.brandId != ''">
+			and brand_id =#{stockProductOrder.brandId}
+		</if>
+		<if test="stockProductOrder.productId !=null and stockProductOrder.productId != ''">
+			and product_id =#{stockProductOrder.productId}
+		</if>
+		<if test="stockProductOrder.buyerUserId!=null and stockProductOrder.buyerUserId!= ''">
+			and buyer_user_id =#{stockProductOrder.buyerUserId}
+		</if>
+		order by stock_number desc
+		<if test="filter.first != null and filter.last != null">
+			LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+	
+	<select id="queryAllListByStockOrderId" resultType="stockProductOrder">
+		SELECT
+			stock_number as stockNumber,
+			stock_order_id as stockOrderId,
+			area_id as areaId,
+			user_id as userId,
+			product_id as productId ,
+			brand_id as brandId,
+			stock_fee as stockFee ,
+			supplier_id as supplierId ,
+			if_user_oder_transition as ifUserOderTransition ,
+			register_number as registerNumber ,
+			user_order_id as userOrderId,
+			order_num as orderNum ,
+			status_cd as statusCd ,
+			accept_date as acceptDate ,
+			change_date as changeDate,
+			if_auto_allot as ifAutoAllot ,
+			allot_user_id as allotUserId,
+			buyer_user_id as buyerUserId
+		FROM
+			st_stock_product_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="stockNumber!=null and stockNumber!=''">
+				stock_number =#{stockNumber}
+			</if>
+			<if test="stockOrderId !=null and stockOrderId!= ''">
+				and stock_order_id =#{stockOrderId}
+			</if>
+			<if test="statusCd != null and statusCd != ''">
+				and status_cd =#{statusCd}
+			</if>
+			<if test="brandId != null and brandId != ''">
+				and brand_id =#{brandId}
+			</if>
+			<if test="productId !=null and productId != ''">
+				and product_id =#{productId}
+			</if>
+			<if test="buyerUserId!=null and buyerUserId!= ''">
+				and buyer_user_id =#{buyerUserId}
+			</if>
+		</trim>
+	</select>
+	
+	<select id="queryCountByStockOrderId" resultType="int">
+		SELECT
+			count(*)
+		FROM
+			st_stock_product_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="stockNumber!=null and stockNumber!=''">
+				stock_number =#{stockNumber}
+			</if>
+			<if test="stockOrderId !=null and stockOrderId!= ''">
+				and stock_order_id =#{stockOrderId}
+			</if>
+			<if test="statusCd != null and statusCd != ''">
+				and status_cd =#{statusCd}
+			</if>
+			<if test="brandId != null and brandId != ''">
+				and brand_id =#{brandId}
+			</if>
+			<if test="productId !=null and productId != ''">
+				and product_id =#{productId}
+			</if>
+			<if test="buyerUserId!=null and buyerUserId!= ''">
+				and buyer_user_id =#{buyerUserId}
+			</if>
+		</trim>
+	</select>
+
+	<delete id="delete">
+		delete from st_stock_product_order
+		where stock_number
+		= #{stockNumber}
+	</delete>
+</mapper>

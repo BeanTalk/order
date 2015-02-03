@@ -1,0 +1,150 @@
+<#include "*/basic/default.html"/>
+<#macro head>
+<script type="text/javascript">
+	var isCheckAll=true;
+	$("#checkboxAll").click(function(){
+		if(isCheckAll){
+			$(".table_pro_body input[type=checkbox]").attr("checked",true);
+			isCheckAll=false;	
+		}else{
+			$(".table_pro_body input[type=checkbox]").attr("checked",false);
+			isCheckAll=true;
+		}
+	});
+	
+	//批量删除
+	$('#batch_remove_btn').click(function(){
+		var length = $("#buycard-list-form").find("input[type='checkbox'][name='productIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个产品");
+            return;
+        }
+		$("#buycard-list-form").attr("action", "${removebatchUrl}");
+		$('#buycard-list-form').submit();
+	});
+	
+	//保存
+	$('#save_btn').click(function(){
+		var length = $("#buycard-list-form").find("input[type='checkbox'][name='productIds']:checked").length;
+        if (length == 0) {
+        	alert("请选择至少一个产品");
+            return;
+        }
+        
+		$("#buycard-list-form").attr("action", "${savebatchUrl}");
+		$('#buycard-list-form').submit();
+	});
+	
+</script>
+</#macro>
+<#macro body>
+
+<#assign removebatchUrl = "${base}/order/stock/batchremove">
+<#assign savebatchUrl = "${base}/order/stock/save">
+
+<div class="grid2 m_t">
+	<form id="buycard-list-form" method="post">
+		<!--
+		<div class="panel">	
+			<div class="panel_header">
+	        	<h3>收货地址</h3>
+			</div>
+			<div class="panel_body">
+	        	<div id="address_content" class="msg_Div">
+	        		<#if addressList?size == 0>
+	                	没有地址记录
+	                <#else>
+		        		<#list addressList as r>
+			          		<p class="font_address">
+				            	<input type="radio" value="${r.addressId!''}" id="addressId" name="addressId">
+				            	<span>${r.receiptAddress}</span>(<span>${r.receiptPerson}</span>收)&nbsp;&nbsp;&nbsp;<span style="color:#666">${r.contactPhone}</span>
+			            	</p>
+		            	</#list>
+		            </#if>
+				</div>
+				<div onclick="window.location.href='${base}/order/address/edit'" class="button blue fr">添加地址</div>
+			</div>
+		</div>
+		-->
+		<div class="panel">
+			<div class="panel_header">
+		        <h3>备货信息</h3>
+		     </div>
+			<div class="panel_body clearfix">
+		    	<table width="100%" class="table_pro_header">
+		      		<tbody>
+		          		<tr>
+							<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
+							<th width="258">产品</th>
+							<th width="100">规格</th>
+							<th width="60">单位</th>
+							<th width="80">目录价</th>
+							<th width="80">订购价</th>
+							<th width="80">数量</th>
+							<th width="80">供应商</th>
+							<th width="50">操作</th>
+				        </tr>
+			    	</tbody>
+				</table>
+		    	<table width="100%" class="table_pro_body">
+					<tbody>
+						<#if customerOrderingList?size == 0>
+		                    <tr>
+		                        <td colspan="6">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list customerOrderingList as r>
+		                    <tr>
+								<td width="30">
+									<input type="checkbox" name="productIds" value="${r.productId!""}">
+								</td>
+		                        <td width="258" align="left">
+									<p><span class="pro_name">${r.productName!""}</span></p>
+									<p><b>货号：</b>${r.productNum!""}</p>
+									<p><b>品牌：</b>${r.brandId!""}</p>
+								</td>
+		                        <td width="100" align="center">${r.specValue!""}</td>
+					            <td width="60" align="center">${r.unitValue!""}</td>
+					            <td width="80" align="center">${r.catalogFee!""}</td>
+					            <td width="80" align="center">
+					            	<label for="textfield"></label>
+									<input type="text" class="right" name="discountPrices" id="discountPrices" size="4" value="${r.discountPrice!""}">
+					            </td>
+								<td width="80" align="center">
+									<label for="textfield"></label>
+									<input type="text" class="right" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
+								</td>
+								<td width="80">
+									<select name="supplys" id="supplys">
+									    <#list suuplys?keys as key>
+									    	<option value="${key}">${suuplys[key]!}</option>
+										</#list> 
+									</select>
+								</td>
+								<td width="50" align="center">
+									<a href="${base}/order/stock/removeOneProductFromBag/${r.productId!""}">
+					            		<div id="${r.productId!""}" class="button orange medium fl">删除</div>
+					            	</a>
+								</td>
+		                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<div id="batch_remove_btn" class="button white fl m_t clearfix">删除选中的产品</div>
+				<div class="actionBar">
+	          		<div style="width:400px;" class="fr right m_t">
+	          			<!--
+		            	<div class="font14">共
+		            		<span class="fb">${customerOrderingList?size}</span>&nbsp;件产品&nbsp;
+		            		&nbsp;总价: <span class="fb">0</span>&nbsp;元&nbsp;</div>
+		            	<br>
+		            	-->
+		            	<div id="save_btn" class="button orange">提交</div>
+	            	</div>
+	        	</div>
+			</div>
+		</div>
+	</form>
+</div>
+</#macro>

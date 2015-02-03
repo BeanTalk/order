@@ -5,38 +5,9 @@
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.order.ProductDao" >
 
-	<select id="searchProductByContext" resultType="product">
-        SELECT
-          product_id AS "productId",
-          product_name AS "productName",
-          product_num AS "productNum",
-          brand_id AS "brandId",
-          spec_value AS "specValue",
-          unit_value AS "unitValue",
-          catalog_fee AS "catalogFee",
-          del_flag AS "delFlag"
-        FROM
-          st_product
-		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
-			<if test="filter.search != null and filter.search != ''">
-				<bind name="filter.search" value=" filter.search + '%' " />
-	            OR product_name LIKE #{filter.search}
-			</if>
-	
-			<if test="filter.search != null and filter.search != ''">
-	            OR product_id LIKE #{filter.search}
-			</if>
-	        
-	        ORDER BY product_id ASC
-			<if test="filter.first != null and filter.last != null">
-	            LIMIT #{filter.first},#{filter.last}
-			</if>
-		</trim> 
-	</select>
-
 	<select id="count" resultType="int">
         SELECT
-          COUNT(product_id)
+          COUNT(id)
         FROM
           st_product
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
@@ -46,26 +17,28 @@
 			</if>
 	
 			<if test="filter.search != null and filter.search != ''">
-	            OR product_id LIKE #{filter.search}
+	            OR id LIKE #{filter.search}
 			</if>
 		</trim> 
 	</select>
 	
 	<select id="getProductListByProductIds" resultType="product">
         SELECT 
-          product_id AS "productId",
+          p.id AS "productId",
+          brand_name AS "brandName",
           product_name AS "productName",
           product_num AS "productNum",
           brand_id AS "brandId",
           spec_value AS "specValue",
           unit_value AS "unitValue",
           catalog_fee AS "catalogFee",
-          del_flag AS "delFlag"
+          p.del_flag AS "delFlag"
         FROM
-          st_product
+           st_product p left join st_product_brand pb
+        ON (p.brand_id = pb.id)
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
 			<if test="productIds != null and productIds.size > 0">
-	            AND product_id IN
+	            AND p.id IN
 				<foreach collection="productIds" item="id" index="index" open="(" separator="," close=")" >
 	                #{id}
 				</foreach>
@@ -75,18 +48,20 @@
 	
 	<select id="getProductByProductId" resultType="product">
         SELECT
-          product_id AS "productId",
+          p.id AS "productId",
+          brand_name AS "brandName",
           product_name AS "productName",
           product_num AS "productNum",
           brand_id AS "brandId",
           spec_value AS "specValue",
           unit_value AS "unitValue",
           catalog_fee AS "catalogFee",
-          del_flag AS "delFlag"
+          p.del_flag AS "delFlag"
         FROM
-          st_product
+           st_product p left join st_product_brand pb
+        ON (p.brand_id = pb.id)
 		WHERE
-		  product_id = #{productId}
+		  p.id = #{productId}
 	</select>
 
 </mapper>

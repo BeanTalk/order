@@ -3,39 +3,75 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- 用户数据访问映射 -->
-<mapper namespace="com.saituo.order.dao.user.UserPeasHisDao" >
+<mapper namespace="com.saituo.order.dao.user.UserPeasHisDao">
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="peasId">
-        insert into st_user_peas_his(
-          user_id,
-          peas_type,
-          peas_balance,
-          register_number,
-          accept_person,
-          accept_date
-        ) values (
-          #{userId},
-          #{peasType},
-          #{peasBalance},
-          #{registerNumber},
-          #{acceptPerson},
-         now()
-        )
+		insert into st_user_peas_his(
+		user_id,
+		peas_type,
+		peas_balance,
+		register_number,
+		gift_id,
+		accept_person,
+		accept_date
+		) values (
+		#{userId},
+		#{peasType},
+		#{peasBalance},
+		#{registerNumber},
+		#{giftId},
+		#{acceptPerson},
+		now()
+		)
 	</insert>
-	
+
 	<select id="queryList" resultType="userPeasHis">
 		select
-		  peas_id as peasId,
-		  user_id as userId,
-          peas_type as peasType,
-          peas_balance as peasBalance,
-          register_number as registerNumber,
-          accept_person as acceptPerson,
-          accept_date as acceptDate
+		peas_id as peasId,
+		user_id as userId,
+		peas_type as peasType,
+		peas_balance as peasBalance,
+		register_number as registerNumber,
+		gift_id as giftId,
+		accept_person as acceptPerson,
+		accept_date as acceptDate
 		from st_user_peas_his
 		where
 		user_id =#{userId}
 	</select>
-	
-			
+
+
+
+	<select id="queryListbyUserId" resultType="userPeasHis">
+		select
+		peas_id as peasId,
+		user_id as userId,
+		peas_type as peasType,
+		peas_balance as peasBalance,
+		register_number as registerNumber,
+		gift_id as giftId,
+		accept_person as acceptPerson,
+		accept_date as acceptDate
+		from st_user_peas_his
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
+				user_id =#{userPeasHis.userId}
+			</if>
+		</trim>
+		order by accept_date desc
+		<if test="filter.first != null and filter.last != null">
+			LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+
+	<select id="count" resultType="int">
+		select
+		count(peas_id)
+		from st_user_peas_his
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
+				user_id =#{userPeasHis.userId}
+			</if>
+		</trim>
+	</select>
 </mapper>

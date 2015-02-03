@@ -1,0 +1,126 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+<script type="text/javascript">
+
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewURL}");
+		$("#head_query_form").submit();
+	});
+	
+</script>
+</#macro>
+
+<#macro body>
+<#assign viewURL = "${base}/order/list/customer/complain_view">
+
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+			<h3>投诉查询</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<form id="head_query_form">
+				<table width="100%" height='40px'>
+					<tr>
+						<td width="60" nowrap="nowrap">开始时间</td>
+			            <td width="80" nowrap="nowrap" align='left'><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
+			            <td width="60" nowrap="nowrap">结束时间</td>
+			            <td width="80" nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
+			            <td width="60" nowrap="nowrap">投诉单号:</td>
+			            <td width="70" align='left'><input type="text" id="complainId" name="complainId" value="${complainId!""}"></td>
+			            <td>&nbsp;</td>
+			        </tr>
+				 </table>
+				 <table width="100%">
+			        <tr>
+				        <td width="60" nowrap="nowrap" align='left'>投诉类型</td>
+			            	<td width='80'><select name="complainTypeId" id="complainTypeId" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list complainType?keys as key>  
+					            	<option value="${key}" <#if key == complainTypeId!"">selected</#if>>${complainType[key]!""}</option>
+								</#list>
+		                    </select>
+			            </td>
+			            <td width="60" nowrap="nowrap" align='left'>投诉状态</td>
+			            	<td width='80'><select name="statusCd" id="statusCd" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list complainStatus?keys as key>
+					            	<option value="${key}" <#if key == statusCd!"">selected</#if>>${complainStatus[key]!""}</option>
+								</#list>
+		                    </select>
+			            </td>
+			            <td width="60" nowrap="nowrap" align='left'>处理结果</td>
+			            	<td width='80'><select name="handlerResult" id="handlerResult" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list handlerResults?keys as key>
+					            	<option value="${key}" <#if key == handlerResult!"">selected</#if>>${handlerResults[key]!""}</option>
+								</#list>
+		                    </select>
+			            </td>
+				        <td nowrap="nowrap">
+			            	<div id="query_btn" class="button white medium">检索</div>
+			            </td>
+				   </tr>
+				</table>
+			</form>
+			<br>
+			<form id="list-form" method="post">
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+				            <th width="248" align="left">产品</th>
+				            <th width="100" align="left">目录价</th>
+				            <th width="100" align="left">订购价</th>
+				            <th width="80" align="left">数量</th>
+				            <th width="80" align="left">投诉时间</th>
+				            <th width="140" align="left">投诉内容</th>
+				            <th width="140" align="left">处理意见</th>
+						</tr>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="8">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+		                    	<tr class="user_order_toggle_tr" id="${r.id!""}">
+			                    	<td colspan="8">
+							            <table width="100%">
+							            	<th width="30"></th>
+								            <th align="left">投诉单号:${r.id!""}</th>
+								            <th align="left">投诉类型:${complainType[r.complaintType]}</th>
+								            <th align="left">投诉状态:${complainStatus[r.statusCd]}</th>
+								            <th align="left">处理结果:<#if r.handleResult??>${handlerResults[r.handleResult]}</#if></th>
+							            </table>
+							        </td>
+								</tr>
+			                    <tr class="tr_${r.product.productId!""}">
+									<td width="30"></td>
+			                        <td width="248" align="left">
+										<p><span class="pro_name">${r.product.productName!""}</span></p>
+										<p><b>货号:</b>${r.product.productNum!""}</p>
+										<p><b>品牌:</b>${r.product.brandName!""}</p>
+									</td>
+									<td width="100" align="center">${r.product.catalogFee!""}</td>
+						            <td width="100" align="center">${r.orderFee!0}</td>
+									<td width="80" align="center">${r.orderNum!1}</td>
+									<td width="80" align="center"> ${r.complaintDate!""}</td>
+									<td width="140" align="center">${r.complaintNote!""}</td>
+									<td width="140" align="center">${r.handleNote!""}</td>
+			                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<p class="pageBar"></p>
+				<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "complainId" : "${complainId!}", "complainTypeId" :"${complainTypeId!}", "statusCd": "${statusCd!}", "complainProcessTypeId" : "${complainProcessTypeId!}"}>
+				<@pager page "${viewURL}" parameterMap />
+			</form>
+	 	</div>
+	</div>
+</div>
+</#macro>

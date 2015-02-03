@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.user.UserRecordDao">
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="userRecordId">
+		insert
+		into st_user_record(
+		user_id,
+		area_id,
+		group_id,
+		address_id,
+		accept_date
+		) values (
+		#{userId},
+		#{areaId},
+		#{groupId},
+		#{addressId},
+		now()
+		)
+	</insert>
+	<select id="queryList" resultType="userRecord">
+		select
+		user_record_id as userRecordId,
+		user_id as userId,
+		area_id as areaId,
+		group_id as groupId,
+		address_id as addressId,
+		accept_date as acceptDate
+		from st_user_record
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userRecord.areaId!=null and userRecord.areaId!=''">
+				area_id =#{userRecord.areaId}
+			</if>
+			<if
+				test="userRecord.userRecordId !=null and userRecord.userRecordId != ''">
+				and user_record_id =#{userRecord.userRecordId}
+			</if>
+			<if test="userRecord.groupId != null and userRecord.groupId != ''">
+				and group_id =#{userRecord.groupId}
+			</if>
+			<if test="userRecord.userId != null and userRecord.userId != ''">
+				and user_id =#{userRecord.userId}
+			</if>
+		</trim>
+		order by accept_date desc
+		<if test="filter.first != null and filter.last != null">
+			LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+
+	<select id="count" resultType="int">
+		select
+		count(user_record_id)
+		from st_user_record
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userRecord.areaId!=null and userRecord.areaId!=''">
+				area_id =#{userRecord.areaId}
+			</if>
+			<if
+				test="userRecord.userRecordId !=null and userRecord.userRecordId != ''">
+				and user_record_id =#{userRecord.userRecordId}
+			</if>
+			<if test="userRecord.groupId != null and userRecord.groupId != ''">
+				and group_id =#{userRecord.groupId}
+			</if>
+			<if test="userRecord.userId != null and userRecord.userId != ''">
+				and user_id =#{userRecord.userId}
+			</if>
+		</trim>
+	</select>
+
+</mapper>

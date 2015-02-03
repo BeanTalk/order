@@ -21,6 +21,7 @@
 	<!-- import redis -->
 	<import resource="classpath:applicationContext-redis.xml"/>
 	<import resource="classpath:applicationContext-mail.xml"/>
+	<import resource="classpath:applicationContext-lucene.xml"/>
 
 	<!-- init -->
 	<bean id="systemVariableService" class="com.saituo.order.service.variable.SystemVariableService" init-method="init"/>  

@@ -9,9 +9,9 @@ public class ProductOrder {
 	// 客户订单编码
 	private Long userOrderId;
 	// 受理地市
-	private String areaId;
+	private Integer areaId;
 	// 客户编码
-	private String userId;
+	private Integer userId;
 	// 产品编码
 	private Long productId;
 	// 目录价
@@ -43,16 +43,16 @@ public class ProductOrder {
 	public void setUserOrderId(Long userOrderId) {
 		this.userOrderId = userOrderId;
 	}
-	public String getAreaId() {
+	public Integer getAreaId() {
 		return areaId;
 	}
-	public void setAreaId(String areaId) {
+	public void setAreaId(Integer areaId) {
 		this.areaId = areaId;
 	}
-	public String getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
-	public void setUserId(String userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	public Long getProductId() {

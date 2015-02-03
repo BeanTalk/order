@@ -13,12 +13,16 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.HandlerResult;
+import com.saituo.order.commons.enumeration.entity.CompaintType;
+import com.saituo.order.commons.enumeration.entity.ComplainStatus;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
 import com.saituo.order.commons.enumeration.entity.RoleSign;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
@@ -26,10 +30,17 @@ import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.order.Product;
+import com.saituo.order.entity.user.Audit;
+import com.saituo.order.entity.user.AuditHis;
+import com.saituo.order.entity.user.OrderComplaint;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.service.account.AccountService;
 import com.saituo.order.service.order.BuyCardService;
+import com.saituo.order.service.order.ProductBrandService;
 import com.saituo.order.service.order.ProductService;
 import com.saituo.order.service.user.AddressService;
+import com.saituo.order.service.user.AuditHisService;
+import com.saituo.order.service.user.OrderComplainService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
 
@@ -45,13 +56,25 @@ public class CustomerController {
 	private AddressService addressService;
 
 	@Autowired
+	private AuditHisService auditHisService;
+
+	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private ProductBrandService productBrandService;
 
 	@Autowired
 	private BuyCardService buyCardService;
 
 	@Autowired
 	private SystemVariableService systemVariableService;
+
+	@Autowired
+	private AccountService accountService;
+
+	@Autowired
+	private OrderComplainService orderComplainService;
 
 	/**
 	 * 购物车中保存订单
@@ -84,7 +107,7 @@ public class CustomerController {
 			StringBuilder sb = new StringBuilder(120);
 			String productId = productIds.get(i);
 			sb.append(productId).append("~").append(productPriceMap.get(productId)).append("~")
-					.append(subscripts.get(0));
+					.append(subscripts.get(i));
 			productOrderList.add(sb.toString());
 		}
 		filter.put("productOrderList", productOrderList);
@@ -128,9 +151,13 @@ public class CustomerController {
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
+
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
 	}
 
 	/**
@@ -180,7 +207,7 @@ public class CustomerController {
 		filter.putAll(pageRequest.getMap());
 		// 内勤议价，客户订单状态必须为待审批状态
 		List<Integer> mutilStatusCdList = Lists.newArrayList();
-		mutilStatusCdList.add(UserOrderingState.PENDING.getValue());
+		mutilStatusCdList.add(UserOrderingState.REJECTED.getValue());
 		mutilStatusCdList.add(UserOrderingState.HOLD.getValue());
 		filter.put("multiStatusCd", mutilStatusCdList);
 
@@ -199,6 +226,16 @@ public class CustomerController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+	}
+
+	@RequiresPermissions("perms[order:list:upgrade]")
+	@RequestMapping(value = "customer/get_rejectinfo", method = RequestMethod.GET)
+	public @ResponseBody AuditHis customerGetRejectInfo(@RequestParam Map<String, Object> filter) {
+		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"), String.class);
+		return auditHisService.getAuditHisByProductOrderId(productOrderId);
 	}
 
 	/**
@@ -337,6 +374,9 @@ public class CustomerController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
 	}
 
 	/**
@@ -381,7 +421,7 @@ public class CustomerController {
 	public void customerQueryApproveOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
+		Integer groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
 
 		filter.putAll(pageRequest.getMap());
 		// 客户订单状态必须为待审批状态
@@ -397,13 +437,85 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByOfficeIdData(groupId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByOfficeIdData(String.valueOf(groupId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(groupId)));
+	}
+
+	/**
+	 * 客户查看内勤修改完价格的订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "customer/complain", method = RequestMethod.POST)
+	public String customerComplainForOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter) {
+
+		String userOrderId = StringUtils.substringBefore(
+				VariableUtils.typeCast(filter.get("userOrderAndProductOrderId"), String.class), "_");
+		String registerNumber = StringUtils.substringAfter(
+				VariableUtils.typeCast(filter.get("userOrderAndProductOrderId"), String.class), "_");
+
+		filter.put("userOrderId", userOrderId);
+		filter.put("registerNumber", registerNumber);
+		orderComplainService.doCreateOrderComplaint(filter);
+		return "redirect:/order/list/customer/complain_view";
+	}
+
+	/**
+	 * 客户查看内勤修改完价格的订单
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "customer/complain_view", method = RequestMethod.GET)
+	public void customerComplainViewForOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
+			Model model) {
+
+		filter.putAll(pageRequest.getMap());
+		filter.put("userId",
+				VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"), String.class));
+
+		List<OrderComplaint> orderComplainList = orderComplainService.getOrderComplaintList(filter);
+		for (OrderComplaint orderComplaint : orderComplainList) {
+			Product product = productService.getProductByProductId(VariableUtils.typeCast(
+					orderComplaint.getProductId(), Integer.class));
+			orderComplaint.setProduct(product);
+		}
+
+		int orderComplainCount = orderComplainService.getOrderComplaintCount(filter);
+		Page<OrderComplaint> page = new Page<OrderComplaint>(pageRequest, orderComplainList, orderComplainCount);
+
+		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("complainType", VariableUtils.getVariables(CompaintType.class));
+		model.addAttribute("handlerResults", VariableUtils.getVariables(HandlerResult.class));
+		model.addAttribute("complainStatus", VariableUtils.getVariables(ComplainStatus.class));
+		model.addAttribute("page", page);
+		model.addAllAttributes(filter);
 	}
 
 	/**
@@ -443,18 +555,60 @@ public class CustomerController {
 			String userOrderId = entry.getKey();
 			List<String> productOrderIds = entry.getValue();
 
-			List<String> productOrderInfoList = new ArrayList<String>();
+			List<Audit> auditInfoList = new ArrayList<Audit>();
 			for (String productOrderId : productOrderIds) {
-				StringBuilder sb = new StringBuilder();
-				sb.append(productOrderId).append("~").append(auditCd).append("~~");
-				productOrderInfoList.add(sb.toString());
+				Audit audit = new Audit();
+				audit.setProductOrderId(productOrderId);
+				audit.setAuditStatus(auditCd);
+				audit.setTurnDownNote("");
+				audit.setTurnDownReason("");
+				auditInfoList.add(audit);
 			}
-			filter.put("productOrderList", productOrderInfoList);
+			filter.put("auditInfoList", auditInfoList);
 			filter.put("userOrderId", userOrderId);
 			userOrderService.doAuditProductOrder(filter);
 		}
 		return "redirect:/order/list/customer/approve_view";
 	}
+
+	/**
+	 * 导师审批
+	 * 
+	 * @param items
+	 *            :productId
+	 * @param subscripts
+	 *            :订购数量
+	 * @param addressId
+	 *            :地址Id
+	 * @param model
+	 * @return
+	 */
+	@RequiresPermissions("perms[order:list:approve]")
+	@RequestMapping(value = "customer/reject", method = RequestMethod.POST)
+	public String customerRejectOrdering(@RequestParam Map<String, Object> filter, Model model) {
+
+		String turnDownReason = VariableUtils.typeCast(filter.get("turn_down_reason"));
+		String turnDownNote = VariableUtils.typeCast(filter.get("turn_down_note"));
+		String userAndProductOrderid = VariableUtils.typeCast(filter.get("reject_userAndProductOrderid"));
+
+		String userOrderId = StringUtils.substringBefore(userAndProductOrderid, "_");
+		String productOrderId = StringUtils.substringAfter(userAndProductOrderid, "_");
+
+		List<Audit> auditInfoList = Lists.newArrayList();
+		Audit audit = new Audit();
+		audit.setAuditStatus("2"); // 已驳回
+		audit.setProductOrderId(productOrderId);
+		audit.setTurnDownNote(turnDownNote);
+		audit.setTurnDownReason(turnDownReason);
+		auditInfoList.add(audit);
+
+		filter.put("auditInfoList", auditInfoList);
+		filter.put("userOrderId", userOrderId);
+		userOrderService.doAuditProductOrder(filter);
+
+		return "redirect:/order/list/customer/approve_view";
+	}
+
 	/**
 	 * 查看导师需要的下单的订单
 	 * 
@@ -471,7 +625,7 @@ public class CustomerController {
 	@RequestMapping(value = "customer/book_view", method = RequestMethod.GET)
 	public void customerBookViewOrdering(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
+		Integer groupId = SessionVariable.getCurrentSessionVariable().getGroupId();
 		filter.putAll(pageRequest.getMap());
 		// 客户订单状态必须为待审批状态
 		filter.put("statusCd", UserOrderingState.ACCEPTED.getValue());
@@ -486,13 +640,21 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByOfficeIdData(groupId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByOfficeIdData(String.valueOf(groupId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
+		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(groupId)));
 	}
 
 	/**
@@ -521,38 +683,6 @@ public class CustomerController {
 	}
 
 	/**
-	 * 根据所查订单状态，返回所有涉及到本人的订单信息
-	 * 
-	 * @param filter
-	 * @param model
-	 */
-	@RequestMapping(value = "list/customer/orders", method = RequestMethod.GET)
-	public void getOrderingListByStatus(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
-
-		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-				String.class);
-		filter.put("userId", userId);
-		filter.putAll(pageRequest.getMap());
-
-		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
-		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
-		int userOrderCount = userOrderService.getUserOrderCount(filter);
-
-		for (UserOrder userOrder : userOrderList) {
-			String userOrderId = String.valueOf(userOrder.getUserOrderId());
-			Map<String, Object> mapData = Maps.newHashMap();
-			mapData.put("userOrderId", userOrderId);
-			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
-		}
-		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
-				userOrderCount);
-		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
-		model.addAttribute("page", page);
-		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
-
-	}
-
-	/**
 	 * 查看所有的订单
 	 * 
 	 * @param filter
@@ -561,11 +691,11 @@ public class CustomerController {
 	@RequestMapping(value = "all_order", method = RequestMethod.GET)
 	public void getAllOrderingList(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		String areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
 		filter.putAll(pageRequest.getMap());
 
 		// 根据用户的角色与类别，来区分用户能看到的订单
-		filter = watchOrderListPipline(filter);
+		filter = watchOrderListPipline(filter, model);
 
 		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
 		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
@@ -575,14 +705,20 @@ public class CustomerController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
-			mapData.put("userName", systemVariableService.getUserByAreaIdData(areaId, userOrder.getUserId()));
+			mapData.put(
+					"userName",
+					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
+							String.valueOf(userOrder.getUserId())));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
+		model.addAttribute("statusCd", filter.get("statusCd"));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
+		model.addAttribute("startDate", filter.get("startDate"));
+		model.addAttribute("endDate", filter.get("endDate"));
 	}
 
 	/**
@@ -591,26 +727,40 @@ public class CustomerController {
 	 * @param filter
 	 * @return
 	 */
-	private Map<String, Object> watchOrderListPipline(Map<String, Object> filter) {
+	private Map<String, Object> watchOrderListPipline(Map<String, Object> filter, Model model) {
 
 		Integer useCatagory = VariableUtils.typeCast(
 				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 
 		// 外部用户
-		if (useCatagory == UserCatagory.EXTERNAL.getValue()) {
+		if (UserCatagory.EXTERNAL.getValue().equals(useCatagory)) {
 			List<String> roleSign = SessionVariable.getCurrentSessionVariable().getRoleList();
 			// 当其为学生时,只能看到本人的订单
-			if (roleSign.contains(RoleSign.STUDENT.getValue())) {
+			if (roleSign.contains(String.valueOf(RoleSign.STUDENT.getValue()))) {
 				String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 						String.class);
 				filter.put("userId", userId);
+				model.addAttribute("role", "student");
 			}
 			// 当其为老师和PI时，能看到该组下面的所有的订单
-			if (roleSign.contains(RoleSign.TEACHER.getValue()) || roleSign.contains(RoleSign.PI.getValue())) {
-				filter.put("groupId", SessionVariable.getCurrentSessionVariable().getGroupId());
+			if (roleSign.contains(String.valueOf(RoleSign.TEACHER.getValue()))
+					|| roleSign.contains(String.valueOf(RoleSign.PI.getValue()))) {
+				filter.put("groupId", String.valueOf(SessionVariable.getCurrentSessionVariable().getGroupId()));
+				model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
+						.getCurrentSessionVariable().getGroupId())));
+				model.addAttribute("role", "teacher");
 			}
+			// 内部用户
+		} else {
+			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
+					.getCurrentSessionVariable().getGroupId())));
+			model.addAttribute("role", "internal");
 		}
 
+		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(SessionVariable
+				.getCurrentSessionVariable().getAreaId()));
+		model.addAttribute("groupId", VariableUtils.typeCast(filter.get("groupId")));
 		// 内部用户可以看到本地市的所有的订单，在UserOrderService 中已经默认设置
 		return filter;
 	}

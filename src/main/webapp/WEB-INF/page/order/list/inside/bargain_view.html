@@ -38,7 +38,7 @@
 			<h3>订单议价</h3>
 		</div>
 		<div class="panel_body  clearfix">
-			<@headquery offices groupId userInfoMap userId userOrderId/>
+			<@internal_headquery offices groupId userInfoMap userId userOrderId/>
 			<br>
 			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
@@ -63,28 +63,32 @@
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
-			                    <tr>
-						            <th width="30">
-						            	<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
-						            </th>
-						            <th align="left" colspan="1">订单号: ${r.userOrderReturn.userOrderId}</th>
-						            <th align="left" colspan="2">订货人:${r.userOrderReturn.userName}</th>
-						            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate}</th>
-						            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]}</th>
+		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
+			                    	<td colspan="10">
+							            <table width="100%">
+							            	<th width="30">
+							            		<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
+							            	</th>
+								            <th align="left">订单号: ${r.userOrderReturn.userOrderId}</th>
+								            <th align="left">订货人:${r.userOrderReturn.userName}</th>
+								            <th align="left">时间:${r.userOrderReturn.acceptDate}</th>
+								            <th align="left">状态:${states[r.userOrderReturn.statusCd]}</th>
+							            </table>
+							        </td>
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
-				                    <tr>
+				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
 											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
 										</td>
 				                        <td width="248" align="left">
-											<p><span class="pro_name">${productOrderInfo.product.productName}</span></p>
-											<p><b>货号:</b>${productOrderInfo.product.productNum}</p>
-											<p><b>品牌:</b>${productOrderInfo.product.brandId}</p>
+											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
+											<p><b>货号:</b>${productOrderInfo.product.productNum!""}</p>
+											<p><b>品牌:</b>${productOrderInfo.product.brandName!""}</p>
 										</td>
-				                        <td width="80" align="center">${productOrderInfo.product.specValue}</td>
-				                        <td width="60" align="center">${productOrderInfo.product.unitValue}</td>
-							            <td width="100" align="center">${productOrderInfo.product.catalogFee}</td>
+				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
+				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
+							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">
 							            	<input type="text" class="right" size="8" id="${productOrderInfo.registerNumber}_orderFees" name="orderFees" value="${productOrderInfo.orderFee}">
 							            	<input type="hidden" id="${productOrderInfo.registerNumber}_disCountFees" name="disCountFees" value="${productOrderInfo.orderFee}">
@@ -106,7 +110,7 @@
 		                </#if>
 					</tbody>
 				</table>
-				<#assign parameterMap = { "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
+				<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "groupId":"${groupId!}","userId":"${userId!}","userOrderId":"${userOrderId!}" }>
 				<@pager page "${viewUrl}" parameterMap />
 				<div class="actionBar">
 					<div id="batch_btn" class="button white">批量议价更改</div>

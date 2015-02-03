@@ -15,18 +15,33 @@
 <div class="header">
 	<div class="container">
 		<div class="header_fr">
-			<ul class="topnav">
-				<li><a href=""><div class="fl icon icon_user"></div>个人中心</a></li>
-				<li>
-					<a href="${base}/order/buycard/list">
-					<div class="shopping fl icon icon_cart"></div>
-						购物车
-						<@shiro.authenticated>
-							<span id="productInBagCount" class="fontred">0</span>
-						</@shiro.authenticated>
-					</a>
-				</li>
-      		</ul>
+				<ul class="topnav">
+					<@shiro.authenticated>
+						<!-- 内部用户时 -->
+						<#if Session["session_variable"].isInternalUser?string('true','false') == "true">
+							<li>&nbsp;</li>
+							<li>
+								<a href="${base}/order/stock/list">
+								<div class="stock fl icon icon_2"></div>
+									备货<span id="storeInBagCount" class="fontred">0</span>
+								</a>
+							</li>
+						<#else>
+							<li>
+								<a href="${base}/order/buycard/list">
+									<div class="shopping fl icon icon_cart"></div>
+									购物车<span id="productInBagCount" class="fontred">0</span>
+								</a>
+							</li>
+							<li>
+								<a href="${base}/order/record/list">
+									<div class="record fl icon icon_1"></div>
+									记录<span id="recordInBagCount" class="fontred">0</span>
+								</a>
+							</li>
+						</#if>
+					</@shiro.authenticated>
+	      		</ul>
       		<p><img src="${base}/resource/images/hotfont.gif"></p>
 		</div>
 	    <div class="schBox">

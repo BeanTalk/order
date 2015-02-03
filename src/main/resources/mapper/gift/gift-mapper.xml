@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.gift.GiftDao">
+	<select id="queryList" resultType="gift">
+		select
+			id as id ,
+			gift_name as giftName ,
+			area_id as  areaId,
+			need_pea as  needPea,
+			need_score as needScore ,
+			gift_status as giftStatus,
+			gift_num as giftNum,
+			create_by as createBy,
+			create_date as createDate,
+			update_by as updateBy,
+			update_date as updateDate,
+			remarks as remarks,
+			del_flag as delFlag
+		from st_gift
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
+			<if test="gift.areaId!=null and gift.areaId!=''">
+				area_id =#{gift.areaId}
+			</if>
+			<if test="gift.giftStatus !=null and gift.giftStatus != ''">
+				and gift_status =#{gift.giftStatus}
+			</if>
+			<if test="filter.beansNum !=null and filter.beansNum != ''">
+				<![CDATA[ and need_pea <= #{filter.beansNum} ]]>
+			</if>
+		</trim> 
+		order by create_date desc
+		<if test="filter.first != null and filter.last != null">
+            LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+	
+	<select id="count" resultType="int">
+		select
+			count(id)
+		from st_gift
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
+			<if test="gift.areaId!=null and gift.areaId!=''">
+				area_id =#{gift.areaId}
+			</if>
+			<if test="gift.giftStatus !=null and gift.giftStatus != ''">
+				and gift_status =#{gift.giftStatus}
+			</if>
+			<if test="filter.beansNum !=null and filter.beansNum != ''">
+				<![CDATA[ and need_pea <= #{filter.beansNum} ]]>
+			</if>
+		</trim> 
+	</select>
+	
+	<update id="update">  
+        update st_gift
+		<trim prefix="set" suffixOverrides=",">  
+			<if test="giftNum != null">  
+                  gift_num = gift_num - #{giftNum},  
+			</if>  
+			<if test="updateBy != null">  
+                   update_by = #{updateBy},  
+			</if>
+		</trim>
+		,update_date =now()
+        where id = #{id}  
+	</update>  
+	
+</mapper>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 用户数据访问映射 -->
+<mapper namespace="com.saituo.order.dao.order.ProductBrandDao" >
+
+	<select id="getProductBrandList" resultType="productBrand">
+        SELECT 
+          id AS "productId",
+          brand_name AS "productName",
+          buy_discount AS "buyDiscount",
+          weight_discount AS "weightDiscount",
+          limit_discount AS "limitDiscount"
+        FROM
+          st_product_brand
+        WHERE del_flag = 0
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="filter.productBrandIds != null and filter.productBrandIds.size > 0">
+	            AND id IN
+				<foreach collection="filter.productBrandIds" item="id" index="index" open="(" separator="," close=")" >
+	                #{id}
+				</foreach>
+			</if>
+		</trim>
+		
+	</select>
+	
+</mapper>

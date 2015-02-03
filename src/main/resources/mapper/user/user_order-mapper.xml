@@ -66,6 +66,12 @@
 			<if test="userOrder.userId != null and userOrder.userId != ''">
 			    and user_id =#{userOrder.userId}
 			</if>
+			<if test="filter.startDate !=null and filter.startDate != ''">
+				<![CDATA[ and DATE_FORMAT(accept_date, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="filter.endDate !=null and filter.endDate != ''">
+				<![CDATA[ and DATE_FORMAT(accept_date, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
+			</if>
 			<if test="userOrder.statusCd !=null and userOrder.statusCd != ''">
 			    and status_cd = #{userOrder.statusCd}
 			</if>

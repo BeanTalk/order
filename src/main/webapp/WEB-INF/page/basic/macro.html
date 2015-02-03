@@ -106,38 +106,96 @@
 	</#if>
 </#macro>
 
-<#--需要按条件进行查询的功能-->
-<#macro headquery offices groupId="" userInfoMap={} userId="" userOrderId="">
+<#--内部员工需要按条件进行查询的功能-->
+<#macro internal_headquery offices groupId="" userInfoMap={} userId="" userOrderId="">
 	<form id="head_query_form">
 		<table width="100%">
 			<tbody>
 				<tr>
-		            <td width="60" nowrap="nowrap">课题组:
-		            	<select name="groupId" id="groupId">
+					<td width="60" nowrap="nowrap" height='40'>开始时间</td>
+		            <td  nowrap="nowrap" align='left'><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
+		            <td width="60" nowrap="nowrap" align='left'>结束时间</td>
+		            <td  nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
+		            <td width="60" nowrap="nowrap" align='left'>订单号:
+		            	<input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!""}">
+		            </td>
+		            <td width='150'></td>
+		         </tr>
+		         <tr>
+		            <td  nowrap="nowrap"  width="60" align='left' >课题组:</td>
+		            	<td align='left' ><select class="select_choose" name="groupId" id="groupId"  style='width:170px'>
 	                        <option value="">请选择...</option>
 	                        <#list offices?keys as key>  
-				            	<option value="${key}" <#if key == groupId>selected</#if>>${offices[key]}</option>
+				            	<option value="${key}" <#if key == groupId>selected</#if>>${offices[key]!""}</option>
 							</#list> 
 	                    </select>
+</td>
+		            <td  nowrap="nowrap"  align='left'>订购人:</td>
+		            	<td align='left' ><select class="select_choose" name="userId" id="userId" style='width:170px'>
+		            		<#if userInfoMap?size == 0>
+	                        	<option value="">请选择...</option>
+	                        <#else>
+	                        	<#list userInfoMap?keys as key>  
+	                        		<option value="${key}" <#if key == userId>selected</#if>> ${userInfoMap[key]!""}</option>
+	                        	</#list>
+	                        </#if>
+	                    </select></td>
 		            </td>
+		            <td nowrap="nowrap" align='left'>
+		            	<div id="query_btn" class="button white medium">检索</div>
+		            </td>
+		            
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</#macro>
+
+<#--学生,需要按条件进行查询的功能-->
+<#macro st_headquery startDate="" endDate="" userOrderId="">
+	<form id="head_query_form">
+		<table width="100%">
+			<tbody>
+				<tr>
+		            <td width="60" nowrap="nowrap">开始时间</td>
+		            <td width="70" nowrap="nowrap"><input name="startDate" type="text" class="datepicker" size="12" value="${startDate}"/></td>
+		            <td width="60" nowrap="nowrap">结束时间</td>
+		            <td width="70" nowrap="nowrap"><input name="endDate" type="text" class="datepicker" size="12" value="${endDate}"/></td>
+		            <td width="60" nowrap="nowrap">订单号</td>
+		            <td width="70" nowrap="nowrap"><input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}"></td>
+		            <td width="58" nowrap="nowrap"><div id="query_btn" class="button white medium">检索</div></td>
+					<td width="398" nowrap="nowrap"></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+</#macro>
+
+<#--教师与PI,需要按条件进行查询的功能-->
+<#macro teacher_headquery startDate="" endDate="" userOrderId="" userInfoMap={}>
+	<form id="head_query_form">
+		<table width="100%">
+			<tbody>
+				<tr>
+		            <td width="60" nowrap="nowrap">开始时间</td>
+		            <td width="70" nowrap="nowrap"><input name="startDate" type="text" class="datepicker" size="12" value="${startDate}"/></td>
+		            <td width="60" nowrap="nowrap">结束时间</td>
+		            <td width="70" nowrap="nowrap"><input name="endDate" type="text" class="datepicker" size="12" value="${endDate}"/></td>
+		            <td width="60" nowrap="nowrap">订单号</td>
+		            <td width="70" nowrap="nowrap"><input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}"></td>
 		            <td width="60" nowrap="nowrap">订购人:
 		            	<select name="userId" id="userId">
 		            		<#if userInfoMap?size == 0>
 	                        	<option value="">请选择...</option>
 	                        <#else>
-	                        	<#list userInfoMap?keys as key>  
-	                        		<option value="${key}" <#if key == userId>selected</#if>> ${userInfoMap[key]}</option>
+	                        	<#list userInfoMap?keys as key>
+	                        		<option value="${key}" <#if key == userId!"">selected</#if>> ${userInfoMap[key]}</option>
 	                        	</#list>
 	                        </#if>
 	                    </select>
 		            </td>
-		            <td width="60" nowrap="nowrap">订单号:
-		            	<input type="text" id="userOrderId" name="userOrderId" value="${userOrderId!}">
-		            </td>
-		            <td width="58" nowrap="nowrap">
-		            	<div id="query_btn" class="button white medium">检索</div>
-		            </td>
-		            <td width="398" nowrap="nowrap"></td>
+		            <td width="58" nowrap="nowrap"><div id="query_btn" class="button white medium">检索</div></td>
+					<td width="398" nowrap="nowrap"></td>
 				</tr>
 			</tbody>
 		</table>
@@ -158,5 +216,11 @@
 <#macro address_plugin address="">
 	<tr>
 		<td colspan="10" class="msg_Div" align="center">送货地址: <span>${(address.receiptAddress)!""}</span>(<span>${(address.receiptPerson)!""}</span>收)&nbsp;&nbsp;&nbsp;<span style="color:#666">${(address.contactPhone)!""}</span></td>
+	</tr>
+</#macro>
+
+<#macro address_undefine>
+	<tr>
+		<td colspan="8" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
 	</tr>
 </#macro>

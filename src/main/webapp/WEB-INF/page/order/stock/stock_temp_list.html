@@ -1,0 +1,63 @@
+<#include "*/basic/default.html"/>
+<#macro head>
+<script type="text/javascript">
+	$(function(){
+		$('.Q-stock-btn').stock();
+	});
+</script>
+</#macro>
+
+<#macro body>
+<div class="containerPx clearfix">
+	<@shiro.guest>
+	<div class="grid1 m_t">
+		<div class="subnav">
+			<p class="subnav-header">产品中心</p>
+		</div>
+	</div>
+	</@shiro.guest>
+	<div class="grid2 m_t">
+		<div class="panel_body clearfix">
+        	<table width="100%" class="table_pro_header">
+          		<tbody>
+	          		<tr>
+		            	<th width="308">产品</th>
+			            <th width="100">规格</th>
+			            <th width="60">单位</th>
+			            <th width="100">目录价</th>
+			            <th width="100">订购价</th>
+			            <th width="130">操作</th>
+			        </tr>
+		    	</tbody>
+			</table>
+        	<table width="100%" class="table_pro_body">
+				<tbody>
+					<#if productList?size == 0>
+	                    <tr>
+	                        <td colspan="6"> 没有记录</td>
+	                    </tr>
+                    <#else>
+                        <#list productList as r>
+                        <tr>
+	                        <td width="308" align="left">
+								<p><span class="pro_name">${r.productName!}</span></p>
+								<p><b>货号：</b>${r.productNum!}</p>
+								<p><b>品牌：</b>${r.brandId!}</p>
+							</td>
+                            <td width="100" align="center">${r.specValue!}</td>
+				            <td width="60" align="center">${r.unitValue!}</td>
+				            <td width="100" align="center">${r.catalogFee!}</td>
+				            <td width="100" align="center">${r.discountFee!}</td>
+				            <input type="hidden" id="productId" value="${r.productId}">
+				            <td width="120" align="center">
+				            	<div id="${r.productId}" class="button green medium fl Q-stock-btn">备货</div>
+				            </td>
+                        </tr>
+                        </#list>
+                    </#if>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+</#macro>

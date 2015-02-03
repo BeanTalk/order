@@ -5,7 +5,7 @@
 			
 			var self=this,
 				$shop=$('.shopping'),
-				$num=$('.fontred');
+				$num=$('#productInBagCount');
 			
 			var S={
 					
@@ -39,7 +39,7 @@
 									$obj.stop(false, false).animate({'top': Y-20,'opacity':0}, 500, function(){
 										$obj.fadeOut(300,function(){
 											$obj.remove();	
-											$target.data('click', false).addClass('dis-click');
+											$target.data('click', false).addClass('gray').removeClass('green');
 										});
 									});
 								});	
