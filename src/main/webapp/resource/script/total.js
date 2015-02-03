@@ -2,8 +2,8 @@
 
 $(document).ready(function() {
 	
-	$("input[type=checkbox][name=item]").each(function(index) {
-		$("input[type=checkbox][name=item]").attr('checked',false);
+	$("input[type=checkbox][name=productIds]").each(function(index) {
+		$("input[type=checkbox][name=productIds]").attr('checked',false);
 		var multiplier=$(this).parent().parent().find("td.price-per-products").text();
 		var numpro=$(this).parent().parent().find("td.num-products").children("input").val();
 		var rowTotal = numpro * multiplier;

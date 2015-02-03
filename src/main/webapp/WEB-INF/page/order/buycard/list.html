@@ -1,6 +1,7 @@
 <#include "*/basic/default.html"/>
 <#macro head>
 <script type="text/javascript">
+
 	var isCheckAll=true;
 	$("#checkboxAll").click(function(){
 		if(isCheckAll){
@@ -91,40 +92,37 @@
 			    	</tbody>
 				</table>
 		    	<table width="100%" class="table_pro_body">
-					<tbody>
-						<#if customerOrderingList?size == 0>
-		                    <tr>
-		                        <td colspan="6">没有记录</td>
-		                    </tr>
-		                <#else>
-		                    <#list customerOrderingList as r>
-		                    <tr>
-								<td width="30">
-									<input type="checkbox" name="productIds" value="${r.productId!""}">
-								</td>
-		                        <td width="258" align="left">
-									<p><span class="pro_name">${r.productName!""}</span></p>
-									<p><b>货号：</b>${r.productNum!""}</p>
-									<p><b>品牌：</b>${r.brandName!""}</p>
-								</td>
-		                        <td width="100" align="center">${r.specValue!""}</td>
-					            <td width="60" align="center">${r.unitValue!""}</td>
-					            <td width="80" align="center">${r.catalogFee!""}</td>
-					            <td width="80" align="center" class="price-per-products">${r.discountPrice!""}</td>
-								<td width="80" align="center" class="num-products">
-									<label for="textfield"></label>
-									<input type="text" class="right num-products-input" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
-								</td>
-								<td width="80">大连赛拓</td>
-								<td width="50" align="center">
-									<a href="${base}/order/buycard/removeOneProductFromBag/${r.productId!""}">
-					            		<div id="${r.productId!""}" class="button orange medium fl D-buy-btn">删除</div>
-					            	</a>
-								</td>
-		                    </tr>
-		                    </#list>
-		                </#if>
-					</tbody>
+					<#if customerOrderingList?size == 0>
+	                    <tr>
+	                        <td colspan="6">没有记录</td>
+	                    </tr>
+	                <#else>
+	                    <#list customerOrderingList as r>
+	                    <tr>
+							<td width="30">
+								<input type="checkbox" name="productIds" value="${r.productId!""}">
+							</td>
+	                        <td width="258" align="left">
+								<p><span class="pro_name">${r.productName!""}</span></p>
+								<p><b>货号：</b>${r.productNum!""}</p>
+								<p><b>品牌：</b>${r.brandName!""}</p>
+							</td>
+	                        <td width="100" align="center">${r.specValue!""}</td>
+				            <td width="60" align="center">${r.unitValue!""}</td>
+				            <td width="80" align="center">${r.catalogFee!""}</td>
+				            <td width="80" align="center" class="price-per-products">${r.discountPrice!""}</td>
+							<td width="80" align="center" class="num-products">
+								<input type="text" class="num-products-input" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
+							</td>
+							<td width="80">大连赛拓</td>
+							<td width="50" align="center">
+								<a href="${base}/order/buycard/removeOneProductFromBag/${r.productId!""}">
+				            		<div id="${r.productId!""}" class="button orange medium fl D-buy-btn">删除</div>
+				            	</a>
+							</td>
+	                    </tr>
+	                    </#list>
+	                </#if>
 				</table>
 				<div id="batch_btn" class="button white fl m_t clearfix">删除选中的产品</div>
 				<div class="actionBar">
