@@ -1,33 +1,34 @@
 package com.saituo.order.entity.gift;
 
 public class Gift {
-	// 礼品ID
-	private Long id;
-	// 所属区域
-	private String giftName;
-	// 所属区域
-	private String areaId;
-	// 所需豆豆
-	private int needPea;
-	// 所需积分
-	private int needScore;
-	// 礼品状态: 0,未开始兑换;1,开始兑换;2,兑换结束
-	private int giftStatus;
-	// 礼品可使用数量
-	private int giftNum;
-	// 创建者
-	private String createBy;
-	// 创建者
-	private String createDate;
-	// 更新者
-	private String updateBy;
-	// 更新时间
-	private String updateDate;
-	// 备注信息
-	private String remarks;
-	// 删除标记
-	private String delFlag;
 
+	//礼品ID
+	private Long id;
+	//所属区域
+	private String giftName;
+	//所属区域
+	private String areaId;
+	//所需豆豆
+	private int needPea;
+	//所需积分
+	private int needScore;
+   //礼品状态: 0,未开始兑换;1,开始兑换;2,兑换结束
+	private int giftStatus;
+	//礼品可使用数量
+	private int giftNum;
+	//创建者
+	private String 	createBy;
+	//创建者
+	private String  createDate;
+	//更新者
+	private String 	updateBy;
+	//更新时间
+	private String  	updateDate;
+	//备注信息
+	private String  	remarks;
+	//删除标记
+	private String  	delFlag;
+	
 	public Long getId() {
 		return id;
 	}

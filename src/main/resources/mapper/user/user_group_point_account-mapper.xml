@@ -29,6 +29,32 @@
 	</update>  
 
 
+		<update id="updateAdd">  
+	        update st_user_group_point_account  
+			<trim prefix="set" suffixOverrides=",">  
+				<if test="pointBalance != null">  
+	                  point_balance = point_balance +#{pointBalance},  
+				</if>  
+				<if test="accountFee != null">  
+	                   account_fee =account_fee+ #{accountFee},  
+				</if>
+			</trim>
+	        where user_group_id = #{userGroupId}  
+		</update>  
+		
+		<update id="updateReduction">  
+	        update st_user_group_point_account  
+			<trim prefix="set" suffixOverrides=",">  
+				<if test="pointBalance != null">  
+	                  point_balance = point_balance -#{pointBalance},  
+				</if>  
+				<if test="accountFee != null">  
+	                   account_fee =account_fee- #{accountFee},  
+				</if>
+			</trim>
+	        where user_group_id = #{userGroupId}  
+		</update>  
+
 
 	<select id="query" resultType="userGroupPointAccount">
 		SELECT

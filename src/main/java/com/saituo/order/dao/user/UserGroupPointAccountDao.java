@@ -41,5 +41,23 @@ public interface UserGroupPointAccountDao {
 	 * @throws 
 	*/
 	public void delete(UserGroupPointAccount userGroupPointAccount);
+	
+	/**
+	 * <p>Description: 更新数据加积分</p>
+	 * @Method: update
+	 * @param UserGroupPointAccount
+	 * @return void 
+	 * @throws 
+	*/
+	public void updateAdd (UserGroupPointAccount userGroupPointAccount);
+	
+	/**
+	 * <p>Description: 更新数据减积分</p>
+	 * @Method: update
+	 * @param UserGroupPointAccount
+	 * @return void 
+	 * @throws 
+	*/
+	public void updateReduction (UserGroupPointAccount userGroupPointAccount);
 
 }

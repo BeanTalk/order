@@ -51,6 +51,15 @@
 			<if test=" invoiceStatus!= null">  
                     invoice_status= #{invoiceStatus},  
 			</if>
+				<if test=" pricePaidFee!= null">  
+                    price_paid_fee= #{pricePaidFee},  
+			</if>
+				<if test=" pointBalanceFee!= null">  
+                    point_balance_fee= #{pointBalanceFee},  
+			</if>
+				<if test="deliveryDate!= null">  
+                    delivery_date= now(),  
+			</if>
 		</trim>
 		,change_date= now()
         where register_number = #{registerNumber}  
@@ -69,7 +78,10 @@
 			status_cd as statusCd,
 			invoice_status as invoiceStatus,
 			accept_date as acceptDate,
-			change_date as changeDate
+			change_date as changeDate,
+			delivery_date as deliveryDate,
+			price_paid_fee as pricePaidFee,  
+			point_balance_fee as pointBalanceFee
 		from st_product_order
 		where
 		register_number = #{registerNumber}  
@@ -88,7 +100,10 @@
 			status_cd as statusCd,
 			invoice_status as invoiceStatus,
 			accept_date as acceptDate,
-			change_date as changeDate
+			change_date as changeDate,
+			delivery_date as deliveryDate,
+			price_paid_fee as pricePaidFee,  
+			point_balance_fee as pointBalanceFee
 		from st_product_order
 		where
 		user_order_id = #{userOrderId}

@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import com.saituo.order.entity.user.UserGroupPointHis;
 
 /**
- * 客户豆豆历史表维护
+ * 客户积分历史表维护
  */
 public interface UserGroupPointHisDao {
 	/**
@@ -35,15 +35,8 @@ public interface UserGroupPointHisDao {
 	public List<UserGroupPointHis> queryList(@Param("userGroupPointHis") UserGroupPointHis userGroupPointHis,
 			@Param("filter") Map<String, Object> filter);
 
-	/**
-	 * <p>
-	 * Description: 查询数据:根据客户编码查询豆豆变更情况集合
-	 * </p>
-	 * 
-	 * @Method: query
-	 * @param UserGroupPointAccount
-	 * @return UserGroupPointAccount
-	 * @throws
-	 */
 	public int count(@Param("userGroupPointHis") UserGroupPointHis userGroupPointHis);
+
+	public UserGroupPointHis queryByRegisterNumber (UserGroupPointHis userGroupPointHis);
+
 }
