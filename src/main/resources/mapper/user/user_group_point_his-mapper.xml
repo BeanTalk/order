@@ -27,14 +27,24 @@
 		select
 			point_id as  pointId,
 			group_id as groupId,
-			point_type  as pointType,
-			point_balance  as pointBalance,
+			point_type as pointType,
+			point_balance as pointBalance,
 			register_number as registerNumber,
 			accept_person as acceptPerson,
 			accept_date as acceptDate
 		from st_user_group_point_his
-		where
-		group_id =#{groupId}
+		where group_id = #{userGroupPointHis.groupId}
+		order by accept_date desc
+		<if test="filter.first != null and filter.last != null">
+            LIMIT #{filter.first}, #{filter.last}
+		</if>
 	</select>
-
+	
+	<select id="count" resultType="int">
+		select
+			count(*)
+		from st_user_group_point_his
+		where group_id = #{userGroupPointHis.groupId}
+	</select>
+	
 </mapper>

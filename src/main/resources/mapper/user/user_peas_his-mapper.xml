@@ -42,7 +42,7 @@
 
 
 
-	<select id="queryListbyUserId" resultType="gift">
+	<select id="queryListbyUserId" resultType="userPeasHis">
 		select
 		peas_id as peasId,
 		user_id as userId,

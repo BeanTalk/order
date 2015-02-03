@@ -1,24 +1,24 @@
 package com.saituo.order.entity.user;
 
 public class UserPeasHis {
-	
-	//序号
+
+	// 序号
 	private Long peasId;
-	//客户编码
+	// 客户编码
 	private String userId;
-	//操作类型:1.累积积分2.使用积分
+	// 操作类型:1.累积积分2.使用积分
 	private String peasType;
-	//本次使用或累计豆豆数
-	private Long  peasBalance;
-	//累积豆豆时是客户订购产品的订单编号；使用豆豆时是客户积分兑换时使用的订单编号
-	private Long  registerNumber;
-	//创建者
+	// 本次使用或累计豆豆数
+	private Long peasBalance;
+	// 累积豆豆时是客户订购产品的订单编号；使用豆豆时是客户积分兑换时使用的订单编号
+	private Long registerNumber;
+	// 创建者
 	private String acceptPerson;
-	//创建时间
+	// 创建时间
 	private String acceptDate;
-	//礼品ID
+	// 礼品ID
 	private Long giftId;
-	
+
 	public Long getGiftId() {
 		return giftId;
 	}
@@ -26,7 +26,6 @@ public class UserPeasHis {
 		this.giftId = giftId;
 	}
 
-	
 	public Long getPeasId() {
 		return peasId;
 	}
