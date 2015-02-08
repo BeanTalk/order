@@ -2,8 +2,6 @@
 <#macro head>
 <script type="text/javascript">
 
-	$('.num-products-input').val(1);
-	
 	//批量删除
 	$('#batch_btn').click(function(){
 		var length = $("#buycard-list-form").find("input[type='checkbox'][name='productIds']:checked").length;
@@ -101,7 +99,7 @@
 				            <td width="60" align="center">${r.unitValue!""}</td>
 				            <td width="80" align="center" class="price-per-products">${r.catalogFee!""}</td>
 							<td width="80" align="center" class="num-products">
-								<input type="text" class="num-products-input" name="subscripts" size="2" value="${r.subscriptCount!1}">
+								<input type="text" class="right int-count-input" name="subscripts" size="2" value="${r.subscriptCount!1}">
 							</td>
 							<td width="80">大连赛拓</td>
 							<td width="50" align="center">

@@ -44,18 +44,18 @@ $(' .user_order_toggle_tr ').dblclick(function(event) {
 	$(".tr_" + (this.id)).toggle('');
 });
 
-var isIntOrNotNull = function(str) {
+var isIntAndNotNull = function(str) {
 	if (!isObj(str))
 		return 'undefined';
 	return !isNull(str) && isInt(str);
 }
 
-var isFloatOrNotNull = function(str) {
+var isFloatAndNotNull = function(str) {
 	if (!isObj(str))
 		return 'undefined';
 	if (isInt(str))
 		return true;
-	return !isNull(str) || isFloat(str);
+	return !isNull(str) && isFloat(str);
 }
 
 var isObj = function(str) {
@@ -84,3 +84,26 @@ var isInt = function(str) {
 	var reg = /^(-|\+)?\d+$/;
 	return reg.test(str);
 }
+
+var isFloat = function(str){  
+	var reg = /^(-?\d+)(\.\d+)?$/;
+	return reg.test(str);
+} 
+
+$('.float-input').change(function(){
+	if(!isFloatAndNotNull($(this).val())){
+		$(this).val(0);
+	}
+});
+
+$('.int-input').change(function(){
+	if(!isIntAndNotNull($(this).val())){
+		$(this).val(0);
+	}
+});
+
+$('.int-count-input').change(function(){
+	if(!isIntAndNotNull($(this).val())){
+		$(this).val(1);
+	}
+});
