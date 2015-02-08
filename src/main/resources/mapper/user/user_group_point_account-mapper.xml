@@ -4,6 +4,7 @@
 
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.user.UserGroupPointAccountDao">
+	
 	<insert id="insert" useGeneratedKeys="true" keyProperty="userGroupId">
 		insert into st_user_group_point_account(
 		user_group_id,
@@ -15,6 +16,7 @@
 		#{accountFee}
 		)
 	</insert>
+	
 	<update id="update">  
         update st_user_group_point_account  
 		<trim prefix="set" suffixOverrides=",">  
@@ -28,32 +30,31 @@
         where user_group_id = #{userGroupId}  
 	</update>  
 
-
-		<update id="updateAdd">  
+	<update id="updateAdd">  
 	        update st_user_group_point_account  
-			<trim prefix="set" suffixOverrides=",">  
-				<if test="pointBalance != null">  
+		<trim prefix="set" suffixOverrides=",">  
+			<if test="pointBalance != null">  
 	                  point_balance = point_balance +#{pointBalance},  
-				</if>  
-				<if test="accountFee != null">  
+			</if>  
+			<if test="accountFee != null">  
 	                   account_fee =account_fee+ #{accountFee},  
-				</if>
-			</trim>
+			</if>
+		</trim>
 	        where user_group_id = #{userGroupId}  
-		</update>  
+	</update>  
 		
-		<update id="updateReduction">  
+	<update id="updateReduction">  
 	        update st_user_group_point_account  
-			<trim prefix="set" suffixOverrides=",">  
-				<if test="pointBalance != null">  
+		<trim prefix="set" suffixOverrides=",">  
+			<if test="pointBalance != null">  
 	                  point_balance = point_balance -#{pointBalance},  
-				</if>  
-				<if test="accountFee != null">  
+			</if>  
+			<if test="accountFee != null">  
 	                   account_fee =account_fee- #{accountFee},  
-				</if>
-			</trim>
+			</if>
+		</trim>
 	        where user_group_id = #{userGroupId}  
-		</update>  
+	</update>  
 
 
 	<select id="query" resultType="userGroupPointAccount">

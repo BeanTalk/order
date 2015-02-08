@@ -34,8 +34,10 @@ public class ProductOrder {
 	private Product product;
 	// 实收价
 	private Double pricePaidFee;
-	//使用积分
+	// 使用积分
 	private Long pointBalanceFee;
+	// 总体价格＝单价＊个数
+	private Double totalPrice;
 
 	public String getDeliveryDate() {
 		return deliveryDate;
@@ -133,6 +135,12 @@ public class ProductOrder {
 	}
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 }

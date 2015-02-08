@@ -22,7 +22,16 @@
 	
 	/* 退货 */
 	$('.return_btn').click(function(){
-		alert(this.id);
+		$.post("${returnURL}", {"productOrderId" : this.id})
+		.success(
+			function(){
+				alert("退货成功!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
 	});
 	
 </script>
@@ -32,6 +41,8 @@
 
 <#assign viewURL = "${base}/order/list/all_order">
 <#assign complianURL = "${base}/order/list/customer/complain">
+<#assign returnURL = "${base}/order/list/inside/return">
+
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
@@ -108,8 +119,10 @@
 				            <th width="80" align="left">规格</th>
 				            <th width="60" align="left">单位</th>
 				            <th width="100" align="left">目录价</th>
-				            <th width="100" align="left">订购价</th>
+				            <th width="100" align="left">订购单价</th>
 				            <th width="80" align="left">数量</th>
+				            <th width="100" align="left">使用积分</th>
+				            <th width="100" align="left">实收价</th>
 				            <th width="80" align="left">订单状态</th>
 				            <th width="80" align="left">操作</th>
 						</tr>
@@ -119,12 +132,12 @@
 					<tbody>
 						<#if page.content?size == 0>
 		                    <tr>
-		                        <td colspan="8">没有记录</td>
+		                        <td colspan="11">没有记录</td>
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
 		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
-				                    <td colspan="9">
+				                    <td colspan="11">
 							            <table width="100%">
 							            	<th width="30"></th>
 								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
@@ -148,6 +161,8 @@
 				                        <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
 										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+										<td width="100" align="center">${productOrderInfo.pointBalanceFee!0}</td>
+										<td width="100" align="center"><#if productOrderInfo.pricePaidFee??>${productOrderInfo.pricePaidFee!0}<#else>${productOrderInfo.totalPrice!0}</#if></td>
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]!""}</td>
 										<td width="80" align="center">
 											<#if !Session["session_variable"].isInternalUser && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3")>

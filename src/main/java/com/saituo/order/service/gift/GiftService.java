@@ -101,15 +101,15 @@ public class GiftService {
 		// 更新客户豆豆数量
 		UserBeans userBeans = new UserBeans();
 		userBeans.setUserId(userId);// 客户编号
-		userBeans.setBeansNum(beansNum);// 豆豆数量
-		userBeansDao.update(userBeans);
+		userBeans.setBeansNum(peasBalance);// 豆豆数量
+		userBeansDao.updateReduction(userBeans);
 
 		// 礼品表:减掉兑换了的礼品数量
 		Gift gift = new Gift();
 		gift.setId(giftId);// 兑换礼品ID
 		gift.setUpdateBy(userId);// 更新者
 		gift.setGiftNum(giftNum);
-		giftDao.update(gift);// XXX
+		giftDao.update(gift);
 
 		// 记录客户豆豆历史表
 		UserPeasHis userPeasHis = new UserPeasHis();

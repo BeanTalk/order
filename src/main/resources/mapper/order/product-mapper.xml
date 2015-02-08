@@ -32,6 +32,9 @@
           spec_value AS "specValue",
           unit_value AS "unitValue",
           catalog_fee AS "catalogFee",
+          weight_discount AS "weightDiscount",
+          limit_discount AS "limitDiscount",
+          buy_discount AS "buyDiscount",
           p.del_flag AS "delFlag"
         FROM
            st_product p left join st_product_brand pb
@@ -56,6 +59,9 @@
           spec_value AS "specValue",
           unit_value AS "unitValue",
           catalog_fee AS "catalogFee",
+          weight_discount AS "weightDiscount",
+          limit_discount AS "limitDiscount",
+          buy_discount AS "buyDiscount",
           p.del_flag AS "delFlag"
         FROM
            st_product p left join st_product_brand pb

@@ -2,17 +2,6 @@
 <#macro head>
 <script type="text/javascript">
 
-	var isCheckAll=true;
-	$("#checkboxAll").click(function(){
-		if(isCheckAll){
-			$(".table_pro_body input[type=checkbox]").attr("checked",true);
-			isCheckAll=false;	
-		}else{
-			$(".table_pro_body input[type=checkbox]").attr("checked",false);
-			isCheckAll=true;
-		}
-	});
-	
 	//批量确认
 	$('#save_btn').click(function(){
 		var length = $("#buycard-list-form").find("input[type='checkbox'][name='stockNumbers']:checked").length;
@@ -57,14 +46,15 @@
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
 		          		<tr>
-							<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
+							<th width="30"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
 							<th width="60">备货号</th>
 							<th width="218">产品</th>
-							<th width="80">地市</th>
-							<th width="80">备货人</th>
 							<th width="80">备货价</th>
 							<th width="80">数量</th>
 							<th width="80">供应商</th>
+							<th width="80">地市</th>
+							<th width="80">备货人</th>
+							<th width="80">采购人</th>
 							<th width="60">操作</th>
 				        </tr>
 			    	</tbody>
@@ -87,11 +77,12 @@
 										<p><b>货号：</b>${r.product.productNum!""}</p>
 										<p><b>品牌：</b>${r.product.brandName!""}</p>
 									</td>
-			                        <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
-			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
 						            <td width="80" align="center">${r.stockFee!""}</td>
 						            <td width="80" align="center">${r.orderNum!""}</td>
 						            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+						            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
+			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
+			                        <td width="80" align="center">${userIdAndName[r.buyerUserId?string]!""}</td>
 									<td width="60" align="center">
 										<div id="${r.stockNumber}" class="button orange medium fl D-operation pass">入库</div>
 									</td>

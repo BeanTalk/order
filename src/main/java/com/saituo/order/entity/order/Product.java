@@ -28,6 +28,15 @@ public class Product {
 	// 折扣价
 	private Double discoutFee;
 
+	// 加权折扣
+	private Double weightDiscount;
+
+	// 采购折扣
+	private Double buyDiscount;
+
+	// 最高限价折扣
+	private Double limitDiscount;
+
 	public Integer getProductId() {
 		return productId;
 	}
@@ -98,6 +107,30 @@ public class Product {
 
 	public void setBrandName(String brandName) {
 		this.brandName = brandName;
+	}
+
+	public Double getWeightDiscount() {
+		return weightDiscount;
+	}
+
+	public void setWeightDiscount(Double weightDiscount) {
+		this.weightDiscount = weightDiscount;
+	}
+
+	public Double getBuyDiscount() {
+		return buyDiscount;
+	}
+
+	public void setBuyDiscount(Double buyDiscount) {
+		this.buyDiscount = buyDiscount;
+	}
+
+	public Double getLimitDiscount() {
+		return limitDiscount;
+	}
+
+	public void setLimitDiscount(Double limitDiscount) {
+		this.limitDiscount = limitDiscount;
 	}
 
 }

@@ -82,7 +82,7 @@
 					</tbody>
 				</table>
 		        <table width="100%" class="table_pro_body_t">
-					<tbody>
+					<tbody class="second_level">
 						<#if page.content?size == 0>
 		                    <tr>
 		                        <td colspan="6">没有记录</td>
@@ -92,7 +92,9 @@
 			                    <tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
 			                    	<td colspan="8">
 							            <table width="100%">
-							            	<th width="30"><input type="checkbox" class="userOrderClass" name="userOrderIds" id="u_${r.userOrderReturn.userOrderId!""}" value="${r.userOrderReturn.userOrderId!""}"></th>
+							            	<th width="30">
+							            		<input type="checkbox" class="userOrderClass" name="userOrderIds" id="${r.userOrderReturn.userOrderId!""}" value="${r.userOrderReturn.userOrderId!""}">
+							            	</th>
 								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 								            <th align="left">订货人:${r.userOrderReturn.userName!""}</th>
 								            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
@@ -104,7 +106,7 @@
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
 											<#if productOrderInfo.auditCd == "1">
-												<input type="checkbox" name="userOrderAndProductOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}">
+												<input type="checkbox" class="hidden_class" name="userOrderAndProductOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}">
 											</#if>
 										</td>
 				                        <td width="248" align="left">

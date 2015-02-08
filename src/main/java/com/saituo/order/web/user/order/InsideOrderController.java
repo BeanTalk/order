@@ -112,8 +112,8 @@ public class InsideOrderController {
 	@RequestMapping(value = "bargain", method = RequestMethod.POST)
 	public String bargainOrder(@RequestParam(required = false) Map<String, Object> filter,
 			@RequestParam(required = false) List<String> productOrderIds,
-			@RequestParam(required = false) List<Double> orderFees,
-			@RequestParam(required = false) List<Double> disCountFees) {
+			@RequestParam(required = false) List<Double> newcatalogFees,
+			@RequestParam(required = false) List<Double> oldcatalogFees) {
 
 		String productOrderId = (String) filter.get("productOrderId");
 		// 产品订单编号~订购价格新~订购价格旧
@@ -121,20 +121,32 @@ public class InsideOrderController {
 
 		if (StringUtils.isNotEmpty(productOrderId)) {
 
-			Double modifiedFee = Double.valueOf(String.valueOf(filter.get("modifiedFee")));
-			Double disCountFee = Double.valueOf(String.valueOf(filter.get("disCountFee")));
+			Double newOrderFee = Double.valueOf(String.valueOf(filter.get("newOrderFee")));
+			Double oldOrderFee = Double.valueOf(String.valueOf(filter.get("oldOrderFee")));
 
 			StringBuilder sb = new StringBuilder();
-			sb.append(productOrderId).append("~").append(modifiedFee).append("~").append(disCountFee);
+			sb.append(productOrderId).append("~").append(newOrderFee).append("~").append(oldOrderFee);
 			productOrderList.add(sb.toString());
 
 		} else {
+			List<String> productIds = Lists.newArrayList();
+			List<Double> newcatalogFeesList = Lists.newArrayList();
+			List<Double> oldcatalogFeesList = Lists.newArrayList();
 
 			for (int i = 0; i < productOrderIds.size(); i++) {
-				String productOrderIdTmp = productOrderIds.get(i);
+				String productStr = productOrderIds.get(i);
+				String productId = StringUtils.substringBefore(productStr, "_");
+				productIds.add(productId);
+				int index = Integer.valueOf(StringUtils.substringAfter(productStr, "_"));
+				newcatalogFeesList.add(newcatalogFees.get(index));
+				oldcatalogFeesList.add(oldcatalogFees.get(index));
+			}
+
+			for (int i = 0; i < productIds.size(); i++) {
+				String productOrderIdTmp = productIds.get(i);
 				StringBuilder sb = new StringBuilder();
-				sb.append(productOrderIdTmp).append("~").append(orderFees.get(i)).append("~")
-						.append(disCountFees.get(i));
+				sb.append(productOrderIdTmp).append("~").append(newcatalogFeesList.get(i)).append("~")
+						.append(oldcatalogFeesList.get(i));
 				productOrderList.add(sb.toString());
 			}
 		}
@@ -393,6 +405,25 @@ public class InsideOrderController {
 		}
 		userOrderService.doProductOrderReceipt(filter);
 		return "redirect:/order/list/inside/received_view";
+	}
+
+	/**
+	 * 内勤退货
+	 * 
+	 * @param filter
+	 * @param productIds
+	 * @return
+	 */
+	@RequestMapping(value = "return", method = RequestMethod.POST)
+	public String returnOrder(@RequestParam Map<String, Object> filter) {
+
+		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"), String.class);
+		List<String> list = Lists.newArrayList();
+		list.add(productOrderId);
+		filter.put("productOrderList", list);
+
+		userOrderService.doProductOrderReturn(filter);
+		return "redirect:/order/list/all_order";
 	}
 
 }

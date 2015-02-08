@@ -74,11 +74,11 @@
 							<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
 							<th width="60">备货号</th>
 							<th width="218">产品</th>
-							<th width="80">地市</th>
-							<th width="80">备货人</th>
 							<th width="80">备货价</th>
 							<th width="80">数量</th>
 							<th width="80">供应商</th>
+							<th width="80">地市</th>
+							<th width="80">备货人</th>
 							<th width="100">操作</th>
 				        </tr>
 			    	</tbody>
@@ -101,11 +101,11 @@
 										<p><b>货号：</b>${r.product.productNum!""}</p>
 										<p><b>品牌：</b>${r.product.brandName!""}</p>
 									</td>
-			                        <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
-			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
 						            <td width="80" align="center">${r.stockFee!""}</td>
 						            <td width="80" align="center">${r.orderNum!""}</td>
 						            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+						            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
+			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
 									<td width="100" align="center">
 										<div id="${r.stockNumber}" class="button orange medium fl D-operation pass">确认</div>
 						            	<div id="${r.stockNumber}" class="button green medium fl D-operation reject">重分配</div>

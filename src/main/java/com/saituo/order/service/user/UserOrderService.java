@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.utils.DateBetweenUtils;
+import com.saituo.order.commons.utils.MathUtils;
 import com.saituo.order.dao.account.GroupDao;
 import com.saituo.order.dao.order.ProductDao;
 import com.saituo.order.dao.user.AddressDao;
@@ -452,7 +453,8 @@ public class UserOrderService {
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
 		// 客户组编号
-		String userGroupId = VariableUtils.typeCast(filter.get("userGroupId"), String.class);
+		String userGroupId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
+				String.class);
 
 		if (productOrderList != null && productOrderList.size() > 0) {
 			ProductOrder productOrder = null;
@@ -1033,10 +1035,11 @@ public class UserOrderService {
 			Integer productId = VariableUtils.typeCast(productOrder.getProductId(), Integer.class);
 			Product product = productDao.getProductByProductId(productId);
 			productOrder.setProduct(product);
+			productOrder
+					.setTotalPrice(MathUtils.getDoublePoint(productOrder.getOrderFee() * productOrder.getOrderNum()));
 		}
 		return productOrderList;
 	}
-
 	public List<Product> getProductList(Long userOrderId) {
 
 		// 根据客户订单编码查询产品订单项信息列表
@@ -1215,5 +1218,11 @@ public class UserOrderService {
 				}
 			}
 		}
+	}
+
+	public UserGroupPointAccount queryGroupPointAccount(Integer groupId) {
+		UserGroupPointAccount userGroupPointAccount = new UserGroupPointAccount();
+		userGroupPointAccount.setUserGroupId(String.valueOf(groupId));
+		return userGroupPointAccountDao.query(userGroupPointAccount);
 	}
 }

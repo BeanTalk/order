@@ -18,6 +18,48 @@
 		$("#list-form").attr("action", "${submitUrl}");
 		$("#list-form").submit();
 	});
+	
+	
+	$('.num-point-input').change(function(){
+	
+		if(!isIntOrNotNull($(this).val())){
+			$(this).val(0);
+		}
+		
+		var pointNum = toDecimal($(this).val());
+		var oldpointnum = toDecimal($("#"+this.id+"_point").val());
+		var totalPoint = toDecimal($("#point_score").text());
+	
+		var isContinue = true;
+		var sum_point = 0;
+		$(this).closest('.second_level').find("input[type=text][class^=num-point-input]").each(
+			function(){
+				sum_point = sum_point + toDecimal($(this).val());
+ 			}
+ 		);
+ 		var staTotalPoint = toDecimal($("#point_score_sta").text());
+ 		var totalPoint = toDecimal($("#point_score").text());
+		if(sum_point > staTotalPoint){
+			isContinue = false;
+			alert("对不起您的积分不够!");
+			$(this).val(oldpointnum);
+		}
+		
+		if(isContinue){
+			var remainPoint = toDecimal(totalPoint-(pointNum-oldpointnum));
+			$("#point_score").text(remainPoint);
+			$("#"+this.id+"_point").val(pointNum);
+			
+			//money
+			var singPrice = $("#singlePrice_" +this.id).text();
+			var singleNum = $("#singleNum_"+ this.id).text();
+			
+			var totalPrice = toDecimal(singPrice *singleNum);
+			var pointForMoney = toDecimal(pointNum/100);
+			$('#totalprice_'+this.id).text(toDecimal(totalPrice-pointForMoney));
+			$('#hidden_totalprice_'+this.id).val(toDecimal(totalPrice-pointForMoney));
+		}
+	});
 </script>
 </#macro>
 
@@ -34,6 +76,11 @@
 		<div class="panel_body clearfix">
 			<@teacher_headquery startDate endDate userOrderId userInfoMap/>
 			<br>
+			<div class="panel_header">
+				<h3>积分总数: <span id="point_score">${(userGroupPointAccount.pointBalance)!0}<span></h3>
+				<h3>余额: ${(userGroupPointAccount.accountFee)!0}</h3>
+				<h3><span class="hidden_class" id="point_score_sta">${(userGroupPointAccount.pointBalance)!0}<span></h3>
+			</div>
 			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
 					<tbody>
@@ -45,21 +92,24 @@
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
 				            <th width="80" align="left">数量</th>
+				            <th width="100" align="left">订单总价</th>
+				            <th width="100" align="left">使用积分</th>
 						</tr>
 					</tbody>
 				</table>
 		        <table width="100%" class="table_pro_body_t">
-					<tbody>
+					<tbody class="second_level">
 						<#if page.content?size == 0>
 		                    <tr>
 		                        <td colspan="6">没有记录</td>
 		                    </tr>
 		                <#else>
+		                	<#assign index= 0>
 		                    <#list page.content as r>
 		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
 			                    	<td colspan="7">
 							            <table width="100%">
-							            	<th width="30"><input type="checkbox" class="userOrderClass" name="userOrderIds" id="u_${r.userOrderReturn.userOrderId!""}" value="${r.userOrderReturn.userOrderId!""}"></th>
+							            	<th width="30"><input type="checkbox" class="userOrderClass" name="userOrderIds" id="${r.userOrderReturn.userOrderId!""}" value="${r.userOrderReturn.userOrderId!""}"></th>
 								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 								            <th align="left">订货人:${r.userOrderReturn.userName!""}</th>
 								            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
@@ -69,7 +119,9 @@
 								</tr>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
-				                    	<td width="30"></td>
+				                    	<td width="30">
+				                    		<input type="checkbox" name="userOrderAndproductOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}_${index}">
+				                    	</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
 											<p><b>货号：</b>${productOrderInfo.product.productNum!""}</p>
@@ -78,9 +130,26 @@
 				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
-							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
-										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+							            <td width="100" align="center">
+							            	<span id="singlePrice_${productOrderInfo.registerNumber}">
+							            		${productOrderInfo.orderFee!""}
+							            	</span>
+							            </td>
+										<td width="80" align="center">
+											<span id="singleNum_${productOrderInfo.registerNumber}">
+												${productOrderInfo.orderNum!1}
+											</span>
+										</td>
+										<td width="100" align="center">
+											<span id="totalprice_${productOrderInfo.registerNumber}">${productOrderInfo.totalPrice!0.0}</span>
+											<input type="hidden" id="hidden_totalprice_${productOrderInfo.registerNumber}" name="totalPrices" value="${productOrderInfo.totalPrice!0.0}">
+										</td>
+										<td width="100" align="center">
+											<input type="text" class="num-point-input right" size="8" id="${productOrderInfo.registerNumber}" name="points" value="0">
+											<input type="hidden" id="${productOrderInfo.registerNumber}_point" name="oldPoints" value="0">
+										</td>
 				                    </tr>
+				                    <#assign index=index+1>
 			                    </#list>
 			                    <#if r.addressReturn??>
 			                    	<@address_plugin r.addressReturn />
