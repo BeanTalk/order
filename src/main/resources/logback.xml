@@ -26,7 +26,7 @@
 	<logger name="com.ibatis.common.jdbc.ScriptRunner" level="debug" />
 	<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="debug" />
 	
-	<root level="ERROR">
+	<root level="INFO">
 		<appender-ref ref="console" />
 		<appender-ref ref="rollingFile" />
 	</root>

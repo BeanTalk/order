@@ -20,19 +20,21 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
-import com.saituo.order.commons.enumeration.entity.HandlerResult;
 import com.saituo.order.commons.enumeration.entity.CompaintType;
 import com.saituo.order.commons.enumeration.entity.ComplainStatus;
+import com.saituo.order.commons.enumeration.entity.HandlerResult;
 import com.saituo.order.commons.enumeration.entity.ProductOrderState;
 import com.saituo.order.commons.enumeration.entity.RoleSign;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
+import com.saituo.order.commons.utils.MathUtils;
 import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.Audit;
 import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.OrderComplaint;
+import com.saituo.order.entity.user.UserGroupPointAccount;
 import com.saituo.order.entity.user.UserOrder;
 import com.saituo.order.service.account.AccountService;
 import com.saituo.order.service.order.BuyCardService;
@@ -96,23 +98,38 @@ public class CustomerController {
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
 		List<String> productOrderList = new ArrayList<String>();
-		List<Product> products = productService.getProductInfoListByProductId(productIds);
 
-		Map<String, String> productPriceMap = Maps.newHashMap();
-		for (Product product : products) {
-			productPriceMap.put(String.valueOf(product.getProductId()), String.valueOf(product.getCatalogFee()));
-		}
+		List<String> productIdList = Lists.newArrayList();
+		List<String> subscriptValids = Lists.newArrayList();
 
 		for (int i = 0; i < productIds.size(); i++) {
+			String productStr = productIds.get(i);
+			String productId = StringUtils.substringBefore(productStr, "_");
+			int index = Integer.valueOf(StringUtils.substringAfter(productStr, "_"));
+			productIdList.add(productId);
+			subscriptValids.add(subscripts.get(index));
+		}
+
+		List<Product> products = productService.getProductInfoListByProductId(productIdList);
+
+		Map<String, Double> productPriceMap = Maps.newHashMap();
+		for (Product product : products) {
+			productPriceMap.put(
+					String.valueOf(product.getProductId()),
+					MathUtils.getDoublePoint(MathUtils.getMathDefault(product.getCatalogFee())
+							* product.getWeightDiscount()));
+		}
+
+		for (int i = 0; i < productIdList.size(); i++) {
 			StringBuilder sb = new StringBuilder(120);
-			String productId = productIds.get(i);
+			String productId = productIdList.get(i);
 			sb.append(productId).append("~").append(productPriceMap.get(productId)).append("~")
-					.append(subscripts.get(i));
+					.append(subscriptValids.get(i));
 			productOrderList.add(sb.toString());
 		}
 		filter.put("productOrderList", productOrderList);
 		userOrderService.doCreateUserOrder(filter);
-		buyCardService.removeProductListFromBuyCard(userId, productIds.toArray(new String[productIds.size()]));
+		buyCardService.removeProductListFromBuyCard(userId, productIdList.toArray(new String[productIdList.size()]));
 		return "redirect:/order/list/customer/confirm_view";
 	}
 	/**
@@ -174,8 +191,8 @@ public class CustomerController {
 	 */
 	@RequiresPermissions("perms[order:list:confirm]")
 	@RequestMapping(value = "customer/confirm", method = RequestMethod.POST)
-	public String customerConfirmOrdering(@RequestParam Map<String, Object> filter,
-			@RequestParam List<String> userOrders, Model model) {
+	public String customerConfirmOrdering(Model model, @RequestParam Map<String, Object> filter,
+			@RequestParam List<String> userOrders, @RequestParam List<String> productOrderIds) {
 		for (String userOrder : userOrders) {
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrder);
@@ -208,7 +225,6 @@ public class CustomerController {
 		// 内勤议价，客户订单状态必须为待审批状态
 		List<Integer> mutilStatusCdList = Lists.newArrayList();
 		mutilStatusCdList.add(UserOrderingState.REJECTED.getValue());
-		mutilStatusCdList.add(UserOrderingState.HOLD.getValue());
 		filter.put("multiStatusCd", mutilStatusCdList);
 
 		List<UserOrder> userOrderList = userOrderService.getUserOrderList(filter);
@@ -648,9 +664,13 @@ public class CustomerController {
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
+
+		UserGroupPointAccount userGroupPointAccount = userOrderService.queryGroupPointAccount(groupId);
+
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userId", filter.get("userId"));
+		model.addAttribute("userGroupPointAccount", userGroupPointAccount);
 		model.addAttribute("startDate", filter.get("startDate"));
 		model.addAttribute("endDate", filter.get("endDate"));
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
@@ -672,12 +692,73 @@ public class CustomerController {
 	@RequiresPermissions("perms[order:list:book]")
 	@RequestMapping(value = "customer/book", method = RequestMethod.POST)
 	public String customerBookOrdering(@RequestParam Map<String, Object> filter,
-			@RequestParam List<String> userOrderIds, Model model) {
+			@RequestParam List<String> userOrderIds, @RequestParam List<String> userOrderAndproductOrderIds,
+			@RequestParam List<String> points, @RequestParam List<String> totalPrices, Model model) {
 
-		for (String userOrderId : userOrderIds) {
-			Map<String, Object> mapData = Maps.newHashMap();
-			mapData.put("userOrderId", userOrderId);
-			userOrderService.doUpdateUserOrderStatusFive(mapData);
+		Map<String, Map<String, List<?>>> mapData = Maps.newHashMap();
+
+		for (int i = 0; i < userOrderAndproductOrderIds.size(); i++) {
+
+			String productStr = userOrderAndproductOrderIds.get(i);
+
+			String userOrderId = StringUtils.substringBefore(productStr, "_");
+			String productId = StringUtils.substringBetween(productStr, "_");
+			int index = Integer.valueOf(StringUtils.substringAfterLast(productStr, "_"));
+
+			List<String> productIdList = null;
+			List<String> pointList = null;
+			List<String> totalPriceList = null;
+
+			Map<String, List<?>> innerMap = mapData.get(userOrderId);
+			if (innerMap == null) {
+				innerMap = Maps.newHashMap();
+
+				productIdList = Lists.newArrayList();
+				productIdList.add(productId);
+
+				pointList = Lists.newArrayList();
+				pointList.add(points.get(index));
+
+				totalPriceList = Lists.newArrayList();
+				totalPriceList.add(totalPrices.get(index));
+
+			} else {
+				productIdList = (List<String>) innerMap.get("productIdList");
+				productIdList.add(productId);
+
+				pointList = (List<String>) innerMap.get("pointList");
+				pointList.add(points.get(index));
+
+				totalPriceList = (List<String>) innerMap.get("totalPriceList");
+				totalPriceList.add(totalPrices.get(index));
+			}
+
+			innerMap.put("productIdList", productIdList);
+			innerMap.put("pointList", pointList);
+			innerMap.put("totalPriceList", totalPriceList);
+			mapData.put(userOrderId, innerMap);
+		}
+
+		for (Map.Entry<String, Map<String, List<?>>> entry : mapData.entrySet()) {
+			String userOrderId = entry.getKey();
+			Map<String, List<?>> innerMap = entry.getValue();
+			List<String> productIds = (List<String>) innerMap.get("productIdList");
+			List<String> pointList = (List<String>) innerMap.get("pointList");
+			List<String> totalPriceList = (List<String>) innerMap.get("totalPriceList");
+
+			List<String> productOrderList = Lists.newArrayList();
+			for (int i = 0; i < productIds.size(); i++) {
+				StringBuilder sb = new StringBuilder(120);
+				String productId = productIds.get(i);
+				sb.append(productId).append("~").append(totalPriceList.get(i)).append("~").append(pointList.get(i));
+				productOrderList.add(sb.toString());
+			}
+
+			Map<String, Object> mapDataRes = Maps.newHashMap();
+			mapDataRes.put("userOrderId", userOrderId);
+			mapDataRes.put("productOrderList", productOrderList);
+			userOrderService.doUpdateUserOrderStatusFive(mapDataRes);
+
 		}
 		return "redirect:/order/list/customer/book_view";
 	}

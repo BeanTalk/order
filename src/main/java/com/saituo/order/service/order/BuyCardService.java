@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.utils.MathUtils;
 import com.saituo.order.dao.order.ProductDao;
 import com.saituo.order.entity.order.CustomerOrdering;
 import com.saituo.order.entity.order.Product;
@@ -100,9 +101,12 @@ public class BuyCardService {
 		List<Product> productList = productDao.getProductListByProductIds(productIds);
 		try {
 			for (Product product : productList) {
+
+				double catalogFee = MathUtils.getDoublePoint(product.getCatalogFee()
+						* MathUtils.getMathDefault(product.getWeightDiscount()));
+				product.setCatalogFee(catalogFee);
 				CustomerOrdering customerOrdering = new CustomerOrdering();
 				BeanUtils.copyProperties(customerOrdering, product);
-				customerOrdering.setDiscountPrice(99);
 				customerOrdering.setSubscriptCount(VariableUtils.typeCast(
 						mapData.get(String.valueOf(product.getProductId())), Integer.class));
 				result.add(customerOrdering);

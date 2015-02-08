@@ -80,10 +80,21 @@ public class UserOrderServiceTestUnit extends ServiceTestCaseSupport {
 		filter.put("productOrderList", productOrderList);
 		userOrderService.doAuditProductOrder(filter);
 	}
-	// @Test
+	
+	//@Test
 	public void doUpdateUserOrderStatusFive() {
 		Map<String, Object> filter = new HashMap<String, Object>();
 		filter.put("userOrderId", 3l);
+		filter.put("userGroupId", 11l);
+		
+		// 格式：产品订单编号~审批结果~驳回原因～处理意见
+		List<String> productOrderList = new ArrayList<String>();
+		productOrderList.add("5~300.05~0");
+		productOrderList.add("6~215.2~100");
+		
+		
+		filter.put("productOrderList", productOrderList);
+		
 		userOrderService.doUpdateUserOrderStatusFive(filter);
 	}
 	// @Test
@@ -121,5 +132,20 @@ public class UserOrderServiceTestUnit extends ServiceTestCaseSupport {
 		filter.put("productOrderList", productOrderList);
 		userOrderService.doProductOrderShipment(filter);
 	}
-
+	//@Test
+	public void doProductOrderReceipt() {
+		Map<String, Object> filter = new HashMap<String, Object>();
+		List<String> productOrderList = new ArrayList<String>();
+		productOrderList.add("5");
+		filter.put("productOrderList", productOrderList);
+		userOrderService.doProductOrderReceipt(filter);
+	}
+	@Test
+	public void doProductOrderReceivables() {
+		Map<String, Object> filter = new HashMap<String, Object>();
+		List<String> productOrderList = new ArrayList<String>();
+		productOrderList.add("5~300.05~10010~11~2015-01-28 20:27:16");
+		filter.put("productOrderList", productOrderList);
+		userOrderService.doProductOrderReceivables(filter);
+	}
 }

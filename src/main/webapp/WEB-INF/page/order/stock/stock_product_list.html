@@ -1,16 +1,6 @@
 <#include "*/basic/default.html"/>
 <#macro head>
 <script type="text/javascript">
-	var isCheckAll=true;
-	$("#checkboxAll").click(function(){
-		if(isCheckAll){
-			$(".table_pro_body input[type=checkbox]").attr("checked",true);
-			isCheckAll=false;	
-		}else{
-			$(".table_pro_body input[type=checkbox]").attr("checked",false);
-			isCheckAll=true;
-		}
-	});
 	
 	//批量删除
 	$('#batch_remove_btn').click(function(){
@@ -74,7 +64,7 @@
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
 		          		<tr>
-							<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
+							<th width="30"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
 							<th width="258">产品</th>
 							<th width="100">规格</th>
 							<th width="60">单位</th>
@@ -96,7 +86,7 @@
 		                    <#list customerOrderingList as r>
 		                    <tr>
 								<td width="30">
-									<input type="checkbox" name="productIds" value="${r.productId!""}">
+									<input type="checkbox" name="productIds" value="${r.productId!""}_${r_index}">
 								</td>
 		                        <td width="258" align="left">
 									<p><span class="pro_name">${r.productName!""}</span></p>

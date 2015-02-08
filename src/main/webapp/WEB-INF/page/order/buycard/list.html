@@ -2,16 +2,7 @@
 <#macro head>
 <script type="text/javascript">
 
-	var isCheckAll=true;
-	$("#checkboxAll").click(function(){
-		if(isCheckAll){
-			$(".table_pro_body input[type=checkbox]").attr("checked",true);
-			isCheckAll=false;	
-		}else{
-			$(".table_pro_body input[type=checkbox]").attr("checked",false);
-			isCheckAll=true;
-		}
-	});
+	$('.num-products-input').val(1);
 	
 	//批量删除
 	$('#batch_btn').click(function(){
@@ -79,12 +70,11 @@
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
 		          		<tr>
-							<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
+							<th width="30"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
 							<th width="258">产品</th>
 							<th width="100">规格</th>
 							<th width="60">单位</th>
 							<th width="80">目录价</th>
-							<th width="80">订购价</th>
 							<th width="80">数量</th>
 							<th width="80">供应商</th>
 							<th width="50">操作</th>
@@ -100,7 +90,7 @@
 	                    <#list customerOrderingList as r>
 	                    <tr>
 							<td width="30">
-								<input type="checkbox" name="productIds" value="${r.productId!""}">
+								<input type="checkbox" name="productIds" value="${r.productId!""}_${r_index}">
 							</td>
 	                        <td width="258" align="left">
 								<p><span class="pro_name">${r.productName!""}</span></p>
@@ -109,10 +99,9 @@
 							</td>
 	                        <td width="100" align="center">${r.specValue!""}</td>
 				            <td width="60" align="center">${r.unitValue!""}</td>
-				            <td width="80" align="center">${r.catalogFee!""}</td>
-				            <td width="80" align="center" class="price-per-products">${r.discountPrice!""}</td>
+				            <td width="80" align="center" class="price-per-products">${r.catalogFee!""}</td>
 							<td width="80" align="center" class="num-products">
-								<input type="text" class="num-products-input" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
+								<input type="text" class="num-products-input" name="subscripts" size="2" value="${r.subscriptCount!1}">
 							</td>
 							<td width="80">大连赛拓</td>
 							<td width="50" align="center">

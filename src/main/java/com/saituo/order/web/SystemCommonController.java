@@ -174,13 +174,26 @@ public class SystemCommonController {
 	 */
 
 	@RequestMapping(value = "index", method = RequestMethod.GET)
-	public void redirectToPageByRole(Model model) {
+	public String redirectToPageByRole(Model model) {
+
+		Subject subject = SecurityUtils.getSubject();
+		if (subject == null || !subject.isAuthenticated()) {
+			return "redirect:/login";
+		}
+
 		Integer userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				Integer.class);
 		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 		Integer groupId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
 				Integer.class);
-		System.out.println("userId:" + userId);
+		return "index";
+
+	}
+
+	@RequestMapping(value = "unauthorized", method = RequestMethod.GET)
+	public String redirectToUnauthorizedpage(Model model) {
+		model.addAttribute("errorinfo", "您目前没有该操作的权限!!");
+		return "error";
 	}
 
 }

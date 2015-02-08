@@ -42,5 +42,21 @@ public interface UserBeansDao {
 	 * @throws 
 	*/
 	public void delete(UserBeans userBeans);
+	/**
+	 * <p>Description: 更新数据:加</p>
+	 * @Method: update
+	 * @param UserGroupPointAccount
+	 * @return void 
+	 * @throws 
+	*/
+	public void updateAdd (UserBeans userBeans);
+	/**
+	 * <p>Description: 更新数据:减</p>
+	 * @Method: update
+	 * @param UserGroupPointAccount
+	 * @return void 
+	 * @throws 
+	*/
+	public void updateReduction (UserBeans userBeans);
 
 }

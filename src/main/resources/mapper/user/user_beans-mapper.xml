@@ -3,33 +3,45 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- 用户数据访问映射 -->
-<mapper namespace="com.saituo.order.dao.user.UserBeansDao" >
+<mapper namespace="com.saituo.order.dao.user.UserBeansDao">
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="userId">
-        insert into st_user_beans(
-          user_id,
-          beans_num
-        ) values (
-          #{userId},
-          #{beansNum}
-        )
+		insert into st_user_beans(
+		user_id,
+		beans_num
+		) values (
+		#{userId},
+		#{beansNum}
+		)
 	</insert>
-	<update id="update">  
-        update st_user_beans  
-		set  beans_num = #{beansNum}
-        where user_id = #{userId}  
-	</update>  
-    
-	<select id="query" resultType="userBeans">  
-		select 
-		user_id as userId, 
-		beans_num as  beansNum
-        from st_user_beans
-        where user_id = #{userId}  
-	</select> 
-	
+	<update id="update">
+		update st_user_beans
+		set beans_num = #{beansNum}
+		where user_id = #{userId}
+	</update>
+
+	<update id="updateAdd">
+		update st_user_beans
+		set beans_num =beans_num+ #{beansNum}
+		where user_id = #{userId}
+	</update>
+
+	<update id="updateReduction">
+		update st_user_beans
+		set beans_num =beans_num- #{beansNum}
+		where user_id = #{userId}
+	</update>
+
+	<select id="query" resultType="userBeans">
+		select
+		user_id as userId,
+		beans_num as beansNum
+		from st_user_beans
+		where user_id = #{userId}
+	</select>
+
 	<delete id="delete">
 		delete from st_user_beans
-		where user_id = #{userId}  	
+		where user_id = #{userId}
 	</delete>
 </mapper>

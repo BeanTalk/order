@@ -215,12 +215,12 @@
 <#--送货地址-->
 <#macro address_plugin address="">
 	<tr>
-		<td colspan="10" class="msg_Div" align="center">送货地址: <span>${(address.receiptAddress)!""}</span>(<span>${(address.receiptPerson)!""}</span>收)&nbsp;&nbsp;&nbsp;<span style="color:#666">${(address.contactPhone)!""}</span></td>
+		<td colspan="11" class="msg_Div" align="center">送货地址: <span>${(address.receiptAddress)!""}</span>(<span>${(address.receiptPerson)!""}</span>收)&nbsp;&nbsp;&nbsp;<span style="color:#666">${(address.contactPhone)!""}</span></td>
 	</tr>
 </#macro>
 
 <#macro address_undefine>
 	<tr>
-		<td colspan="8" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+		<td colspan="11" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
 	</tr>
 </#macro>

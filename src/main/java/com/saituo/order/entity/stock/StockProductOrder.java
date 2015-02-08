@@ -3,6 +3,7 @@ package com.saituo.order.entity.stock;
 import com.saituo.order.entity.order.Product;
 
 public class StockProductOrder {
+	
 	// 备货产品订单编码
 	private Integer stockNumber;
 	// 备货订单编码
@@ -11,7 +12,6 @@ public class StockProductOrder {
 	private Integer areaId;
 	// 备货人编码
 	private Integer userId;
-
 	// 产品编码
 	private Integer productId;
 	// 产品品牌编码

@@ -6,9 +6,18 @@
 	$(".bargain").click(function(event){
 		event.preventDefault();
 		var id = $(event.target).attr('id');
-		var orderFee = $("#"+id+"_orderFees").val();
-		var disCountFee = $("#"+id+"_disCountFees").val();
-		$.post("${submitUrl}", {"productOrderId" : id, "modifiedFee": orderFee, "disCountFee": disCountFee});
+		var newOrderFee = $("#"+id+"_newCatalogFees").val();
+		var oldOrderFee = $("#"+id+"_oldCatalogFees").val();
+		$.post("${submitUrl}", {"productOrderId" : id, "newOrderFee": newOrderFee, "oldOrderFee": oldOrderFee})
+		.success(
+			function(){
+				alert("议价成功!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
 	});
 	
 	$("#batch_btn").click(function(){
@@ -17,6 +26,7 @@
         	alert("请选择至少一个产品订单");
             return;
         }
+        
 		$("#list-form").attr("action", "${submitUrl}");
 		$("#list-form").submit();
 	});
@@ -56,12 +66,13 @@
 					</tbody>
 				</table>
 		        <table width="100%" class="table_pro_body_t">
-					<tbody>
+					<tbody class="second_level">
 						<#if page.content?size == 0>
 		                    <tr>
 		                        <td colspan="6">没有记录</td>
 		                    </tr>
 		                <#else>
+		                	<#assign index=0>
 		                    <#list page.content as r>
 		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
 			                    	<td colspan="10">
@@ -79,7 +90,7 @@
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
-											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
+											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}_${index}">
 										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
@@ -90,14 +101,15 @@
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">
-							            	<input type="text" class="right" size="8" id="${productOrderInfo.registerNumber}_orderFees" name="orderFees" value="${productOrderInfo.orderFee}">
-							            	<input type="hidden" id="${productOrderInfo.registerNumber}_disCountFees" name="disCountFees" value="${productOrderInfo.orderFee}">
+							            	<input type="text" class="right" size="8" id="${productOrderInfo.registerNumber}_newCatalogFees" name="newcatalogFees" value="${productOrderInfo.orderFee}">
+							            	<input type="hidden" id="${productOrderInfo.registerNumber}_oldCatalogFees" name="oldcatalogFees" value="${productOrderInfo.orderFee}">
 							            </td>
 										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
 										<td width="140" align="center">
 							            	<div id="${productOrderInfo.registerNumber}" class="button blue medium fl bargain">议价</div>
 										</td>
 				                    </tr>
+				                    <#assign index=index+1>
 			                    </#list>
 			                    <#if r.addressReturn??>
 			                    	<@address_plugin r.addressReturn />

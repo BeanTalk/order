@@ -1,17 +1,6 @@
 <#include "*/basic/default.html"/>
 <#macro head>
 <script type="text/javascript">
-
-	var isCheckAll=true;
-	$("#checkboxAll").click(function(){
-		if(isCheckAll){
-			$(".table_pro_body input[type=checkbox]").attr("checked",true);
-			isCheckAll=false;	
-		}else{
-			$(".table_pro_body input[type=checkbox]").attr("checked",false);
-			isCheckAll=true;
-		}
-	});
 	
     //点击原因
 	$('.reasonInfo_btn').click(function(){
@@ -42,7 +31,7 @@
 
 	$('#up_cancel').click($.unblockUI);
 	
-	//分配后 确认
+	//分配后确认
 	$('#up_submit').click(function() {
         $("#distribute_sumbit").attr("action", "${submitUrl}");
 		$("#distribute_sumbit").submit();
@@ -67,14 +56,15 @@
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
 		          		<tr>
-							<th width="30"><input type="checkbox" id="checkboxAll" name="item"></th>
+							<th width="30"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
 							<th width="60">备货号</th>
 							<th width="218">产品</th>
-							<th width="80">地市</th>
-							<th width="80">备货人</th>
 							<th width="80">备货价</th>
 							<th width="80">数量</th>
 							<th width="80">供应商</th>
+							<th width="80">地市</th>
+							<th width="80">备货人</th>
+							<th width="80">采购人</th>
 							<th width="100">操作</th>
 				        </tr>
 			    	</tbody>
@@ -97,11 +87,12 @@
 										<p><b>货号：</b>${r.product.productNum!""}</p>
 										<p><b>品牌：</b>${r.product.brandName!""}</p>
 									</td>
-			                        <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
-			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
 						            <td width="80" align="center">${r.stockFee!""}</td>
 						            <td width="80" align="center">${r.orderNum!""}</td>
 						            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+						            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
+			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
+			                        <td width="80" align="center">${userIdAndName[r.buyerUserId?string]!""}</td>
 									<td width="100" align="center">
 										<div id="${r.stockNumber}" class="button green medium fl D-operation reasonInfo_btn">原因</div>
 										<div id="${r.stockNumber}" class="button orange medium fl D-operation distribute_btn">分配</div>

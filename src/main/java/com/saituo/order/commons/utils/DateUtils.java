@@ -7,6 +7,7 @@ package com.saituo.order.commons.utils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
@@ -148,6 +149,17 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 			e.printStackTrace();
 		}
 		return date;
+	}
+	
+	/**
+	 * 获取Calendar类型
+	 * @param date <code>java.util.Date<code>类型实例
+	 * @return  <code>java.util.Calendar<code>类型实例
+	 */
+	public static Calendar getCalendar(final Date date) {
+		final Calendar objCalendarDate = Calendar.getInstance();
+		objCalendarDate.setTime(date);
+		return objCalendarDate;
 	}
 
 }

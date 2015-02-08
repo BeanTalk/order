@@ -28,9 +28,36 @@ public class ProductOrder {
 	private String acceptDate;
 	// 最后修改时间
 	private String changeDate;
+	// 客户收货时间
+	private String deliveryDate;
 	// 产品项
 	private Product product;
+	// 实收价
+	private Double pricePaidFee;
+	// 使用积分
+	private Long pointBalanceFee;
+	// 总体价格＝单价＊个数
+	private Double totalPrice;
 
+	public String getDeliveryDate() {
+		return deliveryDate;
+	}
+	public void setDeliveryDate(String deliveryDate) {
+		this.deliveryDate = deliveryDate;
+	}
+	public Double getPricePaidFee() {
+		return pricePaidFee;
+	}
+	public void setPricePaidFee(Double pricePaidFee) {
+		this.pricePaidFee = pricePaidFee;
+	}
+
+	public Long getPointBalanceFee() {
+		return pointBalanceFee;
+	}
+	public void setPointBalanceFee(Long pointBalanceFee) {
+		this.pointBalanceFee = pointBalanceFee;
+	}
 	public Long getRegisterNumber() {
 		return registerNumber;
 	}
@@ -108,6 +135,12 @@ public class ProductOrder {
 	}
 	public void setProduct(Product product) {
 		this.product = product;
+	}
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
@@ -120,10 +122,15 @@ public class StockCardController {
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
 
-		if (productIds == null || productIds.size() == 0) {
+		List<String> productIdList = Lists.newArrayList();
+		for (int i = 0; i < productIds.size(); i++) {
+			productIdList.add(StringUtils.substringBefore(productIds.get(i), "_"));
+		}
+
+		if (productIdList == null || productIdList.size() == 0) {
 			return "redirect:/order/stock/list";
 		}
-		String[] array = productIds.toArray(new String[productIds.size()]);
+		String[] array = productIdList.toArray(new String[productIdList.size()]);
 		stockCardService.removeProductListFromBuyCard(userId, array);
 		return "redirect:/order/stock/list";
 	}
@@ -147,8 +154,22 @@ public class StockCardController {
 
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
+		List<String> productIdList = Lists.newArrayList();
+		List<String> subscriptList = Lists.newArrayList();
+		List<String> discountPriceList = Lists.newArrayList();
+		List<String> supplyList = Lists.newArrayList();
 
-		List<Product> products = productService.getProductInfoListByProductId(productIds);
+		for (int i = 0; i < productIds.size(); i++) {
+			String productIdStr = productIds.get(i);
+			String productId = StringUtils.substringBefore(productIdStr, "_");
+			Integer index = VariableUtils.typeCast(StringUtils.substringAfter(productIdStr, "_"), Integer.class);
+			productIdList.add(productId);
+			subscriptList.add(subscripts.get(index));
+			discountPriceList.add(discountPrices.get(index));
+			supplyList.add(supplys.get(index));
+		}
+
+		List<Product> products = productService.getProductInfoListByProductId(productIdList);
 
 		Map<String, String> productPriceMap = Maps.newHashMap();
 		Map<String, String> productBrandMap = Maps.newHashMap();
@@ -159,17 +180,17 @@ public class StockCardController {
 
 		// 前台页面传的订购的产品订单串，格式：产品编号~产品品牌~备货价格～数量～供货商
 		List<String> stockProductOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
+		for (int i = 0; i < productIdList.size(); i++) {
 			StringBuilder sb = new StringBuilder(120);
-			String productId = productIds.get(i);
+			String productId = productIdList.get(i);
 			sb.append(productId).append("~").append(productBrandMap.get(productId)).append("~")
-					.append(discountPrices.get(i)).append("~").append(subscripts.get(i)).append("~")
-					.append(supplys.get(i));
+					.append(discountPriceList.get(i)).append("~").append(subscriptList.get(i)).append("~")
+					.append(supplyList.get(i));
 			stockProductOrderList.add(sb.toString());
 		}
 		filter.put("stockProductOrderList", stockProductOrderList);
 		stockOrderService.doCreateStockOrder(filter);
-		stockCardService.removeProductListFromBuyCard(userId, productIds.toArray(new String[productIds.size()]));
+		stockCardService.removeProductListFromBuyCard(userId, productIdList.toArray(new String[productIdList.size()]));
 		return "redirect:/order/stock/list";
 	}
 

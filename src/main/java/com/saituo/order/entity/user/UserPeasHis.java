@@ -18,7 +18,7 @@ public class UserPeasHis {
 	private String acceptDate;
 	// 礼品ID
 	private Long giftId;
-
+	
 	public Long getGiftId() {
 		return giftId;
 	}

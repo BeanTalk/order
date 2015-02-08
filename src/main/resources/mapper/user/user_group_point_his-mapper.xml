@@ -47,4 +47,19 @@
 		where group_id = #{userGroupPointHis.groupId}
 	</select>
 	
+	<select id="queryByRegisterNumber" resultType="userGroupPointHis">
+		select
+			point_id as  pointId,
+			group_id as groupId,
+			point_type  as pointType,
+			point_balance  as pointBalance,
+			register_number as registerNumber,
+			accept_person as acceptPerson,
+			accept_date as acceptDate
+		from st_user_group_point_his
+		where
+		register_number =#{registerNumber}
+		and point_type=#{pointType}
+	</select>
+
 </mapper>

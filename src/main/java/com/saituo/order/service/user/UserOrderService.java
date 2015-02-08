@@ -1,5 +1,8 @@
 package com.saituo.order.service.user;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,19 +14,30 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.collect.Lists;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.utils.DateBetweenUtils;
+import com.saituo.order.commons.utils.MathUtils;
+import com.saituo.order.dao.account.GroupDao;
 import com.saituo.order.dao.order.ProductDao;
 import com.saituo.order.dao.user.AddressDao;
 import com.saituo.order.dao.user.AuditHisDao;
 import com.saituo.order.dao.user.ProductOrderDao;
 import com.saituo.order.dao.user.ProductOrderHisDao;
+import com.saituo.order.dao.user.UserBeansDao;
+import com.saituo.order.dao.user.UserGroupPointAccountDao;
+import com.saituo.order.dao.user.UserGroupPointHisDao;
 import com.saituo.order.dao.user.UserOrderDao;
+import com.saituo.order.dao.user.UserPeasHisDao;
 import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.Address;
 import com.saituo.order.entity.user.Audit;
 import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.ProductOrder;
 import com.saituo.order.entity.user.ProductOrderHis;
+import com.saituo.order.entity.user.UserBeans;
+import com.saituo.order.entity.user.UserGroupPointAccount;
+import com.saituo.order.entity.user.UserGroupPointHis;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.entity.user.UserPeasHis;
 
 /**
  * 客户订单业务逻辑
@@ -44,6 +58,16 @@ public class UserOrderService {
 	private AddressDao addressDao;
 	@Autowired
 	private ProductDao productDao;
+	@Autowired
+	private UserGroupPointAccountDao userGroupPointAccountDao;
+	@Autowired
+	private UserGroupPointHisDao userGroupPointHisDao;
+	@Autowired
+	private UserBeansDao userBeansDao;
+	@Autowired
+	private UserPeasHisDao userPeasHisDao;
+	@Autowired
+	private GroupDao groupDao;
 
 	/**
 	 * 学生订单保存方法
@@ -225,6 +249,7 @@ public class UserOrderService {
 		returnMap.put("productOrderReturn", productOrderReturn);
 		return returnMap;
 	}
+
 	/**
 	 * 根据产品订单编号更新订购价格
 	 */
@@ -405,7 +430,7 @@ public class UserOrderService {
 	}
 
 	/**
-	 * 根据客户订单编码更新客户订单状态为已下单
+	 * 根据客户订单编码更新客户订单状态为已下单 导师下单
 	 */
 	public void doUpdateUserOrderStatusFive(Map<String, Object> filter) {
 		UserOrder userOrderQuery = new UserOrder();
@@ -418,6 +443,61 @@ public class UserOrderService {
 			// 更新客户订单的状态
 			userOrderDao.update(userOrderQuery);
 		}
+
+		// 0125-by-liurong
+		// 产品订单项列表-记录实收价和使用积分
+		List<String> productOrderList = (List<String>) filter.get("productOrderList");
+		// 前台页面传的订购的产品订单串，格式：产品订单编号~实收价~使用积分
+		String prodcutString[];
+		// 客户编码
+		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				String.class);
+		// 客户组编号
+		String userGroupId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
+				String.class);
+
+		if (productOrderList != null && productOrderList.size() > 0) {
+			ProductOrder productOrder = null;
+			ProductOrderHis productOrderHis = null;
+			String orderResult = "";// 历史信息结果
+			for (String productOrderString : productOrderList) {
+				prodcutString = productOrderString.split("~");
+				productOrder = new ProductOrder();
+				productOrder.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
+				productOrder.setPricePaidFee(VariableUtils.typeCast(prodcutString[1], Double.class)); // 实收价
+				productOrder.setPointBalanceFee(VariableUtils.typeCast(prodcutString[2], Long.class));// 使用积分
+
+				// 如果使用积分需要扣除积分
+				if (null != VariableUtils.typeCast(prodcutString[2], int.class)
+						&& VariableUtils.typeCast(prodcutString[2], int.class) > 0) {
+
+					UserGroupPointAccount userGroupPointAccount = new UserGroupPointAccount();
+					userGroupPointAccount.setPointBalance(VariableUtils.typeCast(prodcutString[2], Long.class));
+					userGroupPointAccount.setUserGroupId(userGroupId);
+					userGroupPointAccountDao.updateReduction(userGroupPointAccount);
+
+					// 记录积分历史表
+					UserGroupPointHis userGroupPointHis = new UserGroupPointHis();
+					userGroupPointHis.setAcceptPerson(userId);// 创建者
+					userGroupPointHis.setGroupId(userGroupId);// 客户组别编码
+					userGroupPointHis.setPointBalance(VariableUtils.typeCast(prodcutString[2], Long.class)); // 本次使用或累计豆豆数
+					userGroupPointHis.setPointType("1"); // 操作类型:1.使用积分 2.累积积分
+					userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
+					userGroupPointHisDao.insert(userGroupPointHis);
+				}
+
+				productOrderDao.update(productOrder);
+				// 记录产品订单项的操作历史
+				orderResult = "导师下单，实收价：" + VariableUtils.typeCast(prodcutString[1], String.class) + " 使用积分："
+						+ VariableUtils.typeCast(prodcutString[2], String.class);
+				productOrderHis = new ProductOrderHis();
+				productOrderHis.setAcceptPerson(userId);// 当前操作人
+				productOrderHis.setOrderResult(orderResult);
+				productOrderHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
+				productOrderHisDao.insert(productOrderHis);
+			}
+		}
+
 	}
 
 	/**
@@ -597,6 +677,7 @@ public class UserOrderService {
 			}
 		}
 	}
+
 	/**
 	 * 根据产品订单编号修改订单状态为内勤出单 此方法适用于内勤出单：出单时productOrderStatusCd传1
 	 */
@@ -674,6 +755,7 @@ public class UserOrderService {
 				productOrder.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
 				// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
 				productOrder.setStatusCd("2");
+				productOrder.setDeliveryDate("");
 				productOrderDao.update(productOrder);
 
 				// 记录产品订单项的操作历史
@@ -779,34 +861,46 @@ public class UserOrderService {
 	}
 
 	/**
-	 * 根据产品订单编号修改发票状态为已送 此方法适用于财务已送发票：productOrderInvoiceStatus传3
+	 * 财务结款
 	 */
 	public void doProductOrderReceivables(Map<String, Object> filter) {
 
-		// 产品订单项列表 前台页面传的订购的产品订单串，格式：产品订单编号
+		// 产品订单项列表
+		// 前台页面传的订购的产品订单串，格式：产品订单编号
+		// ~实收价～客户编码（提交订单的客户）~客户组编号~客户收货时间(deliveryDate) 不用传了
 		List<String> productOrderList = (List<String>) filter.get("productOrderList");
-		/*
-		 * // 产品订单状态 String productOrderInvoiceStatus = ""; if
-		 * (filter.get("productOrderInvoiceStatus") != null &&
-		 * !filter.get("productOrderInvoiceStatus").equals("")) {
-		 * productOrderInvoiceStatus = (String)
-		 * filter.get("productOrderInvoiceStatus");
-		 * 
-		 * }
-		 */
+
 		if (productOrderList != null && productOrderList.size() > 0) {
-			ProductOrder productOrder = null;
+			ProductOrder productOrderQuery = null;
+			ProductOrder productOrderUpdate = null;
 			ProductOrderHis productOrderHis = null;
 			String orderResult = "";// 历史信息结果
-			// 客户编码
+			// 财务编码
 			String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 					String.class);
+
+			Double consumptionPoints = 0d;// 消费积分
+			Double collectionPoints = 0d;// 回款积分
+			UserBeans userBeans = null;// 豆豆类
+			UserPeasHis userPeasHis = null;// 豆豆历史
+			UserGroupPointAccount userGroupPointAccount = null;// 回款积分
+			Date date = new Date();// 当前时间
+			Date custDate = null; // 客户收货时间
+			String deliveryDate = ""; // 客户收货时间
+			int dayFlag = 0;// 计算当前时间-客户收货时间的时间差天数。
+			Map<String, Object> map = null;// 查询客户组编号
 			for (String productOrderString : productOrderList) {
-				productOrder = new ProductOrder();
-				productOrder.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+				productOrderQuery = new ProductOrder();
+				productOrderQuery.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+				productOrderQuery = productOrderDao.query(productOrderQuery);
 				// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
-				productOrder.setStatusCd("3");
-				productOrderDao.update(productOrder);
+				productOrderUpdate = new ProductOrder();
+				productOrderUpdate.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+				productOrderUpdate.setStatusCd("3");
+				productOrderDao.update(productOrderUpdate);
+
+				// 查询客户组ID
+				map = groupDao.getUserGroup(productOrderQuery.getUserId());
 
 				// 记录产品订单项的操作历史
 				orderResult = "产品订单状态更改为已结款";
@@ -816,6 +910,91 @@ public class UserOrderService {
 				productOrderHis.setOrderResult(orderResult);
 				productOrderHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
 				productOrderHisDao.insert(productOrderHis);
+
+				// 豆豆 客户豆豆=实收金额*1 取整
+				userBeans = new UserBeans();
+				userBeans.setBeansNum(VariableUtils.typeCast(
+						Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(), float.class)),
+						Long.class));// 豆豆数量
+				userBeans.setUserId(VariableUtils.typeCast(productOrderQuery.getUserId(), String.class));// 客户
+				userBeansDao.updateAdd(userBeans);
+
+				// 增加豆豆历史信息
+				userPeasHis = new UserPeasHis();
+				userPeasHis.setAcceptPerson(userId);
+				userPeasHis.setPeasBalance(VariableUtils.typeCast(
+						Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(), float.class)),
+						Long.class)); // 本次累计豆豆数
+				userPeasHis.setPeasType("1");// 操作类型:1.累积积分2.使用积分
+				userPeasHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));// 累积豆豆时是客户订购产品的订单编号；
+				userPeasHis.setUserId(VariableUtils.typeCast(productOrderQuery.getUserId(), String.class));// 客户编码
+				userPeasHisDao.insert(userPeasHis);
+
+				// 积分 本次组积分=回款积分+消费积分
+				/*
+				 * 根据实收价扣除组账户余额，记录费用历史，（产品订单编号、扣除金额、应收款、实收款、使用积分、受理人、受理时间等）
+				 * 判断如果是预付款客户，回款积分=实收金额*4 如果是普通客户并且回款日期-客户收货日期《=30天
+				 * ，回款积分=实收金额*2，》=30《=90的，回款积分=实收金额*1.
+				 */
+				// 消费积分 消费积分=实收金额*1
+				consumptionPoints = Math
+						.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(), float.class));// 根据实收价算消费积分
+				// 回款积分
+				userGroupPointAccount = new UserGroupPointAccount();
+				userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+				userGroupPointAccount = userGroupPointAccountDao.query(userGroupPointAccount);
+
+				boolean ifPre = false;// 是否预付标识
+				// 判断客户组账户是否有钱
+				if (null != userGroupPointAccount && null != userGroupPointAccount.getAccountFee()
+						&& userGroupPointAccount.getAccountFee() > 0) {
+					// 判断客户组账户钱是否大于实收价，如果大于实收价则认为是预付费客户。
+					if (userGroupPointAccount.getAccountFee() > VariableUtils
+							.typeCast(productOrderString, Double.class)) {
+						ifPre = true;
+					}
+				}
+				collectionPoints = 0d;// 回款积分
+				// 是预付费客户
+				if (ifPre) {
+					// 判断如果是预付款客户，回款积分=实收金额*4
+					collectionPoints = Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(),
+							float.class)) * 4;
+				} else {
+					deliveryDate = VariableUtils.typeCast(productOrderQuery.getDeliveryDate(), String.class);
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					try {
+						custDate = sdf.parse(deliveryDate);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+					// 计算当前时间和客户收货时间差
+					dayFlag = DateBetweenUtils.getDays(custDate, date);
+					// 回款积分=实收金额*2，》=30《=90的，回款积分=实收金额*1.
+					if (dayFlag <= 30) {
+						collectionPoints = Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(),
+								float.class)) * 2;
+					} else if (30 < dayFlag && dayFlag <= 90) {
+						collectionPoints = Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(),
+								float.class));
+					}
+				}
+
+				// 最终积分时消费积分+回款积分
+				userGroupPointAccount.setPointBalance(VariableUtils.typeCast(collectionPoints + consumptionPoints,
+						Long.class));
+				userGroupPointAccount.setAccountFee(null);
+				userGroupPointAccountDao.updateAdd(userGroupPointAccount);
+
+				// 记录积分历史表
+				UserGroupPointHis userGroupPointHis = new UserGroupPointHis();
+				userGroupPointHis.setAcceptPerson(userId);// 创建者
+				userGroupPointHis.setGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+				userGroupPointHis.setPointBalance(VariableUtils.typeCast(collectionPoints + consumptionPoints,
+						Long.class)); // 本次使用或累计豆豆数
+				userGroupPointHis.setPointType("2"); // 操作类型:1.使用积分 2.累积积分
+				userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+				userGroupPointHisDao.insert(userGroupPointHis);
 			}
 		}
 
@@ -856,10 +1035,11 @@ public class UserOrderService {
 			Integer productId = VariableUtils.typeCast(productOrder.getProductId(), Integer.class);
 			Product product = productDao.getProductByProductId(productId);
 			productOrder.setProduct(product);
+			productOrder
+					.setTotalPrice(MathUtils.getDoublePoint(productOrder.getOrderFee() * productOrder.getOrderNum()));
 		}
 		return productOrderList;
 	}
-
 	public List<Product> getProductList(Long userOrderId) {
 
 		// 根据客户订单编码查询产品订单项信息列表
@@ -871,5 +1051,178 @@ public class UserOrderService {
 			productIds.add(String.valueOf(productOrder.getProductId()));
 		}
 		return productDao.getProductListByProductIds(productIds);
+	}
+
+	/**
+	 * 内勤给客户退货
+	 */
+	public void doProductOrderReturn(Map<String, Object> filter) {
+		// 产品订单项列表
+		// 前台页面传的订购的产品订单串，格式：产品订单编号
+		List<String> productOrderList = (List<String>) filter.get("productOrderList");
+
+		// 内勤客户编号
+		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				String.class);
+
+		if (productOrderList != null && productOrderList.size() > 0) {
+			ProductOrder productOrderQuery = null;
+			UserGroupPointAccount userGroupPointAccount = null;
+			Map<String, Object> map = null;// 查询客户组编号
+			UserGroupPointHis userGroupPointHis = null;
+			UserGroupPointHis userGroupPointHisReduction = null;
+			ProductOrder productOrderUpdate = null;
+			ProductOrderHis productOrderHis = null;
+			String orderResult = "";// 历史信息结果
+			UserPeasHis userPeasHis = null;// 豆豆历史
+			UserBeans userBeans = null;
+			for (String productOrderString : productOrderList) {
+				productOrderQuery = new ProductOrder();
+				productOrderQuery.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+				productOrderQuery = productOrderDao.query(productOrderQuery);
+				// 查询客户组ID
+				map = groupDao.getUserGroup(productOrderQuery.getUserId());
+
+				// 判断如果产品订单状态为已收货，则退货时如下
+				if (productOrderQuery.getStatusCd().equals("2")) { // 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消;-2退货
+
+					// 判断是否使用积分,>0说明使用积分 退积分
+					if (productOrderQuery.getPointBalanceFee() > 0) {// 使用积分
+						// 将积分回退
+						userGroupPointAccount = new UserGroupPointAccount();
+						userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+						userGroupPointAccount.setPointBalance(VariableUtils.typeCast(
+								productOrderQuery.getPointBalanceFee(), Long.class));// 使用积分数量
+						userGroupPointAccount.setAccountFee(null);
+						userGroupPointAccountDao.updateAdd(userGroupPointAccount);
+
+						// 记录积分历史表
+						userGroupPointHis = new UserGroupPointHis();
+						userGroupPointHis.setAcceptPerson(userId);// 创建者
+						userGroupPointHis.setGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+						userGroupPointHis.setPointBalance(VariableUtils.typeCast(
+								productOrderQuery.getPointBalanceFee(), Long.class)); // 本次使用或累计豆豆数
+						userGroupPointHis.setPointType("3"); // 操作类型:1.使用积分
+																// 2.累积积分 3.回退
+						userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+						userGroupPointHisDao.insert(userGroupPointHis);
+					}
+
+					// 产品订单项回退
+					// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消; -2.退货
+					productOrderUpdate = new ProductOrder();
+					productOrderUpdate.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+					productOrderUpdate.setStatusCd("-2");
+					productOrderDao.update(productOrderUpdate);
+
+					// 记录产品订单项的操作历史
+					orderResult = "产品订单状态更改为退货";
+					productOrderHis = new ProductOrderHis();
+					// 当前操作人
+					productOrderHis.setAcceptPerson(userId);
+					productOrderHis.setOrderResult(orderResult);
+					productOrderHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+					productOrderHisDao.insert(productOrderHis);
+				}
+
+				// 判断如果产品订单状态为已结款，则退货时如下
+				if (productOrderQuery.getStatusCd().equals("3")) { // 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消;-2退货
+
+					// 判断是否使用积分,>0说明使用积分 退积分
+					if (productOrderQuery.getPointBalanceFee() > 0) {// 使用积分
+						// 将积分回退
+						userGroupPointAccount = new UserGroupPointAccount();
+						userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+						userGroupPointAccount.setPointBalance(VariableUtils.typeCast(
+								productOrderQuery.getPointBalanceFee(), Long.class));// 使用积分数量
+						userGroupPointAccount.setAccountFee(null);
+						userGroupPointAccountDao.updateAdd(userGroupPointAccount);
+
+						// 记录积分历史表
+						userGroupPointHis = new UserGroupPointHis();
+						userGroupPointHis.setAcceptPerson(userId);// 创建者
+						userGroupPointHis.setGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+						userGroupPointHis.setPointBalance(VariableUtils.typeCast(
+								productOrderQuery.getPointBalanceFee(), Long.class)); // 本次使用或累计豆豆数
+						userGroupPointHis.setPointType("3"); // 操作类型:1.使用积分
+																// 2.累积积分 3.回退
+						userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+						userGroupPointHisDao.insert(userGroupPointHis);
+					}
+
+					// 查询结款时生成多少豆豆
+					userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+					userGroupPointHis.setPointType("2"); // 操作类型:1.使用积分 2.累积积分
+															// 3.回退
+					userGroupPointHis = userGroupPointHisDao.queryByRegisterNumber(userGroupPointHisReduction);
+
+					// 将实收价回退--退钱
+					userGroupPointAccount = new UserGroupPointAccount();
+					userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+					userGroupPointAccount.setPointBalance(userGroupPointHis.getPointBalance());// 当时生成多少积分
+					userGroupPointAccount.setAccountFee(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(),
+							Double.class));// 实收价
+					userGroupPointAccountDao.updateAdd(userGroupPointAccount);
+
+					// 减积分
+					userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+					userGroupPointAccount.setPointBalance(userGroupPointHis.getPointBalance());// 当时生成多少积分
+					userGroupPointAccount.setAccountFee(null);
+					userGroupPointAccountDao.updateReduction(userGroupPointAccount);
+
+					// 记录积分历史表
+					userGroupPointHisReduction = new UserGroupPointHis();
+					userGroupPointHisReduction.setAcceptPerson(userId);// 创建者
+					userGroupPointHisReduction.setGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+					userGroupPointHisReduction.setPointBalance(userGroupPointHis.getPointBalance());// 当时生成多少积分
+					userGroupPointHisReduction.setPointType("3"); // 操作类型:1.使用积分
+																	// 2.累积积分3.回退
+					userGroupPointHisReduction
+							.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+					userGroupPointHisDao.insert(userGroupPointHisReduction);
+
+					// 退豆豆
+					userBeans = new UserBeans();
+					userBeans.setBeansNum(VariableUtils.typeCast(
+							Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(), float.class)),
+							Long.class));// 豆豆数量
+					userBeans.setUserId(VariableUtils.typeCast(productOrderQuery.getUserId(), String.class));// 客户
+					userBeansDao.updateReduction(userBeans);
+
+					// 豆豆历史信息
+					userPeasHis = new UserPeasHis();
+					userPeasHis.setAcceptPerson(userId);
+					userPeasHis.setPeasBalance(VariableUtils.typeCast(
+							Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(), float.class)),
+							Long.class)); // 本次累计豆豆数
+					userPeasHis.setPeasType("3");// 操作类型:1.累积积分2.使用积分3回退
+					userPeasHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));// 累积豆豆时是客户订购产品的订单编号；
+					userPeasHis.setUserId(VariableUtils.typeCast(productOrderQuery.getUserId(), String.class));// 客户编码
+					userPeasHisDao.insert(userPeasHis);
+
+					// 产品订单项回退
+					// 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消; -2.退货
+					productOrderUpdate = new ProductOrder();
+					productOrderUpdate.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+					productOrderUpdate.setStatusCd("-2");
+					productOrderDao.update(productOrderUpdate);
+
+					// 记录产品订单项的操作历史
+					orderResult = "产品订单状态更改为退货";
+					productOrderHis = new ProductOrderHis();
+					// 当前操作人
+					productOrderHis.setAcceptPerson(userId);
+					productOrderHis.setOrderResult(orderResult);
+					productOrderHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
+					productOrderHisDao.insert(productOrderHis);
+				}
+			}
+		}
+	}
+
+	public UserGroupPointAccount queryGroupPointAccount(Integer groupId) {
+		UserGroupPointAccount userGroupPointAccount = new UserGroupPointAccount();
+		userGroupPointAccount.setUserGroupId(String.valueOf(groupId));
+		return userGroupPointAccountDao.query(userGroupPointAccount);
 	}
 }
