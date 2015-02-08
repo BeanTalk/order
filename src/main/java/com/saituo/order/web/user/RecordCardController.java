@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.authz.annotation.RequiresAuthentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
@@ -66,15 +67,18 @@ public class RecordCardController {
 	}
 
 	@RequestMapping(value = "batchremove", method = RequestMethod.POST)
-	public String removeBatchProductFromBag(@RequestParam List<String> productIds, RedirectAttributes redirectAttributes) {
+	public String removeBatchProductFromBag(@RequestParam List<String> productIds) {
 
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
-
-		if (productIds == null || productIds.size() == 0) {
+		List<String> productIdList = Lists.newArrayList();
+		for (int i = 0; i < productIds.size(); i++) {
+			productIdList.add(StringUtils.substringBefore(productIds.get(i), "_"));
+		}
+		if (productIdList == null || productIdList.size() == 0) {
 			return "redirect:/order/buycard/list";
 		}
-		String[] array = productIds.toArray(new String[productIds.size()]);
+		String[] array = productIdList.toArray(new String[productIdList.size()]);
 		recordCardService.removeProductListFromBuyCard(userId, array);
 		return "redirect:/order/buycard/list";
 	}
@@ -101,51 +105,73 @@ public class RecordCardController {
 			@RequestParam List<String> discountPrices, @RequestParam List<String> subscripts,
 			@RequestParam List<String> supplys, Model model) {
 
+		List<String> productIdList = Lists.newArrayList();
+		List<String> discountPriceList = Lists.newArrayList();
+		List<String> subscriptList = Lists.newArrayList();
+		List<String> supplyList = Lists.newArrayList();
+
+		for (int i = 0; i < productIds.size(); i++) {
+			String productStr = productIds.get(i);
+			String productId = StringUtils.substringBefore(productStr, "_");
+			Integer index = VariableUtils.typeCast(StringUtils.substringAfter(productStr, "_"), Integer.class);
+			productIdList.add(productId);
+			discountPriceList.add(discountPrices.get(index));
+			subscriptList.add(subscripts.get(index));
+			supplyList.add(supplys.get(index));
+		}
+
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
 
 		List<String> productOrderList = new ArrayList<String>();
-		for (int i = 0; i < productIds.size(); i++) {
+		for (int i = 0; i < productIdList.size(); i++) {
 			StringBuilder sb = new StringBuilder(120);
-			sb.append(productIds.get(i)).append("~").append(discountPrices.get(i)).append("~")
-					.append(subscripts.get(i)).append("~").append(supplys.get(i));
+			sb.append(productIdList.get(i)).append("~").append(discountPriceList.get(i)).append("~")
+					.append(subscriptList.get(i)).append("~").append(supplyList.get(i));
 			productOrderList.add(sb.toString());
 		}
 		filter.put("productRecordList", productOrderList);
 		// productRecordList : 产品编号~订购价格～数量~供应商id
 		userRecordService.doCreateUserRecord(filter);
-		recordCardService.removeProductListFromBuyCard(userId, productIds.toArray(new String[productIds.size()]));
+		recordCardService.removeProductListFromBuyCard(userId, productIdList.toArray(new String[productIdList.size()]));
 		return "redirect:/order/record/list";
 	}
 
-//	@RequiresPermissions("perms[order:record:record_view]")
-//	@RequestMapping(value = "record_view", method = RequestMethod.GET)
-//	public void getReviewRecordInfoList(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
-//			Model model) {
-//
-//		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-//				String.class);
-//		filter.put("userId", userId);
-//		filter.putAll(pageRequest.getMap());
-//		List<UserRecord> userRecordList = userRecordService.getUserRecordList(filter);
-//		List<Map<String, Object>> userOrderAndDetailInfoResultList = Lists.newArrayList();
-//		int userRecordCount = userRecordService.getUserRecordCount(filter);
-//
-//		for (UserRecord userRecord : userRecordList) {
-//			String userOrderId = String.valueOf(userRecord.getUserRecordId());
-//			Map<String, Object> mapData = Maps.newHashMap();
-//			mapData.put("userOrderId", userOrderId);
-//			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
-//		}
-//		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
-//				userOrderCount);
-//
-//		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
-//		model.addAttribute("page", page);
-//		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
-//		model.addAttribute("startDate", filter.get("startDate"));
-//		model.addAttribute("endDate", filter.get("endDate"));
-//		model.addAttribute("userOrderId", filter.get("userOrderId"));
-//	}
+	// @RequiresPermissions("perms[order:record:record_view]")
+	// @RequestMapping(value = "record_view", method = RequestMethod.GET)
+	// public void getReviewRecordInfoList(PageRequest pageRequest,
+	// @RequestParam Map<String, Object> filter,
+	// Model model) {
+	//
+	// String userId =
+	// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+	// String.class);
+	// filter.put("userId", userId);
+	// filter.putAll(pageRequest.getMap());
+	// List<UserRecord> userRecordList =
+	// userRecordService.getUserRecordList(filter);
+	// List<Map<String, Object>> userOrderAndDetailInfoResultList =
+	// Lists.newArrayList();
+	// int userRecordCount = userRecordService.getUserRecordCount(filter);
+	//
+	// for (UserRecord userRecord : userRecordList) {
+	// String userOrderId = String.valueOf(userRecord.getUserRecordId());
+	// Map<String, Object> mapData = Maps.newHashMap();
+	// mapData.put("userOrderId", userOrderId);
+	// userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
+	// }
+	// Page<Map<String, Object>> page = new Page<Map<String,
+	// Object>>(pageRequest, userOrderAndDetailInfoResultList,
+	// userOrderCount);
+	//
+	// model.addAttribute("states",
+	// VariableUtils.getVariables(UserOrderingState.class));
+	// model.addAttribute("page", page);
+	// model.addAttribute("userName",
+	// SessionVariable.getCurrentSessionVariable().getUser().get("name"));
+	// model.addAttribute("startDate", filter.get("startDate"));
+	// model.addAttribute("endDate", filter.get("endDate"));
+	// model.addAttribute("userOrderId", filter.get("userOrderId"));
+	// }
 
 }

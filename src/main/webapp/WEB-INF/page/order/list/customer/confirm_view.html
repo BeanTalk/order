@@ -118,7 +118,7 @@
 				                        <td width="80" align="center">${(productOrderInfo.product.specValue)!""}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
-										<td width="80" align="center"><input type="text" size="2" id="n_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="orderNums" value=${productOrderInfo.orderNum!1}></td>
+										<td width="80" align="center"><input type="text" class="int-count-input" size="2" id="n_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="orderNums" value=${productOrderInfo.orderNum!1}></td>
 										<td width="140" align="center">
 							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl D-buy-btn cancel">取消</div>
 							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium fl D-buy-btn update">修改</div>

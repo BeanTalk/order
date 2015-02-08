@@ -60,6 +60,7 @@
 				            <th width="60" align="left">单位</th>
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
+				            <th width="100" align="left">成交价</th>
 				            <th width="80" align="left">数量</th>
 				            <th width="140" align="left">操作</th>
 						</tr>
@@ -99,9 +100,10 @@
 										</td>
 				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
-							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
+							            <td width="100" align="center">${productOrderInfo.product.catalogFee!0}</td>
+							            <td width="100" align="center">${productOrderInfo.orderFee!0}</td>
 							            <td width="100" align="center">
-							            	<input type="text" class="right" size="8" id="${productOrderInfo.registerNumber}_newCatalogFees" name="newcatalogFees" value="${productOrderInfo.orderFee}">
+							            	<input type="text" class="float-input right" size="8" id="${productOrderInfo.registerNumber}_newCatalogFees" name="newcatalogFees" value="${productOrderInfo.orderFee}">
 							            	<input type="hidden" id="${productOrderInfo.registerNumber}_oldCatalogFees" name="oldcatalogFees" value="${productOrderInfo.orderFee}">
 							            </td>
 										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>

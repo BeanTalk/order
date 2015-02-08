@@ -126,7 +126,12 @@
 				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee}</td>
-										<td width="80" align="center"><input type="text" size="2" id="order_num_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="prodOrderIdAndOrderNums" value=${productOrderInfo.orderNum!1}></td>
+										<td width="80" align="center">
+											<#if productOrderInfo.auditCd == "3">
+												${productOrderInfo.orderNum!1}
+											<#else>
+												<input type="text" class="int-count-input" size="2" id="order_num_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="prodOrderIdAndOrderNums" value=${productOrderInfo.orderNum!1}></td>
+											</#if>
 										<td width="140" align="center">
 											<!--需要userOrderId修改状态-->
 											<#if productOrderInfo.auditCd == "2" || productOrderInfo.auditCd == "0">
