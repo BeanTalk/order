@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alibaba.druid.util.StringUtils;
+import com.saituo.order.commons.SessionVariable;
+import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.mailer.RetryPasswordMailService;
 import com.saituo.order.commons.utils.CaptchaUtils;
 import com.saituo.order.commons.utils.Encodes;
@@ -172,16 +174,20 @@ public class SystemCommonController {
 	 */
 
 	@RequestMapping(value = "index", method = RequestMethod.GET)
-	public void redirectToPageByRole(Model model) {
-		// Integer userId =
-		// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
-		// Integer.class);
-		// Integer areaId =
-		// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(),
-		// Integer.class);
-		// Integer groupId =
-		// VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
-		// Integer.class);
+	public String redirectToPageByRole(Model model) {
+
+		Subject subject = SecurityUtils.getSubject();
+		if (subject == null || !subject.isAuthenticated()) {
+			return "redirect:/login";
+		}
+
+		Integer userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
+				Integer.class);
+		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
+		Integer groupId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getGroupId(),
+				Integer.class);
+		return "index";
+
 	}
 
 	@RequestMapping(value = "unauthorized", method = RequestMethod.GET)
