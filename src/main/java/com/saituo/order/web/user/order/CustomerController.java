@@ -36,14 +36,18 @@ import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.OrderComplaint;
 import com.saituo.order.entity.user.UserGroupPointAccount;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.entity.user.UserRecord;
 import com.saituo.order.service.account.AccountService;
 import com.saituo.order.service.order.BuyCardService;
 import com.saituo.order.service.order.ProductBrandService;
+import com.saituo.order.service.order.ProductRecordService;
 import com.saituo.order.service.order.ProductService;
+import com.saituo.order.service.order.RecordCardService;
 import com.saituo.order.service.user.AddressService;
 import com.saituo.order.service.user.AuditHisService;
 import com.saituo.order.service.user.OrderComplainService;
 import com.saituo.order.service.user.UserOrderService;
+import com.saituo.order.service.user.UserRecordService;
 import com.saituo.order.service.variable.SystemVariableService;
 
 @Controller
@@ -77,6 +81,15 @@ public class CustomerController {
 
 	@Autowired
 	private OrderComplainService orderComplainService;
+
+	@Autowired
+	private UserRecordService userRecordService;
+
+	@Autowired
+	private ProductRecordService productRecordService;
+
+	@Autowired
+	private RecordCardService recordCardService;
 
 	/**
 	 * 购物车中保存订单
@@ -764,6 +777,34 @@ public class CustomerController {
 	}
 
 	/**
+	 * 记录查询
+	 */
+	@RequestMapping(value = "record", method = RequestMethod.GET)
+	public void getRecordList(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+
+		filter.putAll(pageRequest.getMap());
+		// 根据用户的角色与类别，来区分用户能看到的订单
+		filter = watchOrderListPipline(filter, model);
+
+		List<UserRecord> userRecordList = userRecordService.getUserRecordList(filter);
+		int userRecordCount = userRecordService.getUserRecordCount(filter);
+
+		List<Map<String, Object>> userProductRecordList = Lists.newArrayList();
+
+		for (UserRecord userRecord : userRecordList) {
+			Map<String, Object> mapData = Maps.newHashMap();
+			mapData.put("userRecordId", userRecord.getUserRecordId());
+			userProductRecordList.add(userRecordService.getProductRecordInfo(mapData));
+		}
+		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userProductRecordList,
+				userRecordCount);
+		model.addAttribute("page", page);
+		model.addAttribute("agents", recordCardService.getAgentList());
+		model.addAllAttributes(filter);
+
+	}
+
+	/**
 	 * 查看所有的订单
 	 * 
 	 * @param filter
@@ -795,11 +836,9 @@ public class CustomerController {
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
-		model.addAttribute("statusCd", filter.get("statusCd"));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("startDate", filter.get("startDate"));
-		model.addAttribute("endDate", filter.get("endDate"));
+		model.addAllAttributes(filter);
 	}
 
 	/**
@@ -822,7 +861,10 @@ public class CustomerController {
 						String.class);
 				filter.put("userId", userId);
 				model.addAttribute("role", "student");
+				model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
+						.getCurrentSessionVariable().getGroupId())));
 			}
+
 			// 当其为老师和PI时，能看到该组下面的所有的订单
 			if (roleSign.contains(String.valueOf(RoleSign.TEACHER.getValue()))
 					|| roleSign.contains(String.valueOf(RoleSign.PI.getValue()))) {
@@ -833,13 +875,14 @@ public class CustomerController {
 			}
 			// 内部用户
 		} else {
-			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(SessionVariable
-					.getCurrentSessionVariable().getGroupId())));
+			String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(),
+					String.class);
+			model.addAttribute("userInfoMap", accountService.findAllofUserByAreaId(areaId));
 			model.addAttribute("role", "internal");
 		}
 
 		model.addAttribute("userOrderId", filter.get("userOrderId"));
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(SessionVariable
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(SessionVariable
 				.getCurrentSessionVariable().getAreaId()));
 		model.addAttribute("groupId", VariableUtils.typeCast(filter.get("groupId")));
 		// 内部用户可以看到本地市的所有的订单，在UserOrderService 中已经默认设置

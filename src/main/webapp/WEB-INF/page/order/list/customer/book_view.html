@@ -39,9 +39,20 @@
  		);
  		var staTotalPoint = toDecimal($("#point_score_sta").text());
  		var totalPoint = toDecimal($("#point_score").text());
+		
 		if(sum_point > staTotalPoint){
-			isContinue = false;
+			isContindue = false;
 			alert("对不起您的积分不够!");
+			$(this).val(oldpointnum);
+		}
+		
+		var singPrice = $("#singlePrice_" +this.id).text();
+		var singleNum = $("#singleNum_"+ this.id).text();
+		var totalPrice = toDecimal(singPrice *singleNum);
+		
+		if(toDecimal(sum_point/100) >= toDecimal(totalPrice/2)){
+			isContinue = false;
+			alert("对不起您的积分不能超过总价的一半!");
 			$(this).val(oldpointnum);
 		}
 		
@@ -71,7 +82,7 @@
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
-			<h3>客户下单</h3>
+			<h3>提交订单</h3>
 		</div>
 		<div class="panel_body clearfix">
 			<@teacher_headquery startDate endDate userOrderId userInfoMap/>
@@ -100,18 +111,18 @@
 					<tbody class="second_level">
 						<#if page.content?size == 0>
 		                    <tr>
-		                        <td colspan="6">没有记录</td>
+		                        <td colspan="8">没有记录</td>
 		                    </tr>
 		                <#else>
 		                	<#assign index= 0>
 		                    <#list page.content as r>
 		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
-			                    	<td colspan="7">
+			                    	<td colspan="8">
 							            <table width="100%">
 							            	<th width="30"><input type="checkbox" class="userOrderClass" name="userOrderIds" id="${r.userOrderReturn.userOrderId!""}" value="${r.userOrderReturn.userOrderId!""}"></th>
 								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 								            <th align="left">订货人:${r.userOrderReturn.userName!""}</th>
-								            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
+								            <th align="left">时间:${(r.userOrderReturn.teacherOrderDate)!""}</th>
 								            <th align="left">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 							            </table>
 							        </td>

@@ -33,11 +33,15 @@ $(document).ready(function() {
 				}, function(data) {
 					$("#userId").empty()
 							.append("<option value=\"\">请选择</option>");
-					$.each(data, function(i) {
+					if(data !== null && data !== ""){
+						$.each(data, function(i) {
+							if(data[i].name !== "undefined"){
 								$("#userId").append("<option value=\""
-										+ data[i].id + "\">" + data[i].name
-										+ "</option>");
-							});
+									+ data[i].id + "\">" + data[i].name
+									+ "</option>");
+							}
+						});
+					}
 				});
 	});
 	

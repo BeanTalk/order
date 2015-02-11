@@ -2,7 +2,7 @@ package com.saituo.order.entity.user;
 
 public class UserRecord {
 	// 客户记录编码
-	private Long userRecordId;
+	private Integer userRecordId;
 	// 客户编码
 	private Integer userId;
 	// 客户名称
@@ -10,10 +10,10 @@ public class UserRecord {
 	// 受理地市
 	private Integer areaId;
 
-	public Long getUserRecordId() {
+	public Integer getUserRecordId() {
 		return userRecordId;
 	}
-	public void setUserRecordId(Long userRecordId) {
+	public void setUserRecordId(Integer userRecordId) {
 		this.userRecordId = userRecordId;
 	}
 	public Integer getUserId() {

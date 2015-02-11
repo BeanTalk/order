@@ -1,41 +1,43 @@
 package com.saituo.order.entity.user;
 
+import com.saituo.order.entity.order.Product;
 
 public class ProductRecord {
 	// 产品订单编码
-	private Long recordNumber;
+	private Integer recordNumber;
 	// 客户订单编码
-	private Long userRecordId;
+	private Integer userRecordId;
 	// 受理地市
 	private Integer areaId;
 	// 客户编码
 	private Integer userId;
 	// 产品编码
-	private Long productId;
+	private Integer productId;
 	// 订购价
 	private Double orderFee;
 	// 订购数量
-	private Long orderNum;
-	//供货商ID
-	private Long supplierId;
-	public Long getSupplierId() {
+	private Integer orderNum;
+	// 供货商ID
+	private Integer supplierId;
+
+	public Integer getSupplierId() {
 		return supplierId;
 	}
-	public void setSupplierId(Long supplierId) {
+	public void setSupplierId(Integer supplierId) {
 		this.supplierId = supplierId;
 	}
 	// 创建时间
 	private String acceptDate;
-	public Long getRecordNumber() {
+	public Integer getRecordNumber() {
 		return recordNumber;
 	}
-	public void setRecordNumber(Long recordNumber) {
+	public void setRecordNumber(Integer recordNumber) {
 		this.recordNumber = recordNumber;
 	}
-	public Long getUserRecordId() {
+	public Integer getUserRecordId() {
 		return userRecordId;
 	}
-	public void setUserRecordId(Long userRecordId) {
+	public void setUserRecordId(Integer userRecordId) {
 		this.userRecordId = userRecordId;
 	}
 	public Integer getAreaId() {
@@ -50,10 +52,10 @@ public class ProductRecord {
 	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
-	public Long getProductId() {
+	public Integer getProductId() {
 		return productId;
 	}
-	public void setProductId(Long productId) {
+	public void setProductId(Integer productId) {
 		this.productId = productId;
 	}
 	public Double getOrderFee() {
@@ -62,10 +64,10 @@ public class ProductRecord {
 	public void setOrderFee(Double orderFee) {
 		this.orderFee = orderFee;
 	}
-	public Long getOrderNum() {
+	public Integer getOrderNum() {
 		return orderNum;
 	}
-	public void setOrderNum(Long orderNum) {
+	public void setOrderNum(Integer orderNum) {
 		this.orderNum = orderNum;
 	}
 	public String getAcceptDate() {
@@ -74,7 +76,14 @@ public class ProductRecord {
 	public void setAcceptDate(String acceptDate) {
 		this.acceptDate = acceptDate;
 	}
-	
-	
+
+	private Product product;
+
+	public Product getProduct() {
+		return product;
+	}
+	public void setProduct(Product product) {
+		this.product = product;
+	}
 
 }

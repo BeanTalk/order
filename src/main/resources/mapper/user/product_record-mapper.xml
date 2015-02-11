@@ -27,7 +27,7 @@
 		)
 	</insert>
 
-	<select id="queryListByUserOrderId" resultType="productOrder">
+	<select id="queryListByUserRecordId" resultType="productRecord">
 		select
 		record_number as recordNumber,
 		user_record_id as userRecordId,

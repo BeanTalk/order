@@ -47,4 +47,16 @@ public interface UserRecordDao {
 	 */
 	public List<UserRecord> queryList(@Param(value = "userRecord") UserRecord userRecord,
 			@Param(value = "filter") Map<String, Object> filter);
+	
+	/**
+	 * <p>
+	 * Description: 查询数据:根据客户编码查询
+	 * </p>
+	 * 
+	 * @Method: query
+	 * @param UserRecord
+	 * @return  List<UserRecord> 
+	 * @throws
+	 */
+	public UserRecord query(@Param(value = "userRecord") UserRecord userRecord);
 }

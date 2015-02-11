@@ -88,7 +88,7 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(areaId));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
@@ -197,7 +197,7 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
 		model.addAttribute("userName", SessionVariable.getCurrentSessionVariable().getUser().get("name"));
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(areaId));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
@@ -273,7 +273,7 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(areaId));
 		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, RoleSign.SALE.getValue()));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
@@ -365,7 +365,7 @@ public class InsideOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(areaId));
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);

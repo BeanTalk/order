@@ -1,6 +1,5 @@
 package com.saituo.order.entity.user;
 
-
 public class UserOrder {
 
 	// 客户订单编码
@@ -19,6 +18,8 @@ public class UserOrder {
 	private String acceptDate;
 	// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1 已取消
 	private String statusCd;
+
+	private String teacherOrderDate;
 
 	public String getUserName() {
 		return userName;
@@ -83,4 +84,13 @@ public class UserOrder {
 	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
+
+	public String getTeacherOrderDate() {
+		return teacherOrderDate;
+	}
+
+	public void setTeacherOrderDate(String teacherOrderDate) {
+		this.teacherOrderDate = teacherOrderDate;
+	}
+
 }

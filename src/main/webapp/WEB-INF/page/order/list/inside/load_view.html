@@ -99,11 +99,13 @@
 							            </th>
 							            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 							            <th align="left">订货人:${r.userOrderReturn.userName!""}</th>
-							            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
+							            <th align="left">时间:${(r.userOrderReturn.teacherOrderDate)!""}</th>
 							            <th align="left">状态:${states[r.userOrderReturn.statusCd]!""}</th>
+							            <!--
 							            <th align="left">
 							            	<div id="${r.userOrderReturn.userOrderId!""}" class="button green medium fl D-operation stockbtn">备货</div>
 							            </th>
+										-->
 							            </table>
 							        </td>
 								</tr>

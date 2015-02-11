@@ -10,8 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.dao.order.ProductDao;
+import com.saituo.order.dao.user.AddressDao;
 import com.saituo.order.dao.user.ProductRecordDao;
 import com.saituo.order.dao.user.UserRecordDao;
+import com.saituo.order.entity.order.Product;
+import com.saituo.order.entity.user.Address;
 import com.saituo.order.entity.user.ProductRecord;
 import com.saituo.order.entity.user.UserRecord;
 
@@ -21,8 +25,15 @@ public class UserRecordService {
 
 	@Autowired
 	private UserRecordDao userRecordDao;
+
 	@Autowired
 	private ProductRecordDao productRecordDao;
+
+	@Autowired
+	private ProductDao productDao;
+
+	@Autowired
+	private AddressDao addressDao;
 
 	/**
 	 * 记录保存方法
@@ -50,7 +61,7 @@ public class UserRecordService {
 		userRecord.setGroupId(groupId);
 		userRecordDao.insert(userRecord);
 		// 记录订单编码
-		Long userRecordId = userRecord.getUserRecordId();
+		Integer userRecordId = userRecord.getUserRecordId();
 
 		// 记录产品订单项列表
 		List<String> productRecordList = (List<String>) filter.get("productRecordList");
@@ -65,9 +76,9 @@ public class UserRecordService {
 				productRecord.setAreaId(areaId);// 受理地市
 
 				productRecord.setOrderFee(VariableUtils.typeCast(prodcutString[1], Double.class)); // 目录价
-				productRecord.setOrderNum(VariableUtils.typeCast(prodcutString[2], Long.class)); // 订购数量
-				productRecord.setProductId(VariableUtils.typeCast(prodcutString[0], Long.class));// 产品编码
-				productRecord.setSupplierId(VariableUtils.typeCast(prodcutString[3], Long.class));// 供应商id
+				productRecord.setOrderNum(VariableUtils.typeCast(prodcutString[2], Integer.class)); // 订购数量
+				productRecord.setProductId(VariableUtils.typeCast(prodcutString[0], Integer.class));// 产品编码
+				productRecord.setSupplierId(VariableUtils.typeCast(prodcutString[3], Integer.class));// 供应商id
 				productRecord.setUserId(userId); // 客户编码
 				productRecord.setUserRecordId(userRecordId);// 记录订单编码
 				productRecordDao.insert(productRecord);
@@ -85,9 +96,9 @@ public class UserRecordService {
 
 		UserRecord userRecord = new UserRecord();
 		// 记录订单编号
-		Long userRecordId = null;
+		Integer userRecordId = null;
 		if (filter.get("userRecordId") != null && !filter.get("userRecordId").equals("")) {
-			userRecordId = Long.valueOf(String.valueOf(filter.get("userRecordId")));
+			userRecordId = Integer.valueOf(String.valueOf(filter.get("userRecordId")));
 			userRecord.setUserRecordId(userRecordId);
 		}
 		// 客户组别编码
@@ -113,9 +124,9 @@ public class UserRecordService {
 	public List<UserRecord> getUserRecordList(Map<String, Object> filter) {
 		UserRecord userRecord = new UserRecord();
 		// 记录订单编号
-		Long userRecordId = null;
+		Integer userRecordId = null;
 		if (filter.get("userRecordId") != null && !filter.get("userRecordId").equals("")) {
-			userRecordId = Long.valueOf(String.valueOf(filter.get("userRecordId")));
+			userRecordId = Integer.valueOf(String.valueOf(filter.get("userRecordId")));
 			userRecord.setUserRecordId(userRecordId);
 		}
 		// 客户组别编码
@@ -132,8 +143,46 @@ public class UserRecordService {
 		}
 		// 当前地市
 		userRecord.setAreaId(SessionVariable.getCurrentSessionVariable().getAreaId());
-
 		return userRecordDao.queryList(userRecord, filter);
+	}
+
+	public Map<String, Object> getProductRecordInfo(Map<String, Object> filter) {
+
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		UserRecord userRecordQuery = new UserRecord();
+
+		// 客户订单编号
+		Integer recordOrderId = null;
+		if (filter.get("userRecordId") != null && !filter.get("userRecordId").equals("")) {
+			recordOrderId = Integer.valueOf(String.valueOf(filter.get("userRecordId")));
+			userRecordQuery.setUserRecordId(recordOrderId);
+		}
+
+		// 根据客户订单编号查询客户订单信息
+		UserRecord userRecordReturn = userRecordDao.query(userRecordQuery);
+
+		// 根据地址编码查询地址信息
+		Address address = new Address();
+		address.setAddressId(userRecordReturn.getAddressId());
+		Address addressReturn = addressDao.query(address);
+
+		List<ProductRecord> productRecordReturn = this.combineRecordInfo(recordOrderId);
+
+		returnMap.put("userRecordReturn", userRecordReturn);
+		returnMap.put("addressReturn", addressReturn);
+		returnMap.put("productRecordReturn", productRecordReturn);
+		return returnMap;
+	}
+
+	private List<ProductRecord> combineRecordInfo(Integer userRecordId) {
+		ProductRecord productRecordquery = new ProductRecord();
+		productRecordquery.setUserRecordId(userRecordId);
+		List<ProductRecord> productRecordList = productRecordDao.queryListByUserRecordId(productRecordquery);
+		for (ProductRecord productRecord : productRecordList) {
+			Product product = productDao.getProductByProductId(productRecord.getProductId());
+			productRecord.setProduct(product);
+		}
+		return productRecordList;
 	}
 
 }

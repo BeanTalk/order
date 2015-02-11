@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.ShowType;
 import com.saituo.order.commons.utils.StringUtils;
 import com.saituo.order.dao.account.AreaDao;
 import com.saituo.order.dao.account.GroupDao;
@@ -81,9 +82,9 @@ public class SystemVariableService {
 		return (String) areaDao.getAreaNameById(areaId);
 	}
 
-	public Map<String, Object> getGroupNameByAreaIdAndGroupIdData(Integer areaId) {
+	public Map<String, Object> getGroupNameByAreaIdAndGroupIdDataToShow(Integer areaId) {
 
-		List<Map<String, Object>> groupList = groupDao.get(areaId);
+		List<Map<String, Object>> groupList = groupDao.get(areaId, ShowType.SHOW.getValue());
 		Map<String, Object> officeIdAndNameMap = Maps.newHashMap();
 		for (Map<String, Object> mapData : groupList) {
 			officeIdAndNameMap.put(String.valueOf(mapData.get("id")), mapData.get("name"));

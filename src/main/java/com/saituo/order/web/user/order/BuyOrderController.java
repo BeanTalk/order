@@ -67,6 +67,15 @@ public class BuyOrderController {
 		modelAndView.addObject("userIdAndName", systemVariableService.getUserIdAndName());
 		modelAndView.addObject("supplyIdAndName", systemVariableService.getSupplyIdAndName());
 		modelAndView.addObject("page", page);
+
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		modelAndView
+				.addObject("userInfoMap", accountService.findUserByAreaIdAndRole(areaId, RoleSign.BUYER.getValue()));
+		modelAndView.addObject("supplierIds", systemVariableService.getSupplyIdAndName());
+		modelAndView.addObject("buyers", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
+		modelAndView.addObject("status", VariableUtils.getVariables(StockStatus.class));
+		modelAndView.addObject(filter);
+
 		return modelAndView;
 	}
 
@@ -138,6 +147,15 @@ public class BuyOrderController {
 		modelAndView.addObject("userIdAndName", systemVariableService.getUserIdAndName());
 		modelAndView.addObject("supplyIdAndName", systemVariableService.getSupplyIdAndName());
 		modelAndView.addObject("page", page);
+
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		modelAndView
+				.addObject("userInfoMap", accountService.findUserByAreaIdAndRole(areaId, RoleSign.BUYER.getValue()));
+		modelAndView.addObject("supplierIds", systemVariableService.getSupplyIdAndName());
+		modelAndView.addObject("buyers", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
+		modelAndView.addObject("status", VariableUtils.getVariables(StockStatus.class));
+		modelAndView.addObject(filter);
+
 		return modelAndView;
 	}
 
@@ -194,6 +212,13 @@ public class BuyOrderController {
 		model.addAttribute("userIdAndName", systemVariableService.getUserIdAndName());
 		model.addAttribute("supplyIdAndName", systemVariableService.getSupplyIdAndName());
 		model.addAttribute("page", page);
+
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		model.addAttribute("userInfoMap", accountService.findUserByAreaIdAndRole(areaId, RoleSign.BUYER.getValue()));
+		model.addAttribute("supplierIds", systemVariableService.getSupplyIdAndName());
+		model.addAttribute("buyers", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
+		model.addAllAttributes(filter);
+
 	}
 
 	/**
@@ -219,7 +244,13 @@ public class BuyOrderController {
 		model.addAttribute("userIdAndName", systemVariableService.getUserIdAndName());
 		model.addAttribute("supplyIdAndName", systemVariableService.getSupplyIdAndName());
 		model.addAttribute("page", page);
+
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		model.addAttribute("userInfoMap", accountService.findUserByAreaIdAndRole(areaId, RoleSign.BUYER.getValue()));
+		model.addAttribute("supplierIds", systemVariableService.getSupplyIdAndName());
 		model.addAttribute("buyers", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
+		model.addAttribute("states", VariableUtils.getVariables(StockStatus.class));
+		model.addAllAttributes(filter);
 	}
 
 	/**
@@ -274,7 +305,13 @@ public class BuyOrderController {
 		model.addAttribute("userIdAndName", systemVariableService.getUserIdAndName());
 		model.addAttribute("supplyIdAndName", systemVariableService.getSupplyIdAndName());
 		model.addAttribute("page", page);
+
+		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
+		model.addAttribute("userInfoMap", accountService.findUserByAreaIdAndRole(areaId, RoleSign.BUYER.getValue()));
+		model.addAttribute("supplierIds", systemVariableService.getSupplyIdAndName());
+		model.addAttribute("buyers", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
 		model.addAttribute("status", VariableUtils.getVariables(StockStatus.class));
+		model.addAllAttributes(filter);
 	}
 
 }

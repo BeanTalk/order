@@ -45,7 +45,7 @@
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
-			<h3>订单议价</h3>
+			<h3>内勤议价</h3>
 		</div>
 		<div class="panel_body  clearfix">
 			<@internal_headquery offices groupId userInfoMap userId userOrderId/>
@@ -82,7 +82,7 @@
 							            	</th>
 								            <th align="left">订单号: ${r.userOrderReturn.userOrderId}</th>
 								            <th align="left">订货人:${r.userOrderReturn.userName}</th>
-								            <th align="left">时间:${r.userOrderReturn.acceptDate}</th>
+								            <th align="left">时间:${(r.userOrderReturn.teacherOrderDate)!""}</th>
 								            <th align="left">状态:${states[r.userOrderReturn.statusCd]}</th>
 							            </table>
 							        </td>
@@ -93,15 +93,15 @@
 											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}_${index}">
 										</td>
 				                        <td width="248" align="left">
-											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
-											<p><b>货号:</b>${productOrderInfo.product.productNum!""}</p>
-											<p><b>品牌:</b>${productOrderInfo.product.brandName!""}</p>
+											<p><span class="pro_name">${(productOrderInfo.product.productName)!""}</span></p>
+											<p><b>货号:</b>${(productOrderInfo.product.productNum)!""}</p>
+											<p><b>品牌:</b>${(productOrderInfo.product.brandName)!""}</p>
 										</td>
-				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
-							            <td width="100" align="center">${productOrderInfo.product.catalogFee!0}</td>
-							            <td width="100" align="center">${productOrderInfo.orderFee!0}</td>
+				                        <td width="80" align="center">${(productOrderInfo.product.specValue)!""}</td>
+							            <td width="100" align="center">${(productOrderInfo.product.catalogFee)!0}</td>
+							            <td width="100" align="center">${(productOrderInfo.orderFee)!0}</td>
 							            <td width="100" align="center">
-							            	<input type="text" class="float-input right" size="8" id="${productOrderInfo.registerNumber}_newCatalogFees" name="newcatalogFees" value="${productOrderInfo.orderFee}">
+							            	<input type="text" class="float-input right" size="8" id="${(productOrderInfo.registerNumber)!""}_newCatalogFees" name="newcatalogFees" value="${productOrderInfo.orderFee}">
 							            	<input type="hidden" id="${productOrderInfo.registerNumber}_oldCatalogFees" name="oldcatalogFees" value="${productOrderInfo.orderFee}">
 							            </td>
 										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>

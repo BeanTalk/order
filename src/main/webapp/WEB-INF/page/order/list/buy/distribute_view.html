@@ -1,6 +1,11 @@
 <#include "*/basic/default.html"/>
 <#macro head>
 <script type="text/javascript">
+
+	$("#query_btn").click(function(){
+		$("#head_query_form").attr("action", "${viewUrl}");
+		$("#head_query_form").submit();
+	});
 	
     //点击原因
 	$('.reasonInfo_btn').click(function(){
@@ -47,11 +52,50 @@
 <#assign reasonUrl = "${base}/order/list/buy/getreason">
 
 <div class="grid2 m_t">
-	<form id="buycard-list-form" method="post">
-		<div class="panel">
-			<div class="panel_header">
-		        <h3>主管分配采购单</h3>
-		     </div>
+	<div class="panel">
+		<div class="panel_header">
+	        <h3>主管分配采购单</h3>
+	    </div>
+	    <form id="head_query_form">
+			<table width="100%" height='40px'>
+				<tr>
+					<td width="60" nowrap="nowrap" >开始时间</td>
+		            <td width="80" nowrap="nowrap" align='left'><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
+		            <td width="60" nowrap="nowrap" >结束时间</td>
+		            <td width="80" nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
+		            <td>&nbsp;</td>
+		        </tr>
+			 </table>
+			 <table width="100%">
+		        <tr>
+		            <td width="60" nowrap="nowrap">备货人</td>
+		            <td width='140'>
+		            	<select name="userId" id="userId" style='width:140px'>
+		            		<option value="">请选择...</option>
+		            		<#if userInfoMap?size != 0>
+	                        	<#list userInfoMap?keys as key>  
+	                        		<option value="${key}" <#if key == userId!"">selected</#if>> ${userInfoMap[key]!""}</option>
+	                        	</#list>
+	                        </#if>
+	                    </select>
+		            </td>
+		            <td width="60" nowrap="nowrap" >供应商</td>
+		            <td align='left' width='180' align='left'>
+	            		<select name="supplierId" id="supplierId" style='width:180px'>
+	                       	<option value="">请选择...</option>
+	                       	<#list supplierIds?keys as key>  
+				            	<option value="${key}" <#if key == supplierId!"">selected</#if>>${supplierIds[key]!""}</option>
+							</#list> 
+                    	</select>
+	            	</td>
+			        <td nowrap="nowrap">
+		            	<div id="query_btn" class="button white medium">搜索</div>
+		            </td>
+			   </tr>
+			</table>
+		</form>
+		<br>
+	    <form id="buycard-list-form" method="post">
 			<div class="panel_body clearfix">
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
@@ -72,41 +116,42 @@
 		    	<table width="100%" class="table_pro_body">
 					<tbody>
 						<#if page.content?size == 0>
-		                    <tr>
-		                        <td colspan="8">没有记录</td>
+	                    	<tr>
+								<td colspan="8">没有记录</td>
+	                    	</tr>
+	                	<#else>
+	                    <#list page.content as r>
+							<tr>
+								<td width="30">
+									<input type="checkbox" name="stockNumbers" id="check_stocknumber_${r.stockNumber}" value="${r.stockNumber}">
+								</td>
+								<td width="60" align="center">${r.stockNumber}</td>
+								<td width="218" align="left">
+									<p><span class="pro_name">${r.product.productName!""}</span></p>
+									<p><b>货号：</b>${r.product.productNum!""}</p>
+									<p><b>品牌：</b>${r.product.brandName!""}</p>
+								</td>
+					            <td width="80" align="center">${r.stockFee!""}</td>
+					            <td width="80" align="center">${r.orderNum!""}</td>
+					            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+					            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
+		                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
+		                        <td width="80" align="center">${userIdAndName[r.buyerUserId?string]!""}</td>
+								<td width="100" align="center">
+									<div id="${r.stockNumber}" class="button green medium fl D-operation reasonInfo_btn">原因</div>
+									<div id="${r.stockNumber}" class="button orange medium fl D-operation distribute_btn">分配</div>
+								</td>
 		                    </tr>
-		                <#else>
-		                    <#list page.content as r>
-								<tr>
-									<td width="30">
-										<input type="checkbox" name="stockNumbers" id="check_stocknumber_${r.stockNumber}" value="${r.stockNumber}">
-									</td>
-									<td width="60" align="center">${r.stockNumber}</td>
-									<td width="218" align="left">
-										<p><span class="pro_name">${r.product.productName!""}</span></p>
-										<p><b>货号：</b>${r.product.productNum!""}</p>
-										<p><b>品牌：</b>${r.product.brandName!""}</p>
-									</td>
-						            <td width="80" align="center">${r.stockFee!""}</td>
-						            <td width="80" align="center">${r.orderNum!""}</td>
-						            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
-						            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
-			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
-			                        <td width="80" align="center">${userIdAndName[r.buyerUserId?string]!""}</td>
-									<td width="100" align="center">
-										<div id="${r.stockNumber}" class="button green medium fl D-operation reasonInfo_btn">原因</div>
-										<div id="${r.stockNumber}" class="button orange medium fl D-operation distribute_btn">分配</div>
-									</td>
-			                    </tr>
-		                    </#list>
-		                </#if>
-					</tbody>
+	                    </#list>
+	                </#if>
+				</tbody>
 				</table>
 	        	<p class="pageBar"></p>
-				<@pager page "${viewUrl}" />
+	        	<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "supplierId": "${supplierId!}", "userId" : "${userId!}"}>
+				<@pager page "${viewUrl}" parameterMap/>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
 </div>
 
 <div id="distribute_div" style="display:none; cursor: default; padding: 10px">

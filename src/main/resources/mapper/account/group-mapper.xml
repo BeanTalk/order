@@ -14,8 +14,11 @@
           sys_office
         WHERE
           catagory = 2
+        <if test="ifShow != null and ifShow != ''">
+        	AND if_show = #{ifShow}
+        </if>
         <if test="areaId != null and areaId != ''">
-        AND area_id = #{areaId}
+        	AND area_id = #{areaId}
         </if>
     </select>
 

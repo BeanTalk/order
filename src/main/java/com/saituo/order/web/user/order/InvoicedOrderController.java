@@ -87,7 +87,7 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(areaId));
 		model.addAttribute("salemens", accountService.findUserByAreaIdAndRole(areaId, RoleSign.SALE.getValue()));
 		model.addAttribute("page", page);
 
@@ -176,7 +176,7 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(areaId));
 		model.addAttribute("page", page);
 
 		// 查询条件
@@ -259,7 +259,7 @@ public class InvoicedOrderController {
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
 		model.addAttribute("billstates", VariableUtils.getVariables(BillStatus.class));
-		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdData(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(areaId));
 		model.addAttribute("page", page);
 
 		// 查询条件

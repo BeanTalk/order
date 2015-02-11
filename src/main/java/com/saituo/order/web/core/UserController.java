@@ -1,6 +1,7 @@
 package com.saituo.order.web.core;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
@@ -64,6 +66,10 @@ public class UserController {
 	@RequestMapping("userlist")
 	public @ResponseBody Object getUserListByGroupId(@RequestParam Map<String, Object> filter) {
 		String groupId = String.valueOf(filter.get("groupId"));
+
+		if (StringUtils.isEmpty(groupId)) {
+			return "";
+		}
 		return accountService.findAllofUserByOfficeId(groupId);
 	}
 

@@ -66,7 +66,7 @@
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
-			<h3>生成订单</h3>
+			<h3>提审订单</h3>
 		</div>
 		<div class="panel_body clearfix">
 			<@st_headquery startDate endDate userOrderId />
@@ -99,7 +99,7 @@
 							            	<th width="30"><input type="checkbox" class="userOrderClass" name="userOrders" id="u_${r.userOrderReturn.userOrderId!""}" value="${r.userOrderReturn.userOrderId!""}"></th>
 								            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 								            <th align="left" colspan="2">订货人:${userName!""}</th>
-								            <th align="left" colspan="2">时间:${r.userOrderReturn.acceptDate!""}</th>
+								            <th align="left" colspan="2">时间:${r.userOrderReturn.teacherOrderDate!""}</th>
 								            <th align="left" colspan="3">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 							            </table>
 							        </td>
