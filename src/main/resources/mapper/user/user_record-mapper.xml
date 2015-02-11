@@ -21,6 +21,7 @@
 		now()
 		)
 	</insert>
+	
 	<select id="queryList" resultType="userRecord">
 		select
 		user_record_id as userRecordId,
@@ -44,11 +45,33 @@
 			<if test="userRecord.userId != null and userRecord.userId != ''">
 				and user_id =#{userRecord.userId}
 			</if>
+			<if test="filter.startDate !=null and filter.startDate != ''">
+				<![CDATA[ and DATE_FORMAT(accept_date, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="filter.endDate !=null and filter.endDate != ''">
+				<![CDATA[ and DATE_FORMAT(accept_date, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
+			</if>
 		</trim>
 		order by accept_date desc
 		<if test="filter.first != null and filter.last != null">
 			LIMIT #{filter.first}, #{filter.last}
 		</if>
+	</select>
+	
+	<select id="query" resultType="userRecord">
+		select
+		user_record_id as userRecordId,
+		user_id as userId,
+		area_id as areaId,
+		group_id as groupId,
+		address_id as addressId,
+		accept_date as acceptDate
+		from st_user_record
+		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="userRecord.userRecordId !=null and userRecord.userRecordId != ''">
+				and user_record_id =#{userRecord.userRecordId}
+			</if>
+		</trim>
 	</select>
 
 	<select id="count" resultType="int">

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
+import com.saituo.order.commons.utils.MathUtils;
 import com.saituo.order.entity.order.Product;
 import com.saituo.order.service.order.ProductService;
 
@@ -32,12 +33,12 @@ public class ProductViewController {
 		}
 		model.addAttribute("searchContext", searchContext);
 		Page<Product> pages = productService.searchProduct(pageRequest, searchContext);
-		
+
 		// 当前用户为已登录用户时,将显示折扣价格
 		Subject subject = SecurityUtils.getSubject();
 		if (subject != null && subject.isAuthenticated()) {
 			for (Product product : pages.getContent()) {
-				product.setDiscoutFee(99.99);
+				product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee() * product.getWeightDiscount()));
 			}
 		}
 		return pages;

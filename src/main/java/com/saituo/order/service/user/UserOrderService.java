@@ -440,6 +440,7 @@ public class UserOrderService {
 			userOrderQuery.setUserOrderId(userOrderId);
 			// 状态:1.保存订单;2.待审批;3.已驳回;4.审批通过;5.已下单;6.已接单;7.已完成;-1已取消
 			userOrderQuery.setStatusCd("5");
+			userOrderQuery.setTeacherOrderDate("validDate");
 			// 更新客户订单的状态
 			userOrderDao.update(userOrderQuery);
 		}
@@ -1040,6 +1041,7 @@ public class UserOrderService {
 		}
 		return productOrderList;
 	}
+	
 	public List<Product> getProductList(Long userOrderId) {
 
 		// 根据客户订单编码查询产品订单项信息列表

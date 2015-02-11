@@ -19,13 +19,15 @@
 					<@shiro.authenticated>
 						<!-- 内部用户时 -->
 						<#if Session["session_variable"].isInternalUser?string('true','false') == "true">
-							<li>&nbsp;</li>
-							<li>
-								<a href="${base}/order/stock/list">
-								<div class="stock fl icon icon_2"></div>
-									备货<span id="storeInBagCount" class="fontred">0</span>
-								</a>
-							</li>
+							<#if Session["session_variable"].roleList?seq_contains("4")>
+								<li>&nbsp;</li>
+								<li>
+									<a href="${base}/order/stock/list">
+									<div class="stock fl icon icon_2"></div>
+										备货<span id="storeInBagCount" class="fontred">0</span>
+									</a>
+								</li>
+							</#if>
 						<#else>
 							<li>
 								<a href="${base}/order/buycard/list">
@@ -45,7 +47,7 @@
       		<p><img src="${base}/resource/images/hotfont.gif"></p>
 		</div>
 	    <div class="schBox">
-	    	<input type="text" class="required sch_text" id="search_context">
+	    	<input type="text" class="required sch_text" id="search_context" value="${searchContext!""}">
 	    	<input type="button" class="sch_btn fb" id="search_btn" value="搜索" >
 		</div>
 		<div class="logoBar">

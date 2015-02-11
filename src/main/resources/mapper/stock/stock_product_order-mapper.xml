@@ -127,16 +127,13 @@
 		FROM
 			st_stock_product_order
 		WHERE 1= 1
-		<if
-			test="stockProductOrder.stockNumber!=null and stockProductOrder.stockNumber!=''">
+		<if test="stockProductOrder.stockNumber!=null and stockProductOrder.stockNumber!=''">
 			and stock_number =#{stockProductOrder.stockNumber}
 		</if>
-		<if
-			test="stockProductOrder.stockOrderId !=null and stockProductOrder.stockOrderId!= ''">
+		<if test="stockProductOrder.stockOrderId !=null and stockProductOrder.stockOrderId!= ''">
 			and stock_order_id =#{stockProductOrder.stockOrderId}
 		</if>
-		<if
-			test="stockProductOrder.statusCd != null and stockProductOrder.statusCd != ''">
+		<if test="stockProductOrder.statusCd != null and stockProductOrder.statusCd != ''">
 			and status_cd =#{stockProductOrder.statusCd}
 		</if>
 		<if test="stockProductOrder.brandId != null and stockProductOrder.brandId != ''">
@@ -145,8 +142,17 @@
 		<if test="stockProductOrder.productId !=null and stockProductOrder.productId != ''">
 			and product_id =#{stockProductOrder.productId}
 		</if>
-		<if test="stockProductOrder.buyerUserId!=null and stockProductOrder.buyerUserId!= ''">
-			and buyer_user_id =#{stockProductOrder.buyerUserId}
+		<if test="filter.supplierId != null and filter.supplierId != ''">
+			and supplier_id =#{filter.supplierId}
+		</if>
+		<if test="filter.userId!=null and filter.userId!= ''">
+			and user_id =#{filter.userId}
+		</if>
+		<if test="filter.startDate !=null and filter.startDate != ''">
+			<![CDATA[ and DATE_FORMAT(accept_date, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+		</if>
+		<if test="filter.endDate !=null and filter.endDate != ''">
+			<![CDATA[ and DATE_FORMAT(accept_date, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
 		</if>
 		order by stock_number desc
 		<if test="filter.first != null and filter.last != null">

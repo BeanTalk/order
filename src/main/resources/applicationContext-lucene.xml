@@ -29,11 +29,13 @@
 	<!-- set the IndexWriter Open -->
 	<util:constant id="OPEN_MODE" static-field="org.apache.lucene.index.IndexWriterConfig.OpenMode.CREATE" />
 	
-	<!-- set your analyzer, to be used by the IndexWriter and QueryParser -->
+	<!-- set your analyzer, to be used by the IndexWriter and QueryParser KeywordAnalyzer, StandardAnalyzer-->
 	<bean id="luceneAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer">
 		<constructor-arg ref="LUCENE_VERSION"/>
 	</bean>
-	
+	<!-- 
+	<bean id="luceneAnalyzer" class="org.apache.lucene.analysis.core.KeywordAnalyzer" />
+	 -->
 	<!-- set your Lucene directory -->
 	<!-- in this case I am pulling the location from a properties file -->
 	<!-- also, using the SimpleFSLockFactory -->

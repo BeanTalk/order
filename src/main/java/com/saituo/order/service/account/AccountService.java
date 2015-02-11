@@ -194,7 +194,7 @@ public class AccountService {
 	}
 
 	/**
-	 * 通过areaid和roleSign获取人员
+	 * 通过officeId获取人员
 	 * 
 	 * @param areaId
 	 * @param roleSign
@@ -206,6 +206,18 @@ public class AccountService {
 		mapDataCond.put("officeId", officeId);
 
 		List<Map<String, Object>> list = userDao.findAllofUserByOfficeId(mapDataCond);
+		Map<String, String> mapDataRes = Maps.newHashMap();
+		for (Map<String, Object> mapData : list) {
+			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
+		}
+		return mapDataRes;
+	}
+
+	public Map<String, String> findAllofUserByAreaId(String areaId) {
+		Map<String, String> mapDataCond = Maps.newHashMap();
+		mapDataCond.put("areaId", areaId);
+
+		List<Map<String, Object>> list = userDao.findAllofUserByAreaId(mapDataCond);
 		Map<String, String> mapDataRes = Maps.newHashMap();
 		for (Map<String, Object> mapData : list) {
 			mapDataRes.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));

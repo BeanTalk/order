@@ -98,16 +98,16 @@
 				            <td width="60" nowrap="nowrap">订购人</td>
 				            	<td align='left' width="80"><select name="userId" id="userId" style='width:100px'>
 				            		<option value="">请选择...</option>
+				            		<#if userId?? && userId != "">
+				            			<option value="${userId}" selected>${userInfoMap[userId]!""}</option>
+				            		</#if>
 			                    </select>
 				            </td>
-				           
-			          
 				        </#if>
 				        <td nowrap="nowrap">
-			            	<div id="query_btn" class="button white medium">检索</div>
+			            	<div id="query_btn" class="button white medium">搜索</div>
 			            </td>
 				   </tr>
-				  
 				</table>
 			</form>
 			<br>
@@ -117,13 +117,12 @@
 						<tr>
 				            <th width="238" align="left">产品</th>
 				            <th width="80" align="left">规格</th>
-				            <th width="60" align="left">单位</th>
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购单价</th>
 				            <th width="80" align="left">数量</th>
 				            <th width="100" align="left">使用积分</th>
 				            <th width="100" align="left">实收价</th>
-				            <th width="80" align="left">订单状态</th>
+				            <th width="80" align="left">产品状态</th>
 				            <th width="80" align="left">操作</th>
 						</tr>
 					</tbody>
@@ -142,7 +141,7 @@
 							            	<th width="30"></th>
 								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 								            <th align="left">订货人:${r.userOrderReturn.userName!""}</th>
-								            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
+								            <th align="left">时间:${(r.userOrderReturn.teacherOrderDate)!""}</th>
 								            <th align="left">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 							            </table>
 							        </td>
@@ -157,7 +156,6 @@
 											<p><b>品牌：</b>${productOrderInfo.product.brandName!""}</p>
 										</td>
 				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
-				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
 				                        <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
 										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>

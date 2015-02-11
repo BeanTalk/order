@@ -108,7 +108,6 @@ public class RecordCardService {
 			for (Product product : productList) {
 				CustomerOrdering customerOrdering = new CustomerOrdering();
 				BeanUtils.copyProperties(customerOrdering, product);
-				customerOrdering.setDiscountPrice(0);// XXX
 				customerOrdering.setSubscriptCount(VariableUtils.typeCast(
 						mapData.get(String.valueOf(product.getProductId())), Integer.class));
 				result.add(customerOrdering);
@@ -121,7 +120,7 @@ public class RecordCardService {
 
 	public Map<String, String> getAgentList() {
 		Map<String, String> filter = Maps.newHashMap();
-		filter.put("delFlag", "0");
+		// filter.put("delFlag", "0");
 		List<Agent> agentList = agentDao.getAgentListByIdAndDelFlag(filter);
 		Map<String, String> result = Maps.newHashMap();
 		for (Agent agent : agentList) {

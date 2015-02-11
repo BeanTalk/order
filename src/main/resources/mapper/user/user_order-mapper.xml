@@ -26,6 +26,9 @@
 	<update id="update">
 		update st_user_order set
 			status_Cd = #{statusCd}
+		<if test="teacherOrderDate !=null and teacherOrderDate !=''">
+			,teacher_order_time = now()
+		</if>
 		where user_order_id = #{userOrderId}
 	</update>
 
@@ -37,7 +40,8 @@
 			group_id as groupId,
 			address_id as addressId,
 			accept_date as acceptDate,
-			status_cd as statusCd
+			status_cd as statusCd,
+			teacher_order_time as teacherOrderDate
 		from st_user_order
 		where
 			user_order_id = #{userOrderId}
@@ -51,7 +55,8 @@
 			group_id as groupId,
 			address_id as addressId,
 			accept_date as acceptDate,
-			status_cd as statusCd
+			status_cd as statusCd,
+			teacher_order_time as teacherOrderDate
 		from st_user_order
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">  
 			<if test="userOrder.areaId!=null and userOrder.areaId!=''">

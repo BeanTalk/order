@@ -40,7 +40,6 @@
 				            <th width="30" align="center"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
 				            <th width="238" align="left">产品</th>
 				            <th width="80" align="left">规格</th>
-				            <th width="60" align="left">单位</th>
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
 				            <th width="80" align="left">数量</th>
@@ -62,7 +61,7 @@
 							            	<th width="30"><input type="checkbox" class="userOrderClass" name="userOrderIds" id="u_${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}"></th>
 								            <th align="left">订单号: ${r.userOrderReturn.userOrderId!""}</th>
 								            <th align="left">订货人:${userName!""}</th>
-								            <th align="left">时间:${r.userOrderReturn.acceptDate!""}</th>
+								            <th align="left">时间:${(r.userOrderReturn.teacherOrderDate)!""}</th>
 								            <th align="left">状态:${states[r.userOrderReturn.statusCd]!""}</th>
 							            </table>
 							        </td>
@@ -77,7 +76,6 @@
 											<p><b>品牌：</b>${productOrderInfo.product.brandName!""}</p>
 										</td>
 				                        <td width="100" align="center">${productOrderInfo.product.specValue!""}</td>
-				                        <td width="60" align="center">${productOrderInfo.product.unitValue!""}</td>
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
 										<td width="100" align="center">${productOrderInfo.orderNum!1}</td>

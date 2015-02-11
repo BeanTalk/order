@@ -31,6 +31,45 @@
 		$('#buycard-list-form').submit();
 	});
 	
+	$('#all_checkbox_special').change(function(){
+		var checkboxes = $(this).closest('form').find(':checkbox');
+		if ($(this).prop('checked')) {
+			checkboxes.prop('checked', true);
+		} else {
+			checkboxes.prop('checked', false);
+		}
+		resetTotalNumber();
+	});
+	
+	$('.int-count-input').change(function(){
+		resetTotalNumber();
+	});
+	
+	$('.D-buy-btn').change(function(){
+		resetTotalNumber();
+	});
+	
+	$("input[name='productIds']").change(function(){
+		resetTotalNumber();
+	});
+
+	var resetTotalNumber = function(){
+		var sumPrice = 0;
+		var sumNumber = 0;
+		
+		$("form").find("input[type=checkbox][name^='productIds']:checked").each(
+			function(){
+				
+				var thisNumber = toDecimal($("#total_"+this.id).val());
+				var thisPrice = toDecimal($("#price_"+this.id).text());
+				var totalPrice = toDecimal(thisNumber * thisPrice);
+				sumPrice = sumPrice + totalPrice;
+				sumNumber = sumNumber + thisNumber;
+ 			}
+ 		)
+ 		$('#total-num-products').text(toDecimal(sumNumber));
+ 		$('#total-products').text(toDecimal(sumPrice));
+	}
 </script>
 </#macro>
 <#macro body>
@@ -68,10 +107,9 @@
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
 		          		<tr>
-							<th width="30"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
+							<th width="30"><input type="checkbox" id="all_checkbox_special" name="all_checkbox"></th>
 							<th width="258">产品</th>
 							<th width="100">规格</th>
-							<th width="60">单位</th>
 							<th width="80">目录价</th>
 							<th width="80">数量</th>
 							<th width="80">供应商</th>
@@ -88,7 +126,7 @@
 	                    <#list customerOrderingList as r>
 	                    <tr>
 							<td width="30">
-								<input type="checkbox" name="productIds" value="${r.productId!""}_${r_index}">
+								<input type="checkbox" id="${r.productId!""}" name="productIds" value="${r.productId!""}_${r_index}">
 							</td>
 	                        <td width="258" align="left">
 								<p><span class="pro_name">${r.productName!""}</span></p>
@@ -96,10 +134,9 @@
 								<p><b>品牌：</b>${r.brandName!""}</p>
 							</td>
 	                        <td width="100" align="center">${r.specValue!""}</td>
-				            <td width="60" align="center">${r.unitValue!""}</td>
-				            <td width="80" align="center" class="price-per-products">${r.catalogFee!""}</td>
+				            <td width="80" align="center" id="price_${r.productId!""}">${r.catalogFee!""}</td>
 							<td width="80" align="center" class="num-products">
-								<input type="text" class="right int-count-input" name="subscripts" size="2" value="${r.subscriptCount!1}">
+								<input type="text" class="int-count-input right" id="total_${r.productId!""}" name="subscripts" size="2" value="${r.subscriptCount!1}">
 							</td>
 							<td width="80">大连赛拓</td>
 							<td width="50" align="center">
@@ -118,7 +155,7 @@
 		            		<span class="fb" id="total-num-products"></span>&nbsp;件产品&nbsp;
 		            		&nbsp;总价: <span class="font16 fb" id="total-products"></span>元</div>
 		            	<br>
-		            	<div id="save_btn" class="button orange">生成</div>
+		            	<div id="save_btn" class="button orange">生成订单</div>
 	            	</div>
 	        	</div>
 			</div>
