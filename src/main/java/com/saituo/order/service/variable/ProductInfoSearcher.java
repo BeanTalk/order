@@ -75,6 +75,7 @@ public class ProductInfoSearcher {
 				product.setBrandId(doc.get("brand_name"));
 				product.setCatalogFee(Double.valueOf(doc.get("catalog_fee")));
 				product.setWeightDiscount(Double.valueOf(doc.get("weight_discount")));
+				product.setBuyDiscount(Double.valueOf(doc.get("buy_discount")));
 				productList.add(product);
 			}
 			return new Page<Product>(pageRequest, productList, totalCount);

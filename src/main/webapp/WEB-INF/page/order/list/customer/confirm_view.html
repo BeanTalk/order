@@ -118,8 +118,8 @@
 							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
 										<td width="80" align="center"><input type="text" class="int-count-input" size="2" id="n_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" name="orderNums" value=${productOrderInfo.orderNum!1}></td>
 										<td width="140" align="center">
-							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl D-buy-btn cancel">取消</div>
-							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium fl D-buy-btn update">修改</div>
+							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium D-buy-btn cancel">取消</div>
+							            	<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button blue medium D-buy-btn update">修改</div>
 										</td>
 				                    </tr>
 				                    <#assign index=index+1>

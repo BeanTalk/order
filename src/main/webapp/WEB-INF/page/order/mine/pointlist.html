@@ -33,7 +33,7 @@
 		                    <#list page.content as r>
 			                    <tr>
 									<td width="20%"></td>
-						            <td width="20%" align="center"><#if r.pointType == "1">累积积分<#elseif r.pointType == "2">使用积分<#elseif r.pointType == "3">回退积分</#if></td>
+						            <td width="20%" align="center"><#if r.pointType == "2">累积积分<#elseif r.pointType == "1">使用积分<#elseif r.pointType == "3">回退积分</#if></td>
 									<td width="20%" align="center">${r.pointBalance!0}</td>
 									<td width="20%" align="center"> ${r.registerNumber!""}</td>
 									<td width="20%" align="center">${r.acceptDate!""}</td>

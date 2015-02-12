@@ -142,6 +142,9 @@
 		<if test="stockProductOrder.productId !=null and stockProductOrder.productId != ''">
 			and product_id =#{stockProductOrder.productId}
 		</if>
+		<if test="stockProductOrder.buyerUserId !=null and stockProductOrder.buyerUserId != ''">
+			and buyer_user_id =#{stockProductOrder.buyerUserId}
+		</if>
 		<if test="filter.supplierId != null and filter.supplierId != ''">
 			and supplier_id =#{filter.supplierId}
 		</if>

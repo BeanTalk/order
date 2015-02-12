@@ -49,7 +49,7 @@ public interface UserBeansDao {
 	 * @return void 
 	 * @throws 
 	*/
-	public void updateAdd (UserBeans userBeans);
+	public int updateAdd (UserBeans userBeans);
 	/**
 	 * <p>Description: 更新数据:减</p>
 	 * @Method: update

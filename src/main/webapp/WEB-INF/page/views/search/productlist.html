@@ -27,9 +27,13 @@
 			            <th width="100">规格</th>
 			            <th width="60">单位</th>
 			            <th width="100">目录价</th>
-			            <@shiro.authenticated>
-			            	<th width="130">操作</th>
-			            </@shiro.authenticated>
+			            <#if Session["session_variable"].isInternalUser?string('true','false') == "true">
+							<#if Session["session_variable"].roleList?seq_contains("4")>
+								<th width="130">操作</th>
+							</#if>
+						<#else>
+							<th width="130">操作</th>
+						</#if>
 			        </tr>
 		    	</tbody>
 			</table>
@@ -51,8 +55,15 @@
 				            <td width="60" align="center">${r.unitValue!}</td>
 				            <td width="100" align="center">${r.catalogFee!}</td>
 				            <@shiro.authenticated>
-					            <#if Session["session_variable"].isInternalUser?string('true','false') == "false">
-		                            <td width="130" align="center">
+								<!-- 内部用户时 -->
+								<#if Session["session_variable"].isInternalUser?string('true','false') == "true">
+									<#if Session["session_variable"].roleList?seq_contains("4")>
+										<td width="130" align="center">
+						            		<div id="${r.productId}" class="button green medium Q-stock-btn">加入备货</div>
+			          					</td>
+									</#if>
+								<#else>
+									<td width="130" align="center">
 		                            	<a href="#">
 						            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
 						            	</a>
@@ -60,12 +71,8 @@
 			          						<div id="${r.productId}" class="button orange medium fl Q-record-btn">记录</div>
 			          					</a>
 			          				</td>
-			          			<#else>
-			          				<td width="130" align="center">
-						            	<div id="${r.productId}" class="button green medium fl Q-stock-btn">加入备货</div>
-			          				</td>
-		          				</#if>
-	          				</@shiro.authenticated>
+								</#if>
+							</@shiro.authenticated>
                         </tr>
                         </#list>
                     </#if>

@@ -17,6 +17,8 @@
 	$("#login_button").click(function(){
 	    $("#login_form").submit();
 	});
+	
+	
 
 </script>
 </#macro>
@@ -54,7 +56,7 @@
 				              		</td>
 				          		</tr>
 		                    </#if>
-			          		
+		                    
 			          		<tr>
 			            		<td nowrap="nowrap" align="right"></td>
 			            		<td><p style="visibility:hidden"><span class="fontred">没有此用户（或密码不正确）</span></p>
@@ -71,7 +73,6 @@
 			</div>
 		</div>
 	</div>
-	<!--
 	<div class="fl w_2">&nbsp;</div>
 	<div class="fl w_3">
 	    <div class="panel">
@@ -89,7 +90,7 @@
 	            		<p> 有效的电子邮件，用于登录以及接收订单通知等，绝不公开</p></td>
 	            	</tr>
 	            	<tr>
-						<td nowrap="nowrap" align="right">会员名：</td>
+						<td nowrap="nowrap" align="right">登录名:</td>
 	            		<td>
 	            			<input type="text" class="text width_input_login" name="">
 	     					<span class="fontred">验证</span>
@@ -97,7 +98,7 @@
 	              		</td>
 	          		</tr>
 	          		<tr>
-	            		<td nowrap="nowrap" align="right">密码：</td>
+	            		<td nowrap="nowrap" align="right">密码:</td>
 	            		<td>
 	            			<input type="password" class="text width_input_login" name="">
 	              			<span class="fontred">验证</span>
@@ -105,7 +106,7 @@
 	              		</td>
 					</tr>
 					<tr>
-						<td nowrap="nowrap" align="right">重复密码：</td>
+						<td nowrap="nowrap" align="right">重复密码:</td>
 						<td>
 							<input type="password" class="text width_input_login" name="">
 							<span class="fontred">验证</span>
@@ -118,22 +119,13 @@
 	              			<span class="fontred">验证</span>
 	              		</td>
 	 				</tr>
-	          		<tr>
-	            		<td nowrap="nowrap" align="right">验证码：</td>
-	            		<td>
-	            			<input type="text" class="text width_input_chk" name="input">
-	              			<img src="${base}/resource/images/csk.jpeg"><a class="underline" href="#">看不清</a>
-	              			<span class="fontred">验证</span>
-	              		</td>
-	          		</tr>
 					<tr>
 	   					<td></td>
-						<td><div class="button green">注册完成</div></td>
+						<td><div class="button green register">注册完成</div></td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
 	</div>
-	-->
 </div>
 </#macro>

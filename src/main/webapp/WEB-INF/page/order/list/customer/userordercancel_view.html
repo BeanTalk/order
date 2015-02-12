@@ -43,7 +43,6 @@
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
 				            <th width="80" align="left">数量</th>
-				            <th width="50" align="left"></th>
 						</tr>
 					</tbody>
 				</table>
@@ -75,10 +74,10 @@
 											<p><b>货号：</b>${productOrderInfo.product.productNum!""}</p>
 											<p><b>品牌：</b>${productOrderInfo.product.brandName!""}</p>
 										</td>
-				                        <td width="100" align="center">${productOrderInfo.product.specValue!""}</td>
+				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
-										<td width="100" align="center">${productOrderInfo.orderNum!1}</td>
+										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
 				                    </tr>
 			                    </#list>
 			                    <#if r.addressReturn??>

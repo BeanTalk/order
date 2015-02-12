@@ -918,7 +918,9 @@ public class UserOrderService {
 						Math.floor(VariableUtils.typeCast(productOrderQuery.getPricePaidFee(), float.class)),
 						Long.class));// 豆豆数量
 				userBeans.setUserId(VariableUtils.typeCast(productOrderQuery.getUserId(), String.class));// 客户
-				userBeansDao.updateAdd(userBeans);
+				if (userBeansDao.updateAdd(userBeans) == 0) {
+					userBeansDao.insert(userBeans);
+				}
 
 				// 增加豆豆历史信息
 				userPeasHis = new UserPeasHis();
@@ -1041,7 +1043,7 @@ public class UserOrderService {
 		}
 		return productOrderList;
 	}
-	
+
 	public List<Product> getProductList(Long userOrderId) {
 
 		// 根据客户订单编码查询产品订单项信息列表

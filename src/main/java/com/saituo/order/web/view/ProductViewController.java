@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.commons.utils.MathUtils;
@@ -38,7 +39,12 @@ public class ProductViewController {
 		Subject subject = SecurityUtils.getSubject();
 		if (subject != null && subject.isAuthenticated()) {
 			for (Product product : pages.getContent()) {
-				product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee() * product.getWeightDiscount()));
+				if (SessionVariable.getCurrentSessionVariable().getIsInternalUser()) {
+					product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee() * product.getBuyDiscount()));
+				} else {
+					product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee()
+							* product.getWeightDiscount()));
+				}
 			}
 		}
 		return pages;
