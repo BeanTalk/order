@@ -231,7 +231,7 @@ public class InsideOrderController {
 	}
 
 	/**
-	 * 内勤查看接单状态的订单
+	 * 内勤查看出单状态的订单
 	 * 
 	 * @param filter
 	 * @param productIds
@@ -261,6 +261,7 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("productStatusCd", ProductOrderState.UNSETTLED.getValue());
 			mapData.put(
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
@@ -354,6 +355,7 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("productStatusCd", ProductOrderState.DEALED.getValue());
 			mapData.put(
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),

@@ -27,13 +27,17 @@
 			            <th width="100">规格</th>
 			            <th width="60">单位</th>
 			            <th width="100">目录价</th>
-			            <#if Session["session_variable"].isInternalUser?string('true','false') == "true">
-							<#if Session["session_variable"].roleList?seq_contains("4")>
-								<th width="130">操作</th>
+			            <@shiro.authenticated>
+				            <#if Session["session_variable"].isInternalUser?string('true','false') == "true">
+								<#if Session["session_variable"].roleList?seq_contains("4")>
+									<th width="130">操作</th>
+								</#if>
+							<#else>
+								<#if Session["session_variable"].groupId??>
+									<th width="130">操作</th>
+								</#if>
 							</#if>
-						<#else>
-							<th width="130">操作</th>
-						</#if>
+						</@shiro.authenticated>
 			        </tr>
 		    	</tbody>
 			</table>
@@ -63,14 +67,16 @@
 			          					</td>
 									</#if>
 								<#else>
-									<td width="130" align="center">
-		                            	<a href="#">
-						            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
-						            	</a>
-						            	<a href="#">
-			          						<div id="${r.productId}" class="button orange medium fl Q-record-btn">记录</div>
-			          					</a>
-			          				</td>
+									<#if Session["session_variable"].groupId??>
+										<td width="130" align="center">
+			                            	<a href="#">
+							            		<div id="${r.productId}" class="button green medium fl Q-buy-btn">加入购物车</div>
+							            	</a>
+							            	<a href="#">
+				          						<div id="${r.productId}" class="button orange medium fl Q-record-btn">记录</div>
+				          					</a>
+				          				</td>
+				          			</#if>
 								</#if>
 							</@shiro.authenticated>
                         </tr>

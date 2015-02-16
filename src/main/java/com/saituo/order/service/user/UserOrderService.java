@@ -227,7 +227,7 @@ public class UserOrderService {
 			auditCd = (String) filter.get("auditCd");
 			productOrder.setAuditCd(auditCd);
 		}
-		// 订单状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
+		// 订单状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消; -2.已退货
 		String productStatusCd = null;
 		if (filter.get("productStatusCd") != null && !filter.get("productStatusCd").equals("")) {
 			productStatusCd = String.valueOf(filter.get("productStatusCd"));

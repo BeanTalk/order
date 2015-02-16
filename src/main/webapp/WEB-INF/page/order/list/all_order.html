@@ -166,7 +166,7 @@
 											<#if !Session["session_variable"].isInternalUser && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3")>
 												<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl D-operation complain_btn">投诉</div>
 											</#if>
-											<#if Session["session_variable"].isInternalUser && (r.userOrderReturn.statusCd == "7" && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3")) && (Session["session_variable"].roleList?seq_contains("9"))>
+											<#if Session["session_variable"].isInternalUser && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3") && (Session["session_variable"].roleList?seq_contains("9"))>
 												<div id="${productOrderInfo.registerNumber}" class="button orange medium fl D-operation return_btn">退货</div>
 											</#if>
 										</td>

@@ -5,13 +5,14 @@
     	</@shiro.guest>
     	<@shiro.authenticated>
     	<div class="fl">
-    		<span>${Session["session_variable"].user.login_name!Session["session_variable"].user.name}，你好</span>
+    		<span><a href="/core/talk/sys/user/info">${Session["session_variable"].user.login_name!Session["session_variable"].user.name}</a> , 你好</span>
         </div>
-        <div class="fr"><a href="${base}/logout">退出系统</a></div>
+        <div class="fr">
+        	<a href="${base}/logout">退出系统</a>
+        </div>
         </@shiro.authenticated>
   </div>
 </div>
-
 <div class="header">
 	<div class="container">
 		<div class="header_fr">

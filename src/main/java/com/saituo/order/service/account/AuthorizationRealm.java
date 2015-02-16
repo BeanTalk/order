@@ -15,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.google.common.collect.Lists;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
-import com.saituo.order.commons.enumeration.entity.ResourceType;
 import com.saituo.order.commons.enumeration.entity.UserCatagory;
 import com.saituo.order.service.ServiceException;
 
@@ -69,7 +68,6 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 
 		// 加载用户资源信息
 		List<Map<String, Object>> authorizationInfo = accountService.getUserMenus(userId);
-		List<Map<String, Object>> menuList = accountService.mergeMenus(authorizationInfo, ResourceType.SECURITY);
 		List<String> roleList = accountService.getUserRoles(userId);
 
 		// 添加用户拥有的permission
@@ -77,26 +75,6 @@ public abstract class AuthorizationRealm extends AuthorizingRealm {
 		// 添加用户拥有的role
 		info.addRoles(roleList);
 
-		sv.setAuthorizationInfo(authorizationInfo);
-		sv.setMenusList(menuList);
-		sv.setRoleList(roleList);
-
-		int userCatagory = VariableUtils.typeCast(currentUser.get("userCatagory"), Integer.class).intValue();
-		if (userCatagory == UserCatagory.INTERNAL.getValue().intValue()) {
-			sv.setIsInternalUser(true);
-		} else {
-			sv.setIsInternalUser(false);
-		}
-
-		Map<String, Object> groupAndareaData = accountService.getUserGroup(userId);
-
-		if (groupAndareaData.get("areaId") != null) {
-			sv.setAreaId((Integer) groupAndareaData.get("areaId"));
-		}
-
-		if (groupAndareaData.get("groupId") != null) {
-			sv.setGroupId((Integer) groupAndareaData.get("groupId"));
-		}
 		SecurityUtils.getSubject().getSession().setAttribute(SessionVariable.DEFAULT_SESSION_KEY, sv);
 		return info;
 	}

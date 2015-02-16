@@ -4,9 +4,7 @@
 		stock : function(options) {
 
 			var self = this, $shop = $('.stock'), $num = $('#storeInBagCount');
-
 			var S = {
-
 				init : function() {
 					$(self).data('click', true).live('click', this.addStock);
 				},
@@ -59,7 +57,7 @@
 																											'click',
 																											false)
 																									.addClass('gray')
-																									.removeClass('orange');
+																									.removeClass('green');
 																						});
 																	});
 												});

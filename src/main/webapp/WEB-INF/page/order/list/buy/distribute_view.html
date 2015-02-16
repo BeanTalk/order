@@ -136,7 +136,11 @@
 					            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
 					            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
 		                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
-		                        <td width="80" align="center">${userIdAndName[r.buyerUserId?string]!""}</td>
+		                        <td width="80" align="center">
+		                        <#if r.buyerUserId??>
+		                        	${userIdAndName[r.buyerUserId?string]!""}
+		                        </#if>
+		                        </td>
 								<td width="100" align="center">
 									<div id="${r.stockNumber}" class="button green medium fl D-operation reasonInfo_btn">原因</div>
 									<div id="${r.stockNumber}" class="button orange medium fl D-operation distribute_btn">分配</div>

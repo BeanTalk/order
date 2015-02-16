@@ -39,11 +39,18 @@ public class ProductViewController {
 		Subject subject = SecurityUtils.getSubject();
 		if (subject != null && subject.isAuthenticated()) {
 			for (Product product : pages.getContent()) {
+
+				// 当为内部用户时，显示的是采购折扣*目录价
 				if (SessionVariable.getCurrentSessionVariable().getIsInternalUser()) {
 					product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee() * product.getBuyDiscount()));
 				} else {
-					product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee()
-							* product.getWeightDiscount()));
+					// 当其为无组织用户时，则为新注册用户,显示目录价
+					if (SessionVariable.getCurrentSessionVariable().getGroupId() == null) {
+						product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee()));
+					} else {
+						product.setCatalogFee(MathUtils.getDoublePoint(product.getCatalogFee()
+								* product.getWeightDiscount()));
+					}
 				}
 			}
 		}

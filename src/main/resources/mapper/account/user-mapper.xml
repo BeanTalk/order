@@ -5,6 +5,30 @@
 <!-- 用户数据访问映射 -->
 <mapper namespace="com.saituo.order.dao.account.UserDao" >
 
+	<insert id="addUserForRegister" useGeneratedKeys="true" keyProperty="userId"> 
+		insert into sys_user(
+			office_id,
+			login_name,
+			name,
+			password,
+			email,
+			mobile,
+			user_type,
+			user_catagory,
+			del_flag
+		) values (
+			#{officeId},
+			#{loginName},
+			#{name},
+			#{password},
+			#{email},
+			#{mobile},
+			3,
+			1,
+			0
+		)
+	</insert>
+	
 	<select id="get" resultType="hashmap">
           SELECT
             id AS "id",

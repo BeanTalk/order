@@ -45,13 +45,14 @@
 	</@shiro.notAuthenticated>
 	
 	<#-- 已登录显示 -->
-	<@shiro.hasPermission name ="authc">
+	<@shiro.authenticated>
 		<#include "./header.html" />
 		<div class="containerPx clearfix">
 			<#include "./navbar.html" />
 			<@body/>
 		</div>
-	</@shiro.hasPermission>
+	</@shiro.authenticated>
+	
 	<#--每个页面对应的js或特殊处理-->
     <#if head?exists>
         <@head/>

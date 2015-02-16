@@ -86,9 +86,7 @@
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
-											<#if productOrderInfo.invoiceStatus == "2">
-												<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
-											</#if>
+											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
 										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
@@ -102,9 +100,7 @@
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]!""}</td>
 									    <td width="80" align="center">${billstates[productOrderInfo.invoiceStatus]!""}</td>
 										<td width="80" align="right">
-										<#if productOrderInfo.invoiceStatus == "2">
 								            <div id="${productOrderInfo.registerNumber}" class="button green medium fl single_business_btn">送发票</div>
-										</#if>
 										</td>
 				                    </tr>
 			                    </#list>

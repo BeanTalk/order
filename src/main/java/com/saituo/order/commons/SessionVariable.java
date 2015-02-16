@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 
+import com.google.common.collect.Lists;
 import com.saituo.order.service.account.UnautherizedException;
 
 /**
@@ -21,21 +22,21 @@ public class SessionVariable implements Serializable {
 	public static final String DEFAULT_SESSION_KEY = "session_variable";
 
 	// 当前用户
-	private Map<String, Object> user;
+	private Map<String, Object> user = null;
 	// 当前用户的所有资源
-	private List<Map<String, Object>> authorizationInfo;
+	private List<Map<String, Object>> authorizationInfo = Lists.newArrayList();
 	// 当前用户的菜单集合
 	private List<Map<String, Object>> menusList;
 	// 当前用户的角色集合
-	private List<String> roleList;
+	private List<String> roleList = Lists.newArrayList();
 	// 当前用户所在组
-	private Integer groupId;
+	private Integer groupId = null;
 	// 当前用户所在地市
 	private Integer areaId;
 	// 当前用户是否为内部用户
-	private Boolean isInternalUser;
+	private Boolean isInternalUser = false;
 	// 当前用户电话
-	private String mobile;
+	private String mobile = "";
 	/**
 	 * session 变量对象
 	 *

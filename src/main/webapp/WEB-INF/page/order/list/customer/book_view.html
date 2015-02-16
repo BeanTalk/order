@@ -51,12 +51,6 @@
 		var singleNum = $("#singleNum_"+ this.id).text();
 		var totalPrice = toDecimal(singPrice *singleNum);
 		
-		console.log("pointNum:"+pointNum);
-		console.log("pointNum res:"+toDecimal(pointNum/100));
-		
-		console.log("totalPrice:"+totalPrice);
-		console.log("totalPrice res:"+toDecimal(totalPrice/2));
-		
 		if(toDecimal(pointNum/100) > toDecimal(totalPrice/2)){
 			isContinue = false;
 			alert("对不起您的积分不能超过总价的一半!");
