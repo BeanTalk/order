@@ -93,7 +93,7 @@
 				                    <#list page.content as r>
 					                    <tr>
 					                        <td width="20%" align="center">${r.acceptDate!""}</td>
-					                        <td width="10%" align="center">${r.peasBalance!0}</td>
+					                        <td width="10%" align="center"><#if r.peasType == "2">-${r.peasBalance!0}<#else>${r.peasBalance!0}</#if></td>
 					                		<td width="20%" align="center"><#if r.peasType == "1">累积豆豆<#elseif r.peasType == "2">使用豆豆<#elseif r.peasType == "3">回退豆豆</#if></td>
 					                    </tr>
 			                    	</#list>

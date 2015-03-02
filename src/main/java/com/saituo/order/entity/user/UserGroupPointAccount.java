@@ -2,16 +2,16 @@ package com.saituo.order.entity.user;
 
 //客户组积分账户信息表
 public class UserGroupPointAccount {
-	
-	//客户组编号
+
+	// 客户组编号
 	private String userGroupId;
 
-	//积分
-	private Long  pointBalance;
-	
-	//余额
+	// 积分
+	private Integer pointBalance;
+
+	// 余额
 	private Double accountFee;
-	
+
 	public String getUserGroupId() {
 		return userGroupId;
 	}
@@ -20,11 +20,11 @@ public class UserGroupPointAccount {
 		this.userGroupId = userGroupId;
 	}
 
-	public Long getPointBalance() {
+	public Integer getPointBalance() {
 		return pointBalance;
 	}
 
-	public void setPointBalance(Long pointBalance) {
+	public void setPointBalance(Integer pointBalance) {
 		this.pointBalance = pointBalance;
 	}
 
@@ -36,5 +36,4 @@ public class UserGroupPointAccount {
 		this.accountFee = accountFee;
 	}
 
-	
 }

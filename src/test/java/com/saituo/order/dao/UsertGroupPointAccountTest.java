@@ -16,7 +16,7 @@ public class UsertGroupPointAccountTest  extends ServiceTestCaseSupport {
 	public void addUser() {
 		UserGroupPointAccount userGroupPointAccount=new UserGroupPointAccount();
 		userGroupPointAccount.setUserGroupId("1241");
-		userGroupPointAccount.setPointBalance(100l);
+		userGroupPointAccount.setPointBalance(100);
 		userGroupPointAccount.setAccountFee(110.32);
 		userGroupPointAccountDao.insert(userGroupPointAccount);
 		System.out.println("id:" +userGroupPointAccount.getUserGroupId());

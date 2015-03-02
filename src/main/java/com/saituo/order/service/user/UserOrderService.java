@@ -473,7 +473,7 @@ public class UserOrderService {
 						&& VariableUtils.typeCast(prodcutString[2], int.class) > 0) {
 
 					UserGroupPointAccount userGroupPointAccount = new UserGroupPointAccount();
-					userGroupPointAccount.setPointBalance(VariableUtils.typeCast(prodcutString[2], Long.class));
+					userGroupPointAccount.setPointBalance(VariableUtils.typeCast(prodcutString[2], Integer.class));
 					userGroupPointAccount.setUserGroupId(userGroupId);
 					userGroupPointAccountDao.updateReduction(userGroupPointAccount);
 
@@ -481,7 +481,7 @@ public class UserOrderService {
 					UserGroupPointHis userGroupPointHis = new UserGroupPointHis();
 					userGroupPointHis.setAcceptPerson(userId);// 创建者
 					userGroupPointHis.setGroupId(userGroupId);// 客户组别编码
-					userGroupPointHis.setPointBalance(VariableUtils.typeCast(prodcutString[2], Long.class)); // 本次使用或累计豆豆数
+					userGroupPointHis.setPointBalance(VariableUtils.typeCast(prodcutString[2], Integer.class)); // 本次使用或累计豆豆数
 					userGroupPointHis.setPointType("1"); // 操作类型:1.使用积分 2.累积积分
 					userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(prodcutString[0], Long.class));
 					userGroupPointHisDao.insert(userGroupPointHis);
@@ -947,6 +947,14 @@ public class UserOrderService {
 				userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
 				userGroupPointAccount = userGroupPointAccountDao.query(userGroupPointAccount);
 
+				if (userGroupPointAccount == null) {
+					userGroupPointAccount = new UserGroupPointAccount();
+					userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
+					userGroupPointAccount.setPointBalance(0);
+					userGroupPointAccount.setAccountFee(0d);
+					userGroupPointAccountDao.insert(userGroupPointAccount);
+				}
+
 				boolean ifPre = false;// 是否预付标识
 				// 判断客户组账户是否有钱
 				if (null != userGroupPointAccount && null != userGroupPointAccount.getAccountFee()
@@ -985,7 +993,7 @@ public class UserOrderService {
 
 				// 最终积分时消费积分+回款积分
 				userGroupPointAccount.setPointBalance(VariableUtils.typeCast(collectionPoints + consumptionPoints,
-						Long.class));
+						Integer.class));
 				userGroupPointAccount.setAccountFee(null);
 				userGroupPointAccountDao.updateAdd(userGroupPointAccount);
 
@@ -994,7 +1002,7 @@ public class UserOrderService {
 				userGroupPointHis.setAcceptPerson(userId);// 创建者
 				userGroupPointHis.setGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
 				userGroupPointHis.setPointBalance(VariableUtils.typeCast(collectionPoints + consumptionPoints,
-						Long.class)); // 本次使用或累计豆豆数
+						Integer.class)); // 本次使用或累计豆豆数
 				userGroupPointHis.setPointType("2"); // 操作类型:1.使用积分 2.累积积分
 				userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
 				userGroupPointHisDao.insert(userGroupPointHis);
@@ -1096,7 +1104,7 @@ public class UserOrderService {
 						userGroupPointAccount = new UserGroupPointAccount();
 						userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
 						userGroupPointAccount.setPointBalance(VariableUtils.typeCast(
-								productOrderQuery.getPointBalanceFee(), Long.class));// 使用积分数量
+								productOrderQuery.getPointBalanceFee(), Integer.class));// 使用积分数量
 						userGroupPointAccount.setAccountFee(null);
 						userGroupPointAccountDao.updateAdd(userGroupPointAccount);
 
@@ -1105,7 +1113,7 @@ public class UserOrderService {
 						userGroupPointHis.setAcceptPerson(userId);// 创建者
 						userGroupPointHis.setGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
 						userGroupPointHis.setPointBalance(VariableUtils.typeCast(
-								productOrderQuery.getPointBalanceFee(), Long.class)); // 本次使用或累计豆豆数
+								productOrderQuery.getPointBalanceFee(), Integer.class)); // 本次使用或累计豆豆数
 						userGroupPointHis.setPointType("3"); // 操作类型:1.使用积分
 																// 2.累积积分 3.回退
 						userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
@@ -1138,7 +1146,7 @@ public class UserOrderService {
 						userGroupPointAccount = new UserGroupPointAccount();
 						userGroupPointAccount.setUserGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
 						userGroupPointAccount.setPointBalance(VariableUtils.typeCast(
-								productOrderQuery.getPointBalanceFee(), Long.class));// 使用积分数量
+								productOrderQuery.getPointBalanceFee(), Integer.class));// 使用积分数量
 						userGroupPointAccount.setAccountFee(null);
 						userGroupPointAccountDao.updateAdd(userGroupPointAccount);
 
@@ -1147,7 +1155,7 @@ public class UserOrderService {
 						userGroupPointHis.setAcceptPerson(userId);// 创建者
 						userGroupPointHis.setGroupId(VariableUtils.typeCast(map.get("groupId"), String.class));// 客户组编号
 						userGroupPointHis.setPointBalance(VariableUtils.typeCast(
-								productOrderQuery.getPointBalanceFee(), Long.class)); // 本次使用或累计豆豆数
+								productOrderQuery.getPointBalanceFee(), Integer.class)); // 本次使用或累计豆豆数
 						userGroupPointHis.setPointType("3"); // 操作类型:1.使用积分
 																// 2.累积积分 3.回退
 						userGroupPointHis.setRegisterNumber(VariableUtils.typeCast(productOrderString, Long.class));
