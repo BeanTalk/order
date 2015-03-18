@@ -101,7 +101,7 @@
 										</td>
 							            <td width="80" align="center">${r.stockFee!""}</td>
 							            <td width="80" align="center">${r.orderNum!""}</td>
-							            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+							            <td width="80" align="center"><#if r.supplierId??>${supplyIdAndName[r.supplierId?string]!""}<#else></#if></td>
 							            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
 				                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
 				                        <td width="80" align="center">${userIdAndName[r.buyerUserId?string]!""}</td>

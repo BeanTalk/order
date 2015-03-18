@@ -64,10 +64,6 @@
 		            <td width="60" nowrap="nowrap" >结束时间</td>
 		            <td width="80" nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
 		            <td>&nbsp;</td>
-		        </tr>
-			 </table>
-			 <table width="100%">
-		        <tr>
 		            <td width="60" nowrap="nowrap">备货人</td>
 		            <td width='140'>
 		            	<select name="userId" id="userId" style='width:140px'>
@@ -91,8 +87,8 @@
 			        <td nowrap="nowrap">
 		            	<div id="query_btn" class="button white medium">搜索</div>
 		            </td>
-			   </tr>
-			</table>
+		        </tr>
+			 </table>
 		</form>
 		<br>
 	    <form id="buycard-list-form" method="post">
@@ -133,7 +129,7 @@
 								</td>
 					            <td width="80" align="center">${r.stockFee!""}</td>
 					            <td width="80" align="center">${r.orderNum!""}</td>
-					            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+					            <td width="80" align="center"><#if r.supplierId??>${supplyIdAndName[r.supplierId?string]!""}<#else></#if></td>
 					            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
 		                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
 		                        <td width="80" align="center">

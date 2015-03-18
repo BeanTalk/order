@@ -24,6 +24,7 @@ import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.stock.AgainAllot;
 import com.saituo.order.entity.stock.StockProductOrder;
 import com.saituo.order.service.account.AccountService;
+import com.saituo.order.service.order.StockCardService;
 import com.saituo.order.service.stock.StockOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
 
@@ -31,6 +32,9 @@ import com.saituo.order.service.variable.SystemVariableService;
 @SessionAttributes(SessionVariable.DEFAULT_SESSION_KEY)
 @RequestMapping("order/list/buy")
 public class BuyOrderController {
+
+	@Autowired
+	private StockCardService stockCardService;
 
 	@Autowired
 	private StockOrderService stockOrderService;
@@ -65,13 +69,12 @@ public class BuyOrderController {
 		ModelAndView modelAndView = new ModelAndView("order/list/buy/waitbuy_view");
 		modelAndView.addObject("areaIdAndName", systemVariableService.getAreaIdAndName());
 		modelAndView.addObject("userIdAndName", systemVariableService.getUserIdAndName());
-		modelAndView.addObject("supplyIdAndName", systemVariableService.getSupplyIdAndName());
+		modelAndView.addObject("suuplys", stockCardService.getSupplyMap());
 		modelAndView.addObject("page", page);
 
 		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
 		modelAndView
 				.addObject("userInfoMap", accountService.findUserByAreaIdAndRole(areaId, RoleSign.BUYER.getValue()));
-		modelAndView.addObject("supplierIds", systemVariableService.getSupplyIdAndName());
 		modelAndView.addObject("buyers", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
 		modelAndView.addObject("status", VariableUtils.getVariables(StockStatus.class));
 		modelAndView.addObject(filter);
@@ -81,19 +84,27 @@ public class BuyOrderController {
 
 	@RequestMapping(value = "save", method = RequestMethod.POST)
 	public String saveStockNumber(@RequestParam(required = false) Map<String, Object> filter,
-			@RequestParam(required = false) List<String> stockNumbers) {
+			@RequestParam(required = false) List<String> stockNumbers,
+			@RequestParam(required = false) List<String> supplys) {
 
-		String stockNumber = VariableUtils.typeCast(filter.get("stockNumber"), String.class);
+		String stockNumberSingle = VariableUtils.typeCast(filter.get("stockNumber"), String.class);
+		String supplyIdSingle = VariableUtils.typeCast(filter.get("supplyId"), String.class);
 
-		List<String> stockNumberList = Lists.newArrayList();
-		if (StringUtils.isNotEmpty(stockNumber)) {
-			stockNumberList.add(stockNumber);
+		List<String> stockProductOrderList = Lists.newArrayList();
+
+		if (StringUtils.isNotEmpty(stockNumberSingle)) {
+			stockProductOrderList.add(StringUtils.join(stockNumberSingle, "~", supplyIdSingle));
 		} else {
-			stockNumberList = stockNumbers;
+			for (String stockNumberTemp : stockNumbers) {
+				String stockNumber = StringUtils.substringBefore(stockNumberTemp, "_");
+				Integer index = VariableUtils.typeCast(StringUtils.substringAfter(stockNumberTemp, "_"), Integer.class);
+				String supplyId = supplys.get(index);
+				stockProductOrderList.add(StringUtils.join(stockNumber, "~", supplyId));
+			}
 		}
 
 		filter.put("statusCd", 3);
-		filter.put("stockProductOrderList", stockNumberList);
+		filter.put("stockProductOrderList", stockProductOrderList);
 		stockOrderService.doUpdatePurchased(filter);
 		return "redirect:/order/list/buy/list";
 	}
@@ -105,7 +116,7 @@ public class BuyOrderController {
 		String reason = VariableUtils.typeCast(filter.get("redistribution_note"), String.class);
 
 		StringBuilder sb = new StringBuilder();
-		sb.append(stockNumber).append("~").append(reason);
+		sb.append(stockNumber).append("~").append("~").append(reason);
 
 		List<String> stockNumberList = Lists.newArrayList();
 		stockNumberList.add(sb.toString());

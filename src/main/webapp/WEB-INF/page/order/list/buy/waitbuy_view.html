@@ -21,7 +21,8 @@
 	
 	//单击确认
 	$(".pass").click(function(){
-		$.post("${submitUrl}", {"stockNumber" : this.id})
+		var supplyId = $('#s_' + this.id).val();
+		$.post("${submitUrl}", {"stockNumber" : this.id, "supplyId" : supplyId})
 		.success(
 			function(){
 				alert("确认成功!");
@@ -67,11 +68,6 @@
 			            <td width="80" nowrap="nowrap" align='left'><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
 			            <td width="60" nowrap="nowrap" >结束时间</td>
 			            <td width="80" nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
-			            <td>&nbsp;</td>
-		        	</tr>
-			 	</table>
-			 	<table width="100%">
-		        	<tr>
 			            <td width="60" nowrap="nowrap">备货人</td>
 			            <td width='140'>
 			            	<select name="userId" id="userId" style='width:140px'>
@@ -83,20 +79,11 @@
 		                        </#if>
 		                    </select>
 			            </td>
-			            <td width="60" nowrap="nowrap" >供应商</td>
-			            <td align='left' width='180' align='left'>
-		            		<select name="supplierId" id="supplierId" style='width:180px'>
-		                       	<option value="">请选择...</option>
-		                       	<#list supplierIds?keys as key>  
-					            	<option value="${key}" <#if key == supplierId!"">selected</#if>>${supplierIds[key]!""}</option>
-								</#list> 
-	                    	</select>
-		            	</td>
 				        <td nowrap="nowrap">
 			            	<div id="query_btn" class="button white medium">搜索</div>
 			            </td>
-					</tr>
-				</table>
+		        	</tr>
+			 	</table>
 			</form>
 			<br>
 		     <form id="buycard-list-form" method="post">
@@ -126,7 +113,7 @@
 		                    <#list page.content as r>
 								<tr>
 									<td width="30">
-										<input type="checkbox" name="stockNumbers" id="check_stocknumber_${r.stockNumber}" value="${r.stockNumber}">
+										<input type="checkbox" name="stockNumbers" id="check_stocknumber_${r.stockNumber!""}" value="${r.stockNumber!""}_${r_index}">
 									</td>
 									<td width="60" align="center">${r.stockNumber}</td>
 									<td width="218" align="left">
@@ -136,7 +123,13 @@
 									</td>
 						            <td width="80" align="center">${r.stockFee!""}</td>
 						            <td width="80" align="center">${r.orderNum!""}</td>
-						            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+						            <td width="80">
+										<select name="supplys" id="s_${r.stockNumber}">
+											<#list suuplys?keys as key>
+												<option value="${key}">${suuplys[key]!}</option>
+											</#list>
+										</select>
+									</td>
 						            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
 			                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
 									<td width="100" align="center">

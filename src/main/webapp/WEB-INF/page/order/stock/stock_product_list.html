@@ -34,28 +34,6 @@
 
 <div class="grid2 m_t">
 	<form id="buycard-list-form" method="post">
-		<!--
-		<div class="panel">	
-			<div class="panel_header">
-	        	<h3>收货地址</h3>
-			</div>
-			<div class="panel_body">
-	        	<div id="address_content" class="msg_Div">
-	        		<#if addressList?size == 0>
-	                	没有地址记录
-	                <#else>
-		        		<#list addressList as r>
-			          		<p class="font_address">
-				            	<input type="radio" value="${r.addressId!''}" id="addressId" name="addressId">
-				            	<span>${r.receiptAddress}</span>(<span>${r.receiptPerson}</span>收)&nbsp;&nbsp;&nbsp;<span style="color:#666">${r.contactPhone}</span>
-			            	</p>
-		            	</#list>
-		            </#if>
-				</div>
-				<div onclick="window.location.href='${base}/order/address/edit'" class="button blue fr">添加地址</div>
-			</div>
-		</div>
-		-->
 		<div class="panel">
 			<div class="panel_header">
 		        <h3>备货信息</h3>
@@ -71,7 +49,6 @@
 							<th width="80">备货价</th>
 							<th width="80">订购价</th>
 							<th width="80">数量</th>
-							<th width="80">供应商</th>
 							<th width="50">操作</th>
 				        </tr>
 			    	</tbody>
@@ -103,13 +80,6 @@
 								<td width="80" align="center">
 									<label for="textfield"></label>
 									<input type="text" class="right int-count-input" name="subscripts" id="subscripts" size="2" value="${r.subscriptCount!1}">
-								</td>
-								<td width="80">
-									<select name="supplys" id="supplys">
-									    <#list suuplys?keys as key>
-									    	<option value="${key}">${suuplys[key]!}</option>
-										</#list> 
-									</select>
 								</td>
 								<td width="50" align="center">
 									<a href="${base}/order/stock/removeOneProductFromBag/${r.productId!""}">
