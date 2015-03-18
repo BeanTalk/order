@@ -163,7 +163,7 @@
 										<td width="100" align="center"><#if productOrderInfo.pricePaidFee??>${productOrderInfo.pricePaidFee!0}<#else>${productOrderInfo.totalPrice!0}</#if></td>
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]!""}</td>
 										<td width="80" align="center">
-											<#if !Session["session_variable"].isInternalUser && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3")>
+											<#if !Session["session_variable"].isInternalUser && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3") && productOrderInfo.complainCd != 1 >
 												<div id="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" class="button orange medium fl D-operation complain_btn">投诉</div>
 											</#if>
 											<#if Session["session_variable"].isInternalUser && (productOrderInfo.statusCd == "2" || productOrderInfo.statusCd == "3") && (Session["session_variable"].roleList?seq_contains("9"))>

@@ -3,123 +3,138 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- 用户数据访问映射 -->
-<mapper namespace="com.saituo.order.dao.user.ProductOrderDao" >
-	
+<mapper namespace="com.saituo.order.dao.user.ProductOrderDao">
+
 	<insert id="insert" useGeneratedKeys="true" keyProperty="registerNumber">
-        insert into st_product_order(
-			user_order_id,
-			area_id,
-			user_id,
-			product_id,
-			order_fee,
-			order_num,
-			audit_cd,
-			status_cd,
-			invoice_status,
-			accept_date,
-			change_date
-        ) values (
-          #{userOrderId},
-          #{areaId},
-          #{userId},
-          #{productId},
-          #{orderFee},
-          #{orderNum},
-          #{auditCd},
-          #{statusCd},
-          #{invoiceStatus},
-          now(),
-          now()
-        )
+		insert
+		into st_product_order(
+		user_order_id,
+		area_id,
+		user_id,
+		product_id,
+		order_fee,
+		order_num,
+		audit_cd,
+		status_cd,
+		invoice_status,
+		accept_date,
+		change_date
+		) values (
+		#{userOrderId},
+		#{areaId},
+		#{userId},
+		#{productId},
+		#{orderFee},
+		#{orderNum},
+		#{auditCd},
+		#{statusCd},
+		#{invoiceStatus},
+		now(),
+		now()
+		)
 	</insert>
-	
-	<update id="update">  
-        update st_product_order  
-		<trim prefix="set" suffixOverrides=",">  
-			<if test=" orderFee!= null">  
-                   order_fee= #{orderFee},  
-			</if>  
-			<if test=" orderNum!= null">  
-                    order_num= #{orderNum},  
+
+	<update id="update">
+		update st_product_order
+		<trim prefix="set" suffixOverrides=",">
+			<if test=" orderFee!= null">
+				order_fee= #{orderFee},
 			</if>
-			<if test=" auditCd!= null">  
-                    audit_cd= #{auditCd},  
+			<if test=" orderNum!= null">
+				order_num= #{orderNum},
 			</if>
-			<if test=" statusCd!= null">  
-                    status_cd= #{statusCd},  
+			<if test=" auditCd!= null">
+				audit_cd= #{auditCd},
 			</if>
-			<if test=" invoiceStatus!= null">  
-                    invoice_status= #{invoiceStatus},  
+			<if test=" statusCd!= null">
+				status_cd= #{statusCd},
 			</if>
-				<if test=" pricePaidFee!= null">  
-                    price_paid_fee= #{pricePaidFee},  
+			<if test=" invoiceStatus!= null">
+				invoice_status= #{invoiceStatus},
 			</if>
-				<if test=" pointBalanceFee!= null">  
-                    point_balance_fee= #{pointBalanceFee},  
+			<if test=" pricePaidFee!= null">
+				price_paid_fee= #{pricePaidFee},
 			</if>
-				<if test="deliveryDate!= null">  
-                    delivery_date= now(),  
+			<if test=" pointBalanceFee!= null">
+				point_balance_fee= #{pointBalanceFee},
+			</if>
+			<if test="deliveryDate!= null">
+				delivery_date= now(),
+			</if>
+			<if test="complainCd != null">
+				complain_cd= ${complainCd},
 			</if>
 		</trim>
 		,change_date= now()
-        where register_number = #{registerNumber}  
-	</update>  
-	
+		where register_number = #{registerNumber}
+	</update>
+
 	<select id="query" resultType="productOrder">
 		select
-			register_number as registerNumber,
-			user_order_id as userOrderId,
-			area_id as areaId,
-			user_id as userId,
-			product_id as productId,
-			order_fee as orderFee,
-			order_num as orderNum,
-			audit_cd as auditCd,
-			status_cd as statusCd,
-			invoice_status as invoiceStatus,
-			accept_date as acceptDate,
-			change_date as changeDate,
-			delivery_date as deliveryDate,
-			price_paid_fee as pricePaidFee,  
-			point_balance_fee as pointBalanceFee
+		register_number as
+		registerNumber,
+		user_order_id as userOrderId,
+		area_id as areaId,
+		user_id
+		as userId,
+		product_id as productId,
+		order_fee as orderFee,
+		order_num as
+		orderNum,
+		audit_cd as auditCd,
+		status_cd as statusCd,
+		invoice_status as
+		invoiceStatus,
+		accept_date as acceptDate,
+		change_date as changeDate,
+		delivery_date as deliveryDate,
+		price_paid_fee as pricePaidFee,
+		point_balance_fee as pointBalanceFee,
+		complain_cd as complainCd
 		from st_product_order
 		where
-		register_number = #{registerNumber}  
+		register_number =
+		#{registerNumber}
 	</select>
 
 	<select id="queryListByUserOrderId" resultType="productOrder">
 		select
-			register_number as registerNumber,
-			user_order_id as userOrderId,
-			area_id as areaId,
-			user_id as userId,
-			product_id as productId,
-			order_fee as orderFee,
-			order_num as orderNum,
-			audit_cd as auditCd,
-			status_cd as statusCd,
-			invoice_status as invoiceStatus,
-			accept_date as acceptDate,
-			change_date as changeDate,
-			delivery_date as deliveryDate,
-			price_paid_fee as pricePaidFee,  
-			point_balance_fee as pointBalanceFee
+		register_number as registerNumber,
+		user_order_id as userOrderId,
+		area_id as areaId,
+		user_id as userId,
+		product_id as productId,
+		order_fee
+		as orderFee,
+		order_num as orderNum,
+		audit_cd as auditCd,
+		status_cd as
+		statusCd,
+		invoice_status as invoiceStatus,
+		accept_date as acceptDate,
+		change_date as changeDate,
+		delivery_date as deliveryDate,
+		price_paid_fee as pricePaidFee,
+		point_balance_fee as pointBalanceFee,
+		complain_cd as complainCd
 		from st_product_order
 		where
-		user_order_id = #{userOrderId}
-		<if test=" auditCd != null">  
-            and audit_cd= #{auditCd}
+		user_order_id =
+		#{userOrderId}
+		<if test=" auditCd != null">
+			and audit_cd= #{auditCd}
 		</if>
-		<if test=" statusCd != null">  
-            and status_cd= #{statusCd}
+		<if test=" statusCd != null">
+			and status_cd= #{statusCd}
 		</if>
-		<if test=" invoiceStatus != null">  
-            and invoice_status= #{invoiceStatus}
+		<if test=" invoiceStatus != null">
+			and invoice_status= #{invoiceStatus}
 		</if>
 	</select>
-	
+
 	<delete id="delete">
 		delete from st_product_order
-		where register_number = #{registerNumber}  
-	</delete> 
+		where register_number =
+		#{registerNumber}
+	</delete>
 </mapper>

@@ -38,6 +38,8 @@ public class ProductOrder {
 	private Long pointBalanceFee;
 	// 总体价格＝单价＊个数
 	private Double totalPrice;
+	// 投诉状态
+	private Integer complainCd;
 
 	public String getDeliveryDate() {
 		return deliveryDate;
@@ -141,6 +143,12 @@ public class ProductOrder {
 	}
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+	public Integer getComplainCd() {
+		return complainCd;
+	}
+	public void setComplainCd(Integer complainCd) {
+		this.complainCd = complainCd;
 	}
 
 }

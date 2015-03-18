@@ -10,14 +10,21 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.ComplainCd;
 import com.saituo.order.dao.user.OrderComplaintDao;
+import com.saituo.order.dao.user.ProductOrderDao;
 import com.saituo.order.entity.user.OrderComplaint;
+import com.saituo.order.entity.user.ProductOrder;
 
 @Service
 @Transactional
 public class OrderComplainService {
+
 	@Autowired
 	private OrderComplaintDao orderComplaintDao;
+
+	@Autowired
+	private ProductOrderDao productOrderDao;
 
 	/**
 	 * 投诉订单提交方法
@@ -43,6 +50,11 @@ public class OrderComplainService {
 		orderComplaint.setComplaintNote(complaintNote);// 投诉内容
 		orderComplaint.setStatusCd("0");// 状态：0.未完成、1.处理中、2.已完成、-1.已取消
 		orderComplaintDao.insert(orderComplaint);
+
+		ProductOrder productOrder = new ProductOrder();
+		productOrder.setRegisterNumber(VariableUtils.typeCast(registerNumber, Long.class));
+		productOrder.setComplainCd(ComplainCd.COMPLAINED.getValue());
+		productOrderDao.update(productOrder);
 
 		// 返回投诉编码
 		returnMap.put("Id", VariableUtils.typeCast(orderComplaint.getId(), String.class));
