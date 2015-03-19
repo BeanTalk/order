@@ -476,10 +476,7 @@ public class CustomerController {
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("userId", filter.get("userId"));
-		model.addAttribute("startDate", filter.get("startDate"));
-		model.addAttribute("endDate", filter.get("endDate"));
-		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAllAttributes(filter);
 		model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(groupId)));
 	}
 
@@ -682,11 +679,8 @@ public class CustomerController {
 
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("page", page);
-		model.addAttribute("userId", filter.get("userId"));
 		model.addAttribute("userGroupPointAccount", userGroupPointAccount);
-		model.addAttribute("startDate", filter.get("startDate"));
-		model.addAttribute("endDate", filter.get("endDate"));
-		model.addAttribute("userOrderId", filter.get("userOrderId"));
+		model.addAllAttributes(filter);
 		model.addAttribute("userInfoMap", accountService.findUserByOfficeId(String.valueOf(groupId)));
 	}
 
