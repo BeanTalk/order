@@ -7,7 +7,7 @@ import com.saituo.order.commons.enumeration.ValueEnum;
  */
 public enum AudioStatus implements ValueEnum<Integer> {
 
-	PASS(1, "通过"), REJECT(2, "不通过");
+	NO_DEAL(0, "未处理"), WAIT(1, "待审批"), REJECT(2, "已驳回"), PASS(3, "审批通过");
 
 	// 值
 	private Integer value;

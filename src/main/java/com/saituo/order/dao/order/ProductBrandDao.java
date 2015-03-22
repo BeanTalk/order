@@ -11,4 +11,6 @@ public interface ProductBrandDao {
 
 	public List<ProductBrand> getProductBrandList(@Param(value = "filter") Map<String, ?> filter);
 
+	public List<ProductBrand> getProductBrandAllList();
+
 }

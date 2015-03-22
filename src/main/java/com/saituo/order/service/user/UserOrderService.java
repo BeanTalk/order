@@ -117,6 +117,15 @@ public class UserOrderService {
 				productOrder.setOrderFee(VariableUtils.typeCast(prodcutString[1], Double.class)); // 目录价
 				productOrder.setOrderNum(VariableUtils.typeCast(prodcutString[2], Long.class)); // 订购数量
 				productOrder.setProductId(VariableUtils.typeCast(prodcutString[0], Long.class));// 产品编码
+				Integer productId = VariableUtils.typeCast(prodcutString[0], Integer.class);
+				Product product = productDao.getProductByProductId(productId);
+				if (product == null) {
+					continue;
+				}
+				productOrder.setBrandId(VariableUtils.typeCast(product.getBrandId(), Integer.class));
+				productOrder.setProductNum(product.getProductNum());
+				productOrder.setProductName(product.getProductName());
+				productOrder.setGroupId(groupId);
 				productOrder.setStatusCd("0"); // 状态:0未处理;1.已出单；2.已收货；3.已结款；-1.已取消
 				productOrder.setUserId(userId); // 客户编码
 				productOrder.setUserOrderId(userOrderId);// 客户订单编码
@@ -127,7 +136,6 @@ public class UserOrderService {
 		returnMap.put("userOrderId", VariableUtils.typeCast(userOrderId, String.class));
 		return returnMap;
 	}
-
 	/**
 	 * 查询客户订单信息列表
 	 */
@@ -487,6 +495,7 @@ public class UserOrderService {
 					userGroupPointHisDao.insert(userGroupPointHis);
 				}
 
+				productOrder.setTeacherOrderTime("now");
 				productOrderDao.update(productOrder);
 				// 记录产品订单项的操作历史
 				orderResult = "导师下单，实收价：" + VariableUtils.typeCast(prodcutString[1], String.class) + " 使用积分："

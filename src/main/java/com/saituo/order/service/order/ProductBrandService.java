@@ -25,4 +25,14 @@ public class ProductBrandService {
 		}
 		return resultMap;
 	}
+
+	public Map<String, String> getProductBrandAllList() {
+		List<ProductBrand> productBrandList = productBrandDao.getProductBrandAllList();
+
+		Map<String, String> resultMap = Maps.newHashMap();
+		for (ProductBrand productBrand : productBrandList) {
+			resultMap.put(String.valueOf(productBrand.getBrandId()), productBrand.getBrandName());
+		}
+		return resultMap;
+	}
 }

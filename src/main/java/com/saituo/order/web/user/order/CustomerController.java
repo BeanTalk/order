@@ -20,6 +20,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.saituo.order.commons.SessionVariable;
 import com.saituo.order.commons.VariableUtils;
+import com.saituo.order.commons.enumeration.entity.AudioStatus;
 import com.saituo.order.commons.enumeration.entity.CompaintType;
 import com.saituo.order.commons.enumeration.entity.ComplainStatus;
 import com.saituo.order.commons.enumeration.entity.HandlerResult;
@@ -34,6 +35,7 @@ import com.saituo.order.entity.order.Product;
 import com.saituo.order.entity.user.Audit;
 import com.saituo.order.entity.user.AuditHis;
 import com.saituo.order.entity.user.OrderComplaint;
+import com.saituo.order.entity.user.ProductOrder;
 import com.saituo.order.entity.user.UserGroupPointAccount;
 import com.saituo.order.entity.user.UserOrder;
 import com.saituo.order.entity.user.UserRecord;
@@ -46,6 +48,7 @@ import com.saituo.order.service.order.RecordCardService;
 import com.saituo.order.service.user.AddressService;
 import com.saituo.order.service.user.AuditHisService;
 import com.saituo.order.service.user.OrderComplainService;
+import com.saituo.order.service.user.ProductOrderService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.user.UserRecordService;
 import com.saituo.order.service.variable.SystemVariableService;
@@ -66,6 +69,9 @@ public class CustomerController {
 
 	@Autowired
 	private ProductService productService;
+
+	@Autowired
+	private ProductOrderService productOrderService;
 
 	@Autowired
 	private ProductBrandService productBrandService;
@@ -795,7 +801,6 @@ public class CustomerController {
 		model.addAttribute("page", page);
 		model.addAttribute("agents", recordCardService.getAgentList());
 		model.addAllAttributes(filter);
-
 	}
 
 	/**
@@ -831,6 +836,26 @@ public class CustomerController {
 				userOrderCount);
 		model.addAttribute("states", VariableUtils.getVariables(UserOrderingState.class));
 		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
+		model.addAttribute("page", page);
+		model.addAllAttributes(filter);
+	}
+
+	@RequestMapping(value = "all_product_order", method = RequestMethod.GET)
+	public void getAllProductOrderingList(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		filter.putAll(pageRequest.getMap());
+		filter.put("areaId", areaId);
+
+		// 根据用户的角色与类别，来区分用户能看到的订单
+		filter = watchOrderListPipline(filter, model);
+		int productOrderCount = productOrderService.getProductOrderCount(filter);
+		List<ProductOrder> productOrderList = productOrderService.getProductOrderList(filter);
+
+		Page<ProductOrder> page = new Page<ProductOrder>(pageRequest, productOrderList, productOrderCount);
+		model.addAttribute("auditStatues", VariableUtils.getVariables(AudioStatus.class));
+		model.addAttribute("productStates", VariableUtils.getVariables(ProductOrderState.class));
+		model.addAttribute("brands", productBrandService.getProductBrandAllList());
 		model.addAttribute("page", page);
 		model.addAllAttributes(filter);
 	}

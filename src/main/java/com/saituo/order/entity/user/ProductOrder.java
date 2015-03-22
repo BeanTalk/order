@@ -14,6 +14,14 @@ public class ProductOrder {
 	private Integer userId;
 	// 产品编码
 	private Long productId;
+	// 组id
+	private Integer groupId;
+	// 品牌
+	private Integer brandId;
+	// 货号
+	private String productNum;
+	// 产品名称
+	private String productName;
 	// 目录价
 	private Double orderFee;
 	// 订购数量
@@ -40,6 +48,8 @@ public class ProductOrder {
 	private Double totalPrice;
 	// 投诉状态
 	private Integer complainCd;
+	// 导师下单时间
+	private String teacherOrderTime;
 
 	public String getDeliveryDate() {
 		return deliveryDate;
@@ -149,6 +159,36 @@ public class ProductOrder {
 	}
 	public void setComplainCd(Integer complainCd) {
 		this.complainCd = complainCd;
+	}
+	public Integer getBrandId() {
+		return brandId;
+	}
+	public void setBrandId(Integer brandId) {
+		this.brandId = brandId;
+	}
+	public String getProductNum() {
+		return productNum;
+	}
+	public void setProductNum(String productNum) {
+		this.productNum = productNum;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	public Integer getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
+	public String getTeacherOrderTime() {
+		return teacherOrderTime;
+	}
+	public void setTeacherOrderTime(String teacherOrderTime) {
+		this.teacherOrderTime = teacherOrderTime;
 	}
 
 }
