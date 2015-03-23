@@ -25,7 +25,9 @@ import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.entity.user.UserPeasHis;
 import com.saituo.order.service.account.AccountService;
+import com.saituo.order.service.gift.GiftService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
 
@@ -42,6 +44,9 @@ public class InsideOrderController {
 
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	private GiftService giftService;
 
 	/**
 	 * 内勤查看可议价订单
@@ -426,6 +431,34 @@ public class InsideOrderController {
 
 		userOrderService.doProductOrderReturn(filter);
 		return "redirect:/order/list/all_order";
+	}
+
+	@RequestMapping(value = "exchange_view", method = RequestMethod.GET)
+	public void exChangeView(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		filter.putAll(pageRequest.getMap());
+		int count = giftService.getUserPeasHisCount(filter);
+		List<UserPeasHis> peasList = giftService.getUserPeasHisList(filter);
+		Page<UserPeasHis> page = new Page<UserPeasHis>(pageRequest, peasList, count);
+		model.addAttribute("giftMaps", giftService.getGiftIdAndNameMap());
+		model.addAttribute("userInfoMap", accountService.findAllofUserByAreaId(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(SessionVariable
+				.getCurrentSessionVariable().getAreaId()));
+		model.addAttribute("page", page);
+	}
+	
+	/**
+	 * 内勤兑换
+	 * 
+	 * @param filter
+	 * @param productIds
+	 * @return
+	 */
+	@RequestMapping(value = "exchange", method = RequestMethod.POST)
+	public String exchange(@RequestParam Map<String, Object> filter) {
+		giftService.update(filter);
+		return "redirect:/order/list/inside/exchange_view";
 	}
 
 }

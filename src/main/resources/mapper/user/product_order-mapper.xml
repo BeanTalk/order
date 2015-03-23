@@ -285,6 +285,7 @@
 				<![CDATA[ and DATE_FORMAT(teacher_order_time, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
 			</if>
 		</trim>
+		order by teacher_order_time desc
 		<if test="filter.first != null and filter.last != null">
             LIMIT #{filter.first}, #{filter.last}
 		</if>

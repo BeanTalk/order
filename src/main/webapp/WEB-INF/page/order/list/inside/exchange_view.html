@@ -1,0 +1,109 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+<script type="text/javascript">
+
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewURL}");
+		$("#head_query_form").submit();
+	});
+	
+	$(".exchange_btn").click(function(){
+		$.post("${exchangeURL}", {"peasId" : this.id})
+		.success(
+			function(){
+				alert("兑换成功!");
+			}
+		).done(
+			function(){
+				window.location.reload();
+			}
+		);
+	});
+	
+</script>
+</#macro>
+
+<#macro body>
+<#assign viewURL = "${base}/order/list/inside/exchange_view">
+<#assign exchangeURL = "${base}/order/list/inside/exchange">
+
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+			<h3>豆豆兑换查询</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<form id="head_query_form">
+				<table width="100%" height='40px'>
+					<tr>
+						<td width="60" nowrap="nowrap">礼品名称</td>
+			            	<td width='80'><select name="giftId" id="giftId" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list giftMaps?keys as key>  
+					            	<option value="${key}" <#if key == giftId!"">selected</#if>>${giftMaps[key]!""}</option>
+								</#list> 
+		                    </select>
+			            </td>
+			            <td width="60" nowrap="nowrap" >课题组</td>
+			            	<td align='left' width='140' align='left'><select name="groupId" id="groupId" style='width:180px'>
+		                        <option value="">请选择...</option>
+		                        <#list offices?keys as key>  
+					            	<option value="${key}" <#if key == groupId!"">selected</#if>>${offices[key]!""}</option>
+								</#list> 
+		                    </select>
+			            </td>
+			            <td width="60" nowrap="nowrap">订购人</td>
+			            	<td align='left' width="80"><select name="userId" id="userId" style='width:100px'>
+			            		<option value="">请选择...</option>
+			            		<#if userId?? && userId != "">
+			            			<option value="${userId}" selected>${userInfoMap[userId]!""}</option>
+			            		</#if>
+		                    </select>
+			            </td>
+			            <td nowrap="nowrap">
+			            	<div id="query_btn" class="button white medium">搜索</div>
+			            </td>
+			         </tr>
+			     </table>
+			</form>
+			<br>
+			<form id="list-form" method="post">
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+							<th width="100" align="center">客户名称</th>
+				            <th width="100" align="center">使用豆豆数</th>
+				            <th width="80" align="center">兑换礼品</th>
+				            <th width="80" align="center">变更时间</th>
+				            <th width="140" align="center">操作</th>
+						</tr>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="8">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+			                    <tr>
+									<td width="100" align="center">${userInfoMap[r.userId!""]}</td>
+									<td width="80" align="center">${r.peasBalance}</td>
+									<td width="80" align="center">${giftMaps[r.giftId?string]!""}</td>
+									<td width="80" align="center">${r.acceptDate!""}</td>
+									<td width="140" align="center"><#if r.peasType="2" && r.ifExchange?string == "0"><div id="${r.peasId}" class="button blue medium D-operation exchange_btn">兑换</div><#elseif r.peasType="2" && r.ifExchange?string == "0">已兑换</#if></td>
+			                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<p class="pageBar"></p>
+				<#assign parameterMap = { "userId": "${userId!}", "giftId": "${giftId!}"}>
+				<@pager page "${viewURL}" parameterMap />
+			</form>
+	 	</div>
+	</div>
+</div>
+</#macro>

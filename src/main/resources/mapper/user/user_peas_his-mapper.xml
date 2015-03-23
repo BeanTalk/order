@@ -12,6 +12,8 @@
 		peas_balance,
 		register_number,
 		gift_id,
+		if_exchange,
+		area_id,
 		accept_person,
 		accept_date
 		) values (
@@ -20,6 +22,8 @@
 		#{peasBalance},
 		#{registerNumber},
 		#{giftId},
+		#{ifExchange},
+		#{areaId},
 		#{acceptPerson},
 		now()
 		)
@@ -28,11 +32,13 @@
 	<select id="queryList" resultType="userPeasHis">
 		select
 		peas_id as peasId,
+		area_id as areaId,
 		user_id as userId,
 		peas_type as peasType,
 		peas_balance as peasBalance,
 		register_number as registerNumber,
 		gift_id as giftId,
+		if_exchange as ifExchange,
 		accept_person as acceptPerson,
 		accept_date as acceptDate
 		from st_user_peas_his
@@ -40,22 +46,34 @@
 		user_id =#{userId}
 	</select>
 
-
-
 	<select id="queryListbyUserId" resultType="userPeasHis">
 		select
 		peas_id as peasId,
+		area_id as areaId,
 		user_id as userId,
 		peas_type as peasType,
 		peas_balance as peasBalance,
 		register_number as registerNumber,
 		gift_id as giftId,
+		if_exchange as ifExchange,
 		accept_person as acceptPerson,
-		accept_date as acceptDate
+		DATE_FORMAT(accept_date,'%Y-%m-%d') as acceptDate
 		from st_user_peas_his
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="filter.userId!=null and filter.userId!=''">
+				user_id =#{filter.userId!=null.userId}
+			</if>
+			<if test="filter.areaId!=null and filter.areaId!=''">
+				and area_id =#{filter.areaId}
+			</if>
+			<if test="filter.giftId!=null and filter.giftId!=''">
+				and gift_id=#{filter.giftId}
+			</if>
+			<if test="userPeasHis.peasType!=null and userPeasHis.peasType!=''">
+				and peas_type=#{userPeasHis.peasType}
+			</if>
 			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
-				user_id =#{userPeasHis.userId}
+				and user_id=#{userPeasHis.userId}
 			</if>
 		</trim>
 		order by accept_date desc
@@ -63,14 +81,32 @@
 			LIMIT #{filter.first}, #{filter.last}
 		</if>
 	</select>
+	
+	<update id="update">  
+	    update st_user_peas_his 
+		set if_exchange = 1
+		where peas_id = #{filter.peasId}  
+	</update>  
 
 	<select id="count" resultType="int">
 		select
 		count(peas_id)
 		from st_user_peas_his
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
+			<if test="filter.userId!=null and filter.userId!=''">
+				user_id = #{filter.userId}
+			</if>
+			<if test="filter.areaId!=null and filter.areaId!=''">
+				and area_id = #{filter.areaId}
+			</if>
+			<if test="filter.giftId!=null and filter.giftId!=''">
+				and gift_id=#{filter.giftId}
+			</if>
+			<if test="userPeasHis.peasType!=null and userPeasHis.peasType!=''">
+				and peas_type = #{userPeasHis.peasType}
+			</if>
 			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
-				user_id =#{userPeasHis.userId}
+				and user_id=#{userPeasHis.userId}
 			</if>
 		</trim>
 	</select>
