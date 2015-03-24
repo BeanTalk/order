@@ -65,8 +65,8 @@
 			            	<td align='left' align='left'>
 				            	<select name="ifExchange" id="ifExchange" style='width:180px'>
 				            		<option value="">请选择</option>
-			                        <option value="1">已兑换</option>
-						           	<option value="0">未兑换</option>
+			                        <option value="1" <#if key == ifExchange!"">selected</#if>>已兑换</option>
+						           	<option value="0" <#if key == ifExchange!"">selected</#if>>未兑换</option>
 			                    </select>
 			            	</td>
 			            <td nowrap="nowrap">
@@ -101,7 +101,7 @@
 									<td width="80" align="center">${r.peasBalance}</td>
 									<td width="80" align="center">${giftMaps[r.giftId?string]!""}</td>
 									<td width="80" align="center">${r.acceptDate!""}</td>
-									<td width="140" align="center"><#if r.peasType="2" && r.ifExchange?string == "0"><div id="${r.peasId}" class="button blue medium D-operation exchange_btn">兑换</div><#elseif r.peasType="2" && r.ifExchange?string == "0">已兑换</#if></td>
+									<td width="140" align="center"><#if r.peasType?string="2" && r.ifExchange?string == "0"><div id="${r.peasId!""}" class="button blue medium D-operation exchange_btn">兑换</div><#elseif r.peasType?string="2" && r.ifExchange?string == "1">已兑换</#if></td>
 			                    </tr>
 		                    </#list>
 		                </#if>

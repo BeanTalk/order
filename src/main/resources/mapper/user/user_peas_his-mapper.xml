@@ -72,8 +72,8 @@
 			<if test="userPeasHis.peasType!=null and userPeasHis.peasType!=''">
 				and peas_type=#{userPeasHis.peasType}
 			</if>
-			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
-				and user_id=#{userPeasHis.userId}
+			<if test="filter.ifExchange!=null and filter.ifExchange!=''">
+				and if_exchange=#{filter.ifExchange}
 			</if>
 		</trim>
 		order by accept_date desc
@@ -105,8 +105,8 @@
 			<if test="userPeasHis.peasType!=null and userPeasHis.peasType!=''">
 				and peas_type = #{userPeasHis.peasType}
 			</if>
-			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
-				and user_id=#{userPeasHis.userId}
+			<if test="filter.ifExchange!=null and filter.ifExchange!=''">
+				and if_exchange=#{filter.ifExchange}
 			</if>
 		</trim>
 	</select>
