@@ -96,7 +96,6 @@
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
 		          		<tr>
-							<th width="30"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
 							<th width="60">备货号</th>
 							<th width="218">产品</th>
 							<th width="80">备货价</th>
@@ -118,9 +117,6 @@
 	                	<#else>
 	                    <#list page.content as r>
 							<tr>
-								<td width="30">
-									<input type="checkbox" name="stockNumbers" id="check_stocknumber_${r.stockNumber}" value="${r.stockNumber}">
-								</td>
 								<td width="60" align="center">${r.stockNumber}</td>
 								<td width="218" align="left">
 									<p><span class="pro_name">${r.product.productName!""}</span></p>

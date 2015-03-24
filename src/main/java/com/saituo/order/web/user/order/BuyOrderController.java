@@ -257,7 +257,7 @@ public class BuyOrderController {
 		model.addAttribute("page", page);
 
 		Integer areaId = SessionVariable.getCurrentSessionVariable().getAreaId();
-		model.addAttribute("userInfoMap", accountService.findUserByAreaIdAndRole(areaId, RoleSign.BUYER.getValue()));
+		model.addAttribute("userInfoMap", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
 		model.addAttribute("supplierIds", systemVariableService.getSupplyIdAndName());
 		model.addAttribute("buyers", accountService.findUserByAreaIdAndRole(null, RoleSign.BUYER.getValue()));
 		model.addAttribute("states", VariableUtils.getVariables(StockStatus.class));

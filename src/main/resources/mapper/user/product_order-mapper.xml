@@ -15,7 +15,7 @@
 		group_id,
 		brand_id,
 		product_num,
-		prodcut_name,
+		product_name,
 		order_fee,
 		order_num,
 		audit_cd,
@@ -31,7 +31,7 @@
 		#{groupId},
 		#{brandId},
 		#{productNum},
-		#{prodcutName},
+		#{productName},
 		#{orderFee},
 		#{orderNum},
 		#{auditCd},
@@ -72,8 +72,8 @@
 			<if test="complainCd != null">
 				complain_cd= ${complainCd},
 			</if>
-			<if test="tearcherOrderTime != null">
-				tearch_order_time= now()
+			<if test="teacherOrderTime != null">
+				teacher_order_time= now()
 			</if>
 		</trim>
 		,change_date= now()
