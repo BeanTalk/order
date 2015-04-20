@@ -118,9 +118,11 @@ public class RecordCardService {
 		return result;
 	}
 
-	public Map<String, String> getAgentList() {
+	public Map<String, String> getAgentList(boolean forValidFlag) {
 		Map<String, String> filter = Maps.newHashMap();
-		// filter.put("delFlag", "0");
+		if (forValidFlag) {
+			filter.put("delFlag", "0");
+		}
 		List<Agent> agentList = agentDao.getAgentListByIdAndDelFlag(filter);
 		Map<String, String> result = Maps.newHashMap();
 		for (Agent agent : agentList) {

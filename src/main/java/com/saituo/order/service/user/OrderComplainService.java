@@ -52,7 +52,7 @@ public class OrderComplainService {
 		orderComplaintDao.insert(orderComplaint);
 
 		ProductOrder productOrder = new ProductOrder();
-		productOrder.setRegisterNumber(VariableUtils.typeCast(registerNumber, Long.class));
+		productOrder.setRegisterNumber(VariableUtils.typeCast(registerNumber, Integer.class));
 		productOrder.setComplainCd(ComplainCd.COMPLAINED.getValue());
 		productOrderDao.update(productOrder);
 

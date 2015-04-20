@@ -35,7 +35,7 @@
 		var giftNum = 1;
 			
 		if(haveBeans < parseInt(needBeans) ){
-			alert("您的豆豆数量不足!");
+			alert("您的纳豆数量不足!");
 			return;			
 		}
 		
@@ -64,21 +64,21 @@
 <div class="grid2 m_t">
 	<div class="panel">
 		<div class="panel_header">
-			<h3>我的豆豆</h3>
+			<h3>我的纳豆</h3>
 		</div>
 		<div class="panel_body">
-			<p class="left">您当前的豆豆为: <span id="havebeanNum">${beanNums!0}</span></p>
+			<p class="left">您当前的纳豆为: <span id="havebeanNum">${beanNums!0}</span></p>
 				<div class="usual" id="usual1">
 	          		<ul>
-	            		<li><a href="#tab1" class="selected">豆豆明细</a></li>
-	            		<li><a href="#tab2" class="" id="exchangeDD">兑换豆豆</a></li>
+	            		<li><a href="#tab1" class="selected">纳豆明细</a></li>
+	            		<li><a href="#tab2" class="" id="exchangeDD">兑换纳豆</a></li>
 	          		</ul>
           			<div class="tab_content" id="tab1" style="display: block;">
 			            <table width="100%" class="table_s_header">
 			            	<tbody>
 			              		<tr>
 			                		<th width="20%" align="center">日期</th>
-			                		<th width="10%" align="center">豆豆</th>
+			                		<th width="10%" align="center">纳豆数量</th>
 			                		<th width="20%" align="center">操作类型</th>
 			              		</tr>
 							</tbody>
@@ -94,7 +94,7 @@
 					                    <tr>
 					                        <td width="20%" align="center">${r.acceptDate!""}</td>
 					                        <td width="10%" align="center"><#if r.peasType == "2">-${r.peasBalance!0}<#else>${r.peasBalance!0}</#if></td>
-					                		<td width="20%" align="center"><#if r.peasType == "1">累积豆豆<#elseif r.peasType == "2">使用豆豆<#elseif r.peasType == "3">回退豆豆</#if></td>
+					                		<td width="20%" align="center"><#if r.peasType == "1">累积纳豆<#elseif r.peasType == "2">使用纳豆<#elseif r.peasType == "3">回退纳豆</#if></td>
 					                    </tr>
 			                    	</#list>
 				                </#if>
@@ -109,7 +109,7 @@
 								<tr>
 					                <th width="100" align="center">兑换商品</th>
 					                <th width="200" align="center">描述</th>
-					                <th width="50"  align="center">需要豆豆</th>
+					                <th width="50"  align="center">需要纳豆</th>
 					                <th width="120" align="center">操作</th>
 								</tr>
 							</tbody>

@@ -60,17 +60,17 @@
 		DATE_FORMAT(accept_date,'%Y-%m-%d') as acceptDate
 		from st_user_peas_his
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="filter.userId!=null and filter.userId!=''">
-				user_id =#{filter.userId!=null.userId}
+			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
+				user_id =#{userPeasHis.userId}
 			</if>
-			<if test="filter.areaId!=null and filter.areaId!=''">
-				and area_id =#{filter.areaId}
-			</if>
-			<if test="filter.giftId!=null and filter.giftId!=''">
-				and gift_id=#{filter.giftId}
+			<if test="userPeasHis.areaId!=null and userPeasHis.areaId!=''">
+				and area_id =#{userPeasHis.areaId}
 			</if>
 			<if test="userPeasHis.peasType!=null and userPeasHis.peasType!=''">
 				and peas_type=#{userPeasHis.peasType}
+			</if>
+			<if test="filter.giftId!=null and filter.giftId!=''">
+				and gift_id=#{filter.giftId}
 			</if>
 			<if test="filter.ifExchange!=null and filter.ifExchange!=''">
 				and if_exchange=#{filter.ifExchange}
@@ -93,17 +93,17 @@
 		count(peas_id)
 		from st_user_peas_his
 		<trim prefix="WHERE" prefixOverrides="AND |OR ">
-			<if test="filter.userId!=null and filter.userId!=''">
-				user_id = #{filter.userId}
+			<if test="userPeasHis.userId!=null and userPeasHis.userId!=''">
+				user_id =#{userPeasHis.userId}
 			</if>
-			<if test="filter.areaId!=null and filter.areaId!=''">
-				and area_id = #{filter.areaId}
-			</if>
-			<if test="filter.giftId!=null and filter.giftId!=''">
-				and gift_id=#{filter.giftId}
+			<if test="userPeasHis.areaId!=null and userPeasHis.areaId!=''">
+				and area_id =#{userPeasHis.areaId}
 			</if>
 			<if test="userPeasHis.peasType!=null and userPeasHis.peasType!=''">
 				and peas_type = #{userPeasHis.peasType}
+			</if>
+			<if test="filter.giftId!=null and filter.giftId!=''">
+				and gift_id=#{filter.giftId}
 			</if>
 			<if test="filter.ifExchange!=null and filter.ifExchange!=''">
 				and if_exchange=#{filter.ifExchange}

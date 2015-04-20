@@ -376,13 +376,10 @@ public class InsideOrderController {
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
-		model.addAttribute("startDate", filter.get("startDate"));
-		model.addAttribute("endDate", filter.get("endDate"));
-		model.addAttribute("userId", filter.get("userId"));
-		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
 		}
+		model.addAllAttributes(filter);
 	}
 
 	/**
@@ -424,10 +421,15 @@ public class InsideOrderController {
 	@RequestMapping(value = "return", method = RequestMethod.POST)
 	public String returnOrder(@RequestParam Map<String, Object> filter) {
 
-		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"), String.class);
+		String userOrderIdAndProductOrderId = VariableUtils.typeCast(filter.get("userOrderIdAndProductOrderId"),
+				String.class);
+		String productOrderId = StringUtils.substringAfter(userOrderIdAndProductOrderId, "_");
+		String userOrderId = StringUtils.substringBefore(userOrderIdAndProductOrderId, "_");
+
 		List<String> list = Lists.newArrayList();
 		list.add(productOrderId);
 		filter.put("productOrderList", list);
+		filter.put("userOrderId", userOrderId);
 
 		userOrderService.doProductOrderReturn(filter);
 		return "redirect:/order/list/all_order";
@@ -446,8 +448,9 @@ public class InsideOrderController {
 		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(SessionVariable
 				.getCurrentSessionVariable().getAreaId()));
 		model.addAttribute("page", page);
+		model.addAllAttributes(filter);
 	}
-	
+
 	/**
 	 * 内勤兑换
 	 * 

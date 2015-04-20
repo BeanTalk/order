@@ -151,9 +151,7 @@
 		DATE_FORMAT(teacher_order_time,'%Y-%m-%d') as teacherOrderTime
 		from
 		st_product_order
-		where
-		user_order_id =
-		#{userOrderId}
+		where user_order_id = #{userOrderId}
 		<if test=" auditCd != null">
 			and audit_cd= #{auditCd}
 		</if>
@@ -162,6 +160,14 @@
 		</if>
 		<if test=" invoiceStatus != null">
 			and invoice_status= #{invoiceStatus}
+		</if>
+		<if test="productName !=null and productName != ''">
+			<bind name="productName" value=" productName + '%' " />
+			AND product_name LIKE #{productName}
+		</if>
+		<if test="productNum !=null and productNum != ''">
+			<bind name="productNum" value=" productNum + '%' " />
+			AND product_num LIKE #{productNum}
 		</if>
 	</select>
 

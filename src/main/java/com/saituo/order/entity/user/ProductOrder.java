@@ -5,7 +5,7 @@ import com.saituo.order.entity.order.Product;
 public class ProductOrder {
 
 	// 产品订单编码
-	private Long registerNumber;
+	private Integer registerNumber;
 	// 客户订单编码
 	private Long userOrderId;
 	// 受理地市
@@ -43,7 +43,7 @@ public class ProductOrder {
 	// 实收价
 	private Double pricePaidFee;
 	// 使用积分
-	private Long pointBalanceFee;
+	private Double pointBalanceFee;
 	// 总体价格＝单价＊个数
 	private Double totalPrice;
 	// 投诉状态
@@ -64,16 +64,16 @@ public class ProductOrder {
 		this.pricePaidFee = pricePaidFee;
 	}
 
-	public Long getPointBalanceFee() {
+	public Double getPointBalanceFee() {
 		return pointBalanceFee;
 	}
-	public void setPointBalanceFee(Long pointBalanceFee) {
+	public void setPointBalanceFee(Double pointBalanceFee) {
 		this.pointBalanceFee = pointBalanceFee;
 	}
-	public Long getRegisterNumber() {
+	public Integer getRegisterNumber() {
 		return registerNumber;
 	}
-	public void setRegisterNumber(Long registerNumber) {
+	public void setRegisterNumber(Integer registerNumber) {
 		this.registerNumber = registerNumber;
 	}
 	public Long getUserOrderId() {

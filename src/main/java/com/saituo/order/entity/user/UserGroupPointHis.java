@@ -8,13 +8,16 @@ public class UserGroupPointHis {
 	// 操作类型:1.使用积分 2.累积积分
 	private String pointType;
 	// 本次使用或累计豆豆数
-	private Integer pointBalance;
+	private Double pointBalance;
 	// 累积积分时是客户订购产品的订单编号；使用积分时是客户积分兑换时使用的订单编号
-	private Long registerNumber;
+	private Integer registerNumber;
 	// 创建者
 	private String acceptPerson;
 	// 创建时间
 	private String acceptDate;
+	// 客户订单编号
+	private Long userOrderId;
+	
 	public Long getPointId() {
 		return pointId;
 	}
@@ -33,16 +36,16 @@ public class UserGroupPointHis {
 	public void setPointType(String pointType) {
 		this.pointType = pointType;
 	}
-	public Integer getPointBalance() {
+	public Double getPointBalance() {
 		return pointBalance;
 	}
-	public void setPointBalance(Integer pointBalance) {
+	public void setPointBalance(Double pointBalance) {
 		this.pointBalance = pointBalance;
 	}
-	public Long getRegisterNumber() {
+	public Integer getRegisterNumber() {
 		return registerNumber;
 	}
-	public void setRegisterNumber(Long registerNumber) {
+	public void setRegisterNumber(Integer registerNumber) {
 		this.registerNumber = registerNumber;
 	}
 	public String getAcceptPerson() {
@@ -56,6 +59,12 @@ public class UserGroupPointHis {
 	}
 	public void setAcceptDate(String acceptDate) {
 		this.acceptDate = acceptDate;
+	}
+	public Long getUserOrderId() {
+		return userOrderId;
+	}
+	public void setUserOrderId(Long userOrderId) {
+		this.userOrderId = userOrderId;
 	}
 
 }

@@ -122,7 +122,6 @@ public class GiftService {
 				String.class); //
 		Long peasBalance = VariableUtils.typeCast(filter.get("peasBalance"), Long.class); // 本次使用豆豆数
 		Long giftId = VariableUtils.typeCast(filter.get("giftId"), Long.class); // 兑换礼品ID
-		Long beansNum = VariableUtils.typeCast(filter.get("beansNum"), Long.class); // 客户剩余豆豆数量
 		int giftNum = VariableUtils.typeCast(filter.get("giftNum"), int.class); // 兑换礼品数量
 
 		// 更新客户豆豆数量
@@ -141,12 +140,14 @@ public class GiftService {
 		// 记录客户豆豆历史表
 		UserPeasHis userPeasHis = new UserPeasHis();
 		userPeasHis.setAcceptPerson(userId);// 创建者
+		userPeasHis.setAreaId(SessionVariable.getCurrentSessionVariable().getAreaId());
 		userPeasHis.setGiftId(giftId);// 兑换礼品ID
 		userPeasHis.setPeasBalance(peasBalance);// 本次使用或累计豆豆数
 		userPeasHis.setPeasType("2");// 操作类型:1.累积积分2.使用积分
 		userPeasHis.setIfExchange(0);
 		// userPeasHis.setRegisterNumber(registerNumber);
 		userPeasHis.setUserId(userId);// 客户编码
+		userPeasHis.setAreaId(SessionVariable.getCurrentSessionVariable().getAreaId());
 		userPeasHisDao.insert(userPeasHis);
 		// 返回投诉编码
 		returnMap.put("Id", VariableUtils.typeCast(userPeasHis.getPeasId(), String.class));

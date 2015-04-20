@@ -7,7 +7,7 @@ public class UserGroupPointAccount {
 	private String userGroupId;
 
 	// 积分
-	private Integer pointBalance;
+	private Double pointBalance;
 
 	// 余额
 	private Double accountFee;
@@ -20,11 +20,11 @@ public class UserGroupPointAccount {
 		this.userGroupId = userGroupId;
 	}
 
-	public Integer getPointBalance() {
+	public Double getPointBalance() {
 		return pointBalance;
 	}
 
-	public void setPointBalance(Integer pointBalance) {
+	public void setPointBalance(Double pointBalance) {
 		this.pointBalance = pointBalance;
 	}
 

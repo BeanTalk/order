@@ -104,13 +104,15 @@
 										</td>
 				                    </tr>
 			                    </#list>
-			                    <#if r.addressReturn??>
-			                    	<@address_plugin r.addressReturn />
-			                    <#else>
-			                    	<tr>
-										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
-									</tr>
-			                    </#if>
+			                    <#if r.productOrderReturn?size != 0>
+				                    <#if r.addressReturn??>
+				                    	<@address_plugin r.addressReturn />
+				                    <#else>
+				                    	<tr>
+											<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+										</tr>
+				                    </#if>
+				                 </#if>
 		                    </#list>
 		                </#if>
 					</tbody>

@@ -17,7 +17,7 @@
 		</div>
 		<div class="panel_body clearfix">
 			<form id="head_query_form">
-				<table width="100%" height='40px'>
+				<table width="100%">
 					<tr>
 						<td width="60" nowrap="nowrap">开始时间</td>
 						<td width="80" nowrap="nowrap" align='left'>
@@ -26,36 +26,38 @@
 						<td width="80" nowrap="nowrap" align='left'>
 							<input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
 						<td>&nbsp;</td>
-					</tr>
-				</table>
-				<table width="100%">
-					<tr>
 						<#if role=="teacher">
-						<td width="60" nowrap="nowrap">订购人</td>
-						<td width='80'>
-							<select name="userId" id="userId" style='width: 90px'>
-								<option value="">请选择...</option> <#if userInfoMap?size != 0>
-								<#list userInfoMap?keys as key>
-								<option value="${key}"<#if key ==
-									userId!"">selected</#if>> ${userInfoMap[key]!""}</option> </#list>
-								</#if>
-						</select></td> </#if> <#if role=="internal">
-						<td width="60" nowrap="nowrap">课题组</td>
-						<td align='left' width='140' align='left'><select
-							name="groupId" id="groupId" style='width: 180px'>
-								<option value="">请选择...</option> <#list offices?keys as key>
-								<option value="${key}"<#if key ==
-									groupId!"">selected</#if>>${offices[key]!""}</option> </#list>
-						</select></td>
-						<td width="60" nowrap="nowrap">订购人</td>
-						<td align='left' width="80"><select name="userId" id="userId"
-							style='width: 100px'>
-								<option value="">请选择...</option> <#if userId?? && userId != "">
-								<option value="${userId}" selected>${userInfoMap[userId]!""}</option>
-								</#if>
-						</select></td> </#if>
+							<td width="60" nowrap="nowrap">订购人</td>
+							<td width='80'>
+								<select name="userId" id="userId" style='width: 90px'>
+									<option value="">请选择...</option> <#if userInfoMap?size != 0>
+									<#list userInfoMap?keys as key>
+									<option value="${key}"<#if key ==
+										userId!"">selected</#if>> ${userInfoMap[key]!""}</option> </#list>
+									</#if>
+								</select>
+							</td> 
+						</#if> 
+						<#if role=="internal">
+							<td width="60" nowrap="nowrap">课题组</td>
+							<td align='left' width='140' align='left'>
+								<select name="groupId" id="groupId" style='width: 180px'>
+									<option value="">请选择...</option> <#list offices?keys as key>
+									<option value="${key}"
+									<#if key ==groupId!"">selected</#if>>${offices[key]!""}</option> </#list>
+								</select>
+							</td>
+							<td width="60" nowrap="nowrap">订购人</td>
+							<td align='left' width="80">
+								<select name="userId" id="userId" style='width: 100px'>
+									<option value="">请选择...</option> <#if userId?? && userId != "">
+									<option value="${userId}" selected>${userInfoMap[userId]!""}</option>
+									</#if>
+								</select>
+							</td>
+						</#if>
 						<td nowrap="nowrap">
-							<div id="query_btn" class="button white medium">搜索</div>
+							<div id="query_btn" class="button blue large">搜索</div>
 						</td>
 					</tr>
 				</table>
@@ -65,6 +67,7 @@
 				<table width="100%" class="table_pro_header">
 					<tbody>
 						<tr>
+							<td width="10"></td>
 							<th width="238" align="left">产品</th>
 							<th width="100" align="left">订购价</th>
 							<th width="80" align="left">数量</th>
@@ -92,17 +95,11 @@
 						</tr>
 						<#list r.productRecordReturn as productRecordInfo>
 						<tr class="tr_${r.userRecordReturn.userRecordId!""}">
-							<td width="30"></td>
-							<td width="238">
-								<p>
-									<span class="pro_name">${productRecordInfo.product.productName!""}</span>
-								</p>
-								<p>
-									<b>货号：</b>${productRecordInfo.product.productNum!""}
-								</p>
-								<p>
-									<b>品牌：</b>${productRecordInfo.product.brandName!""}
-								</p>
+							<td width="10"></td>
+							<td width="238" align="left">
+								<p><span class="pro_name">${productRecordInfo.product.productName!""}</span></p>
+								<p><b>货号: </b>${productRecordInfo.product.productNum!""}</p>
+								<p><b>品牌: </b>${productRecordInfo.product.brandName!""}</p>
 							</td>
 							<td width="100">${productRecordInfo.orderFee!""}</td>
 							<td width="80" >${productRecordInfo.orderNum!""}</td>

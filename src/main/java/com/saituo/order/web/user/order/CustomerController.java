@@ -713,7 +713,6 @@ public class CustomerController {
 		for (int i = 0; i < userOrderAndproductOrderIds.size(); i++) {
 
 			String productStr = userOrderAndproductOrderIds.get(i);
-
 			String userOrderId = StringUtils.substringBefore(productStr, "_");
 			String productId = StringUtils.substringBetween(productStr, "_");
 			int index = Integer.valueOf(StringUtils.substringAfterLast(productStr, "_"));
@@ -799,7 +798,7 @@ public class CustomerController {
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userProductRecordList,
 				userRecordCount);
 		model.addAttribute("page", page);
-		model.addAttribute("agents", recordCardService.getAgentList());
+		model.addAttribute("agents", recordCardService.getAgentList(false));
 		model.addAllAttributes(filter);
 	}
 
@@ -830,6 +829,8 @@ public class CustomerController {
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
 							String.valueOf(userOrder.getUserId())));
+			mapData.put("productName", filter.get("productName"));
+			mapData.put("productNum", filter.get("productNum"));
 			userOrderAndDetailInfoResultList.add(userOrderService.getDeatilOrderInfo(mapData));
 		}
 		Page<Map<String, Object>> page = new Page<Map<String, Object>>(pageRequest, userOrderAndDetailInfoResultList,
