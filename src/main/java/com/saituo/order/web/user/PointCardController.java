@@ -20,14 +20,20 @@ import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.dao.user.UserGroupPointHisDao;
 import com.saituo.order.entity.gift.Gift;
 import com.saituo.order.entity.user.UserBeans;
+import com.saituo.order.entity.user.UserGroupPointAccount;
 import com.saituo.order.entity.user.UserGroupPointHis;
 import com.saituo.order.entity.user.UserPeasHis;
 import com.saituo.order.service.gift.GiftService;
+import com.saituo.order.service.user.UserOrderService;
+import com.saituo.order.service.variable.SystemVariableService;
 
 @Controller
 @RequiresAuthentication
 @RequestMapping("order/mine")
 public class PointCardController {
+
+	@Autowired
+	private UserOrderService userOrderService;
 
 	@Autowired
 	private GiftService giftService;
@@ -55,13 +61,6 @@ public class PointCardController {
 	public @ResponseBody Page<Gift> getGiftList(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		UserBeans userBeans = giftService.getUserBeans();
-		Long beansNum = 0L;
-		if (userBeans != null) {
-			beansNum = userBeans.getBeansNum();
-		}
-
-		filter.put("beansNum", beansNum);
 		filter.putAll(pageRequest.getMap());
 		int count = giftService.getGiftCount(filter);
 		List<Gift> giftList = giftService.getGiftList(filter);
@@ -88,9 +87,11 @@ public class PointCardController {
 		userGroupPointHis.setGroupId(groupId);
 
 		int count = userGroupPointHisDao.count(userGroupPointHis);
+		UserGroupPointAccount userGroupPointAccount = userOrderService.queryGroupPointAccount(Integer.valueOf(groupId));
 		List<UserGroupPointHis> userGroupPointHisList = userGroupPointHisDao.queryList(userGroupPointHis, filter);
 		Page<UserGroupPointHis> page = new Page<UserGroupPointHis>(pageRequest, userGroupPointHisList, count);
 		model.addAttribute("page", page);
+		model.addAttribute("userGroupPointAccount", userGroupPointAccount);
 	}
 
 }

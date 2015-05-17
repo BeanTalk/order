@@ -20,12 +20,6 @@
         	alert("请选择至少一个产品");
             return;
         }
-        
-        var addressId=$('input[name=addressId]:checked').val();
-        if($.trim(addressId)==''){
-			alert("请选择送货地址");
-			return;	
-		}
 		
 		$("#buycard-list-form").attr("action", "${savebatchUrl}");
 		$('#buycard-list-form').submit();
@@ -41,30 +35,10 @@
 
 <div class="grid2 m_t">
 	<form id="buycard-list-form" method="post">
-		<div class="panel">	
-			<div class="panel_header">
-	        	<h3>收货地址</h3>
-			</div>
-			<div class="panel_body">
-	        	<div id="address_content" class="msg_Div">
-	        		<#if addressList?size == 0>
-	                	没有地址记录
-	                <#else>
-		        		<#list addressList as r>
-			          		<p class="font_address">
-				            	<input type="radio" value="${r.addressId!''}" id="addressId" name="addressId">
-				            	<span>${r.receiptAddress}</span>(<span>${r.receiptPerson}</span>收)&nbsp;&nbsp;&nbsp;<span style="color:#666">${r.contactPhone}</span>
-			            	</p>
-		            	</#list>
-		            </#if>
-				</div>
-				<div onclick="window.location.href='${base}/order/address/edit'" class="button blue fr">添加地址</div>
-			</div>
-		</div>
 		<div class="panel">
 			<div class="panel_header">
 		        <h3>记录</h3>
-		     </div>
+		    </div>
 			<div class="panel_body clearfix">
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>

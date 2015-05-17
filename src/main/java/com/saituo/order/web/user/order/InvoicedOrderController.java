@@ -57,8 +57,8 @@ public class InvoicedOrderController {
 			Model model) {
 
 		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
-		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
-				.get("userCatagory"), Integer.class);
+		Integer userCatagory = VariableUtils.typeCast(
+				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
 			return;
@@ -75,6 +75,7 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("invoiceStatus", BillStatus.NO_INVOICE.getValue());
 			mapData.put(
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
@@ -164,6 +165,7 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("invoiceStatus", BillStatus.INVOICED.getValue());
 			mapData.put(
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
@@ -227,8 +229,8 @@ public class InvoicedOrderController {
 	@RequestMapping(value = "pay_view", method = RequestMethod.GET)
 	public void getPayViewForProductOrder(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
 
-		Integer userCatagory = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser()
-				.get("userCatagory"), Integer.class);
+		Integer userCatagory = VariableUtils.typeCast(
+				SessionVariable.getCurrentSessionVariable().getUser().get("userCatagory"), Integer.class);
 		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);
 
 		if (userCatagory == UserCatagory.EXTERNAL.getValue()) {
@@ -247,6 +249,8 @@ public class InvoicedOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("productStatusCd", ProductOrderState.RECEVIED.getValue());
+			mapData.put("invoiceStatus", BillStatus.SENDED.getValue());
 			mapData.put(
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),

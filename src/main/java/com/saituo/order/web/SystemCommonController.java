@@ -2,6 +2,7 @@ package com.saituo.order.web;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
@@ -28,8 +29,10 @@ import com.saituo.order.commons.VariableUtils;
 import com.saituo.order.commons.mailer.RetryPasswordMailService;
 import com.saituo.order.commons.utils.CaptchaUtils;
 import com.saituo.order.commons.utils.Encodes;
+import com.saituo.order.commons.utils.HexPassword;
 import com.saituo.order.service.account.AccountService;
 import com.saituo.order.service.account.CaptchaAuthenticationFilter;
+import com.saituo.order.web.form.RegisterForm;
 import com.saituo.order.web.form.RetryPasswordForm;
 
 /**
@@ -102,6 +105,60 @@ public class SystemCommonController {
 		}
 
 		model.addAttribute("successinfo", "已经发送到您的 " + email + " 邮件中，请登录邮件按照提示进行操作!");
+		return "success";
+	}
+
+	/**
+	 * 密码找回 - 发送邮件
+	 * <p>
+	 * UUID与登录名拼串后生成MD5加密字符串,并与loginName的base64加密，发送到用户的邮件
+	 * <p>
+	 * 通过Gmail的邮件进行发送
+	 * 
+	 * @param form
+	 * @param result
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "register", method = RequestMethod.POST)
+	public String register(@Valid @ModelAttribute RegisterForm form, BindingResult result, Model model) {
+
+		model.addAttribute(form);
+		if (result.hasErrors()) {
+			return "login";
+		}
+
+		String loginname = form.getLoginname_reg();
+		String email = form.getEmail();
+		String name = form.getName();
+		String pass = form.getPassword_reg();
+		String confirm_pass = form.getConfirm_password_reg();
+		String phone = form.getPhone();
+
+		if (!accountService.isUserEmailUnique(email)) {
+			model.addAttribute("errorinfo", "该邮箱已被注册!");
+			return "login";
+		}
+
+		if (!accountService.isUsernameUnique(loginname)) {
+			model.addAttribute("errorinfo", "该用户名已被注册!");
+			return "login";
+		}
+
+		if (!StringUtils.equals(pass, confirm_pass)) {
+			model.addAttribute("errorinfo", "该密码不一致!");
+			return "login";
+		}
+
+		Map<String, String> mapData = new HashMap<String, String>();
+		mapData.put("loginName", loginname);
+		mapData.put("name", name);
+		mapData.put("password", HexPassword.entryptPassword(pass));
+		mapData.put("email", email);
+		mapData.put("mobile", phone);
+
+		accountService.registerNewUser(mapData);
+		model.addAttribute("successinfo", "注册成功, 请使用该用户名进行登录!");
 		return "success";
 	}
 
@@ -180,7 +237,6 @@ public class SystemCommonController {
 		if (subject == null || !subject.isAuthenticated()) {
 			return "redirect:/login";
 		}
-
 		Integer userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				Integer.class);
 		Integer areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), Integer.class);

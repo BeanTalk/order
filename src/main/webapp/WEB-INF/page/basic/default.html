@@ -19,14 +19,18 @@
     <link rel="stylesheet" type="text/css" href="${base}/resource/css/style.css">
     <link rel="stylesheet" type="text/css" href="${base}/resource/css/reset.css">
     <link rel="stylesheet" type="text/css" href="${base}/resource/css/tab.css">
+    <link rel="stylesheet" type="text/css" href="${base}/resource/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="${base}/resource/css/dataTables.tableTools.min.css">
     
 	<script src="${base}/resource/script/jquery-1.8.2.js" type="text/javascript"></script>
-    <script src="${base}/resource/script/jquery.confirm.min.js" type="text/javascript"></script>
     <script src="${base}/resource/script/jquery.validate.min.js" type="text/javascript"></script>
+    <script src="${base}/resource/script/jquery.confirm.min.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/init.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/jquery-shopping.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/jquery-record.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/jquery-stock.js" type="text/javascript"></script>
+	<script src="${base}/resource/script/jquery.dataTables.min.js" type="text/javascript" ></script>
+	<script src="${base}/resource/script/dataTables.tableTools.min.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/default.config.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/jquery.ui.core.js" type="text/javascript"></script>
 	<script src="${base}/resource/script/jquery.ui.widget.js" type="text/javascript"></script>
@@ -45,13 +49,14 @@
 	</@shiro.notAuthenticated>
 	
 	<#-- 已登录显示 -->
-	<@shiro.hasPermission name ="authc">
+	<@shiro.authenticated>
 		<#include "./header.html" />
 		<div class="containerPx clearfix">
 			<#include "./navbar.html" />
 			<@body/>
 		</div>
-	</@shiro.hasPermission>
+	</@shiro.authenticated>
+	
 	<#--每个页面对应的js或特殊处理-->
     <#if head?exists>
         <@head/>

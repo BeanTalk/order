@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +62,12 @@ public class AccountService {
 	@Autowired
 	private RedisCacheService redisCacheService;
 
+	@Value("${register.office.id}")
+	private String officeId;
+
+	@Value("${register.role.id}")
+	private String roleId;
+
 	/**
 	 * 默认的用户上传头像的文件夹路径
 	 */
@@ -101,8 +108,19 @@ public class AccountService {
 		if (!f.exists()) {
 			return new byte[0];
 		}
-
 		return FileUtils.readFileToByteArray(new File(path));
+	}
+
+	/**
+	 * 注册新用户
+	 * 
+	 * @param mapData
+	 */
+	public void registerNewUser(Map<String, String> mapData) {
+		mapData.put("officeId", officeId);
+		userDao.addUserForRegister(mapData);
+		String userId = String.valueOf(mapData.get("userId"));
+		roleDao.registerUserRole(Integer.valueOf(userId), Integer.valueOf(roleId));
 	}
 
 	/**

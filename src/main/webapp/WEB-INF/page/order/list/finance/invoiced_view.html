@@ -65,32 +65,32 @@
 					</tbody>
 				</table>
 		        <table width="100%" class="table_pro_body_t">
-					<tbody>
+					<tbody class="second_level">
 						<#if page.content?size == 0>
 		                    <tr>
 		                        <td colspan="6">没有记录</td>
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
-		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
-			                    	<td colspan="10">
-							            <table width="100%">
-							            	<th width="30">
-							            		<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
-							            	</th>
-								            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId!""}</th>
-								            <th align="left" colspan="3">订货人:${r.userOrderReturn.userName!""}</th>
-								            <th align="left" colspan="3">时间:${(r.userOrderReturn.teacherOrderDate)!""}</th>
-								            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]!""}</th>
-							            </table>
-							        </td>
-								</tr>
+		                    	<#if r.productOrderReturn?size != 0>
+			                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
+				                    	<td colspan="10">
+								            <table width="100%">
+								            	<th width="30">
+								            		<input type="checkbox" class="userOrderClass" name="userOrders" id="${r.userOrderReturn.userOrderId}" value="${r.userOrderReturn.userOrderId}">
+								            	</th>
+									            <th align="left" colspan="2">订单号: ${r.userOrderReturn.userOrderId!""}</th>
+									            <th align="left" colspan="3">订货人:${r.userOrderReturn.userName!""}</th>
+									            <th align="left" colspan="3">时间:${(r.userOrderReturn.teacherOrderDate)!""}</th>
+									            <th align="left" colspan="2">状态:${states[r.userOrderReturn.statusCd]!""}</th>
+								            </table>
+								        </td>
+									</tr>
+								</#if>
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
-											<#if productOrderInfo.invoiceStatus == "1">
-												<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
-											</#if>
+											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
 										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
@@ -104,18 +104,18 @@
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]!""}</td>
 										<td width="80" align="center">${billstates[productOrderInfo.invoiceStatus]!""}</td>
 										<td width="80" align="right">
-										<#if productOrderInfo.invoiceStatus == "1">
 								            <div id="${productOrderInfo.registerNumber}" class="button green medium fl invoiced">开发票</div>
-										</#if>
 										</td>
 				                    </tr>
 			                    </#list>
-			                    <#if r.addressReturn??>
-			                    	<@address_plugin r.addressReturn />
-			                    <#else>
-			                    	<tr>
-										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
-									</tr>
+			                    <#if r.productOrderReturn?size != 0>
+				                    <#if r.addressReturn??>
+				                    	<@address_plugin r.addressReturn />
+				                    <#else>
+				                    	<tr>
+											<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+										</tr>
+				                    </#if>
 			                    </#if>
 		                    </#list>
 		                </#if>

@@ -149,15 +149,13 @@ public class StockCardController {
 	 */
 	@RequestMapping(value = "save", method = RequestMethod.POST)
 	public String stockSaveOrdering(@RequestParam Map<String, Object> filter, @RequestParam List<String> productIds,
-			@RequestParam List<String> subscripts, @RequestParam List<String> discountPrices,
-			@RequestParam List<String> supplys, Model model) {
+			@RequestParam List<String> subscripts, @RequestParam List<String> discountPrices, Model model) {
 
 		String userId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getUser().get("id"),
 				String.class);
 		List<String> productIdList = Lists.newArrayList();
 		List<String> subscriptList = Lists.newArrayList();
 		List<String> discountPriceList = Lists.newArrayList();
-		List<String> supplyList = Lists.newArrayList();
 
 		for (int i = 0; i < productIds.size(); i++) {
 			String productIdStr = productIds.get(i);
@@ -166,7 +164,6 @@ public class StockCardController {
 			productIdList.add(productId);
 			subscriptList.add(subscripts.get(index));
 			discountPriceList.add(discountPrices.get(index));
-			supplyList.add(supplys.get(index));
 		}
 
 		List<Product> products = productService.getProductInfoListByProductId(productIdList);
@@ -184,8 +181,7 @@ public class StockCardController {
 			StringBuilder sb = new StringBuilder(120);
 			String productId = productIdList.get(i);
 			sb.append(productId).append("~").append(productBrandMap.get(productId)).append("~")
-					.append(discountPriceList.get(i)).append("~").append(subscriptList.get(i)).append("~")
-					.append(supplyList.get(i));
+					.append(discountPriceList.get(i)).append("~").append(subscriptList.get(i)).append("~");
 			stockProductOrderList.add(sb.toString());
 		}
 		filter.put("stockProductOrderList", stockProductOrderList);

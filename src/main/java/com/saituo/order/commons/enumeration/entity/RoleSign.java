@@ -23,7 +23,11 @@ public enum RoleSign implements ValueEnum<Integer> {
 
 	SYS_ADMIN(8, "系统管理员"),
 
-	INSIDE(9, "内勤");
+	INSIDE(9, "内勤"),
+	
+	NEWHIRE(10, "技术支持"),
+	
+	BUYER_ADMIN(12, "采购主管");
 
 	// 值
 	private Integer value;

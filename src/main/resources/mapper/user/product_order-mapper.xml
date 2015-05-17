@@ -3,123 +3,298 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <!-- 用户数据访问映射 -->
-<mapper namespace="com.saituo.order.dao.user.ProductOrderDao" >
-	
+<mapper namespace="com.saituo.order.dao.user.ProductOrderDao">
+
 	<insert id="insert" useGeneratedKeys="true" keyProperty="registerNumber">
-        insert into st_product_order(
-			user_order_id,
-			area_id,
-			user_id,
-			product_id,
-			order_fee,
-			order_num,
-			audit_cd,
-			status_cd,
-			invoice_status,
-			accept_date,
-			change_date
-        ) values (
-          #{userOrderId},
-          #{areaId},
-          #{userId},
-          #{productId},
-          #{orderFee},
-          #{orderNum},
-          #{auditCd},
-          #{statusCd},
-          #{invoiceStatus},
-          now(),
-          now()
-        )
+		insert
+		into st_product_order(
+		user_order_id,
+		area_id,
+		user_id,
+		product_id,
+		group_id,
+		brand_id,
+		product_num,
+		product_name,
+		order_fee,
+		order_num,
+		audit_cd,
+		status_cd,
+		invoice_status,
+		accept_date,
+		change_date
+		) values (
+		#{userOrderId},
+		#{areaId},
+		#{userId},
+		#{productId},
+		#{groupId},
+		#{brandId},
+		#{productNum},
+		#{productName},
+		#{orderFee},
+		#{orderNum},
+		#{auditCd},
+		#{statusCd},
+		#{invoiceStatus},
+		now(),
+		now()
+		)
 	</insert>
-	
-	<update id="update">  
-        update st_product_order  
-		<trim prefix="set" suffixOverrides=",">  
-			<if test=" orderFee!= null">  
-                   order_fee= #{orderFee},  
-			</if>  
-			<if test=" orderNum!= null">  
-                    order_num= #{orderNum},  
+
+	<update id="update">
+		update st_product_order
+		<trim prefix="set" suffixOverrides=",">
+			<if test=" orderFee!= null">
+				order_fee= #{orderFee},
 			</if>
-			<if test=" auditCd!= null">  
-                    audit_cd= #{auditCd},  
+			<if test=" orderNum!= null">
+				order_num= #{orderNum},
 			</if>
-			<if test=" statusCd!= null">  
-                    status_cd= #{statusCd},  
+			<if test=" auditCd!= null">
+				audit_cd= #{auditCd},
 			</if>
-			<if test=" invoiceStatus!= null">  
-                    invoice_status= #{invoiceStatus},  
+			<if test=" statusCd!= null">
+				status_cd= #{statusCd},
 			</if>
-				<if test=" pricePaidFee!= null">  
-                    price_paid_fee= #{pricePaidFee},  
+			<if test=" invoiceStatus!= null">
+				invoice_status= #{invoiceStatus},
 			</if>
-				<if test=" pointBalanceFee!= null">  
-                    point_balance_fee= #{pointBalanceFee},  
+			<if test=" pricePaidFee!= null">
+				price_paid_fee= #{pricePaidFee},
 			</if>
-				<if test="deliveryDate!= null">  
-                    delivery_date= now(),  
+			<if test=" pointBalanceFee!= null">
+				point_balance_fee= #{pointBalanceFee},
+			</if>
+			<if test="deliveryDate!= null">
+				delivery_date= now(),
+			</if>
+			<if test="complainCd != null">
+				complain_cd= ${complainCd},
+			</if>
+			<if test="teacherOrderTime != null">
+				teacher_order_time= now()
 			</if>
 		</trim>
 		,change_date= now()
-        where register_number = #{registerNumber}  
-	</update>  
-	
+		where register_number = #{registerNumber}
+	</update>
+
 	<select id="query" resultType="productOrder">
 		select
-			register_number as registerNumber,
-			user_order_id as userOrderId,
-			area_id as areaId,
-			user_id as userId,
-			product_id as productId,
-			order_fee as orderFee,
-			order_num as orderNum,
-			audit_cd as auditCd,
-			status_cd as statusCd,
-			invoice_status as invoiceStatus,
-			accept_date as acceptDate,
-			change_date as changeDate,
-			delivery_date as deliveryDate,
-			price_paid_fee as pricePaidFee,  
-			point_balance_fee as pointBalanceFee
+		register_number as
+		registerNumber,
+		user_order_id as userOrderId,
+		area_id as areaId,
+		user_id
+		as userId,
+		group_id as groupId,
+		product_id as productId,
+		brand_id as
+		brandId,
+		product_num as
+		productNum,
+		product_name as productName,
+		order_fee as orderFee,
+		order_num as
+		orderNum,
+		audit_cd as
+		auditCd,
+		status_cd as statusCd,
+		invoice_status as
+		invoiceStatus,
+		accept_date as
+		acceptDate,
+		change_date
+		as changeDate,
+		delivery_date as
+		deliveryDate,
+		price_paid_fee as
+		pricePaidFee,
+		point_balance_fee as
+		pointBalanceFee,
+		complain_cd as complainCd,
+		DATE_FORMAT(teacher_order_time,'%Y-%m-%d') as teacherOrderTime
 		from st_product_order
 		where
-		register_number = #{registerNumber}  
+		register_number =
+		#{registerNumber}
 	</select>
 
 	<select id="queryListByUserOrderId" resultType="productOrder">
 		select
-			register_number as registerNumber,
-			user_order_id as userOrderId,
-			area_id as areaId,
-			user_id as userId,
-			product_id as productId,
-			order_fee as orderFee,
-			order_num as orderNum,
-			audit_cd as auditCd,
-			status_cd as statusCd,
-			invoice_status as invoiceStatus,
-			accept_date as acceptDate,
-			change_date as changeDate,
-			delivery_date as deliveryDate,
-			price_paid_fee as pricePaidFee,  
-			point_balance_fee as pointBalanceFee
-		from st_product_order
-		where
-		user_order_id = #{userOrderId}
-		<if test=" auditCd != null">  
-            and audit_cd= #{auditCd}
+		register_number as registerNumber,
+		user_order_id as userOrderId,
+		area_id as areaId,
+		user_id as userId,
+		group_id as groupId,
+		product_id as
+		productId,
+		brand_id as brandId,
+		product_name as productName,
+		product_num
+		as productNum,
+		order_fee as orderFee,
+		order_num as orderNum,
+		audit_cd as
+		auditCd,
+		status_cd as statusCd,
+		invoice_status as invoiceStatus,
+		accept_date as acceptDate,
+		change_date as changeDate,
+		delivery_date as
+		deliveryDate,
+		price_paid_fee as pricePaidFee,
+		point_balance_fee as
+		pointBalanceFee,
+		complain_cd as complainCd,
+		DATE_FORMAT(teacher_order_time,'%Y-%m-%d') as teacherOrderTime
+		from
+		st_product_order
+		where user_order_id = #{userOrderId}
+		<if test=" auditCd != null">
+			and audit_cd= #{auditCd}
 		</if>
-		<if test=" statusCd != null">  
-            and status_cd= #{statusCd}
+		<if test=" statusCd != null">
+			and status_cd= #{statusCd}
 		</if>
-		<if test=" invoiceStatus != null">  
-            and invoice_status= #{invoiceStatus}
+		<if test=" invoiceStatus != null">
+			and invoice_status= #{invoiceStatus}
+		</if>
+		<if test="productName !=null and productName != ''">
+			<bind name="productName" value=" productName + '%' " />
+			AND product_name LIKE #{productName}
+		</if>
+		<if test="productNum !=null and productNum != ''">
+			<bind name="productNum" value=" productNum + '%' " />
+			AND product_num LIKE #{productNum}
 		</if>
 	</select>
-	
+
 	<delete id="delete">
 		delete from st_product_order
-		where register_number = #{registerNumber}  
-	</delete> 
+		where register_number =
+		#{registerNumber}
+	</delete>
+	
+	<select id="queryCountByCondition" resultType="int">
+		SELECT count(*)
+		FROM st_product_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR">
+			<if test="filter.areaId != null and filter.areaId != ''">
+				AND area_id = #{filter.areaId}
+			</if>
+			<if test="filter.groupId != null and filter.groupId != ''">
+				AND group_id = #{filter.groupId}
+			</if>
+			<if test="filter.userId != null and filter.userId != ''">
+				AND user_id = #{filter.userId}
+			</if>
+			<if test="filter.auditCd != null and filter.auditCd != ''">
+				AND audit_cd= #{filter.auditCd}
+			</if>
+			<if test="filter.statusCd != null and filter.statusCd != ''">
+				AND status_cd= #{filter.statusCd}
+			</if>
+			<if test="filter.invoiceStatus != null and filter.invoiceStatus != ''">
+				AND invoice_status= #{filter.invoiceStatus}
+			</if>
+			<if test="filter.brandId !=null and filter.brandId  != ''">
+				AND brand_id= #{filter.brandId}
+			</if>
+			<if test="filter.productNum !=null and filter.productNum  != ''">
+				<bind name="filter.productNum" value=" filter.productNum + '%' " />
+				AND product_num LIKE #{filter.productNum}
+			</if>
+			<if test="filter.productId !=null and filter.productId  != ''">
+				AND product_id = #{filter.productId}
+			</if>
+			<if test="filter.productName !=null and filter.productName  != ''">
+				<bind name="filter.productName" value=" filter.productName + '%' " />
+				AND product_name LIKE #{filter.productName}
+			</if>
+			<if test="filter.startDate !=null and filter.startDate != ''">
+				<![CDATA[ and DATE_FORMAT(teacher_order_time, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="filter.endDate !=null and filter.endDate != ''">
+				<![CDATA[ and DATE_FORMAT(teacher_order_time, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
+			</if>
+		</trim>
+	</select>
+
+	<select id="queryListByCondition" resultType="productOrder">
+		SELECT
+		register_number as registerNumber,
+		user_order_id as userOrderId,
+		area_id as areaId,
+		user_id as userId,
+		group_id as groupId,
+		product_id as
+		productId,
+		brand_id as brandId,
+		product_num as productNum,
+		product_name
+		as productName,
+		order_fee as orderFee,
+		order_num as orderNum,
+		audit_cd as
+		auditCd,
+		status_cd as statusCd,
+		invoice_status as invoiceStatus,
+		accept_date as acceptDate,
+		change_date as changeDate,
+		delivery_date as
+		deliveryDate,
+		price_paid_fee as pricePaidFee,
+		point_balance_fee as
+		pointBalanceFee,
+		complain_cd as complainCd,
+		DATE_FORMAT(teacher_order_time,'%Y-%m-%d') as teacherOrderTime
+		FROM st_product_order
+		<trim prefix="WHERE" prefixOverrides="AND |OR">
+			<if test="filter.areaId != null and filter.areaId != ''">
+				AND area_id = #{filter.areaId}
+			</if>
+			<if test="filter.groupId != null and filter.groupId != ''">
+				AND group_id = #{filter.groupId}
+			</if>
+			<if test="filter.userId != null and filter.userId != ''">
+				AND user_id = #{filter.userId}
+			</if>
+			<if test="filter.auditCd != null and filter.auditCd != ''">
+				AND audit_cd= #{filter.auditCd}
+			</if>
+			<if test="filter.statusCd != null and filter.statusCd != ''">
+				AND status_cd= #{filter.statusCd}
+			</if>
+			<if test="filter.invoiceStatus != null and filter.invoiceStatus != ''">
+				AND invoice_status= #{filter.invoiceStatus}
+			</if>
+			<if test="filter.brandId !=null and filter.brandId  != ''">
+				AND brand_id= #{filter.brandId}
+			</if>
+			<if test="filter.productNum !=null and filter.productNum  != ''">
+				<bind name="filter.productNum" value=" filter.productNum + '%' " />
+				AND product_num LIKE #{filter.productNum}
+			</if>
+			<if test="filter.productId !=null and filter.productId  != ''">
+				AND product_id = #{filter.productId}
+			</if>
+			<if test="filter.productName !=null and filter.productName  != ''">
+				<bind name="filter.productName" value=" filter.productName + '%' " />
+				AND product_name LIKE #{filter.productName}
+			</if>
+			<if test="filter.startDate !=null and filter.startDate != ''">
+				<![CDATA[ and DATE_FORMAT(teacher_order_time, '%Y-%m-%d') >=  DATE_FORMAT(#{filter.startDate}, '%Y-%m-%d') ]]>
+			</if>
+			<if test="filter.endDate !=null and filter.endDate != ''">
+				<![CDATA[ and DATE_FORMAT(teacher_order_time, '%Y-%m-%d') <=  DATE_FORMAT(#{filter.endDate}, '%Y-%m-%d') ]]>
+			</if>
+		</trim>
+		order by teacher_order_time desc
+		<if test="filter.first != null and filter.last != null">
+            LIMIT #{filter.first}, #{filter.last}
+		</if>
+	</select>
+
 </mapper>

@@ -12,22 +12,28 @@ import com.saituo.order.entity.user.UserPeasHis;
  */
 public interface UserPeasHisDao {
 	/**
-	 * <p>Description: 新增数据</p>
+	 * <p>
+	 * Description: 新增数据
+	 * </p>
+	 * 
 	 * @Method: insert
 	 * @param UserGroupPointAccount
-	 * @return void 
-	 * @throws 
-	*/
-	public void insert (UserPeasHis userPeasHis);
+	 * @return void
+	 * @throws
+	 */
+	public void insert(UserPeasHis userPeasHis);
 	/**
-	 * <p>Description: 查询数据:根据客户编码查询豆豆变更情况集合</p>
+	 * <p>
+	 * Description: 查询数据:根据客户编码查询豆豆变更情况集合
+	 * </p>
+	 * 
 	 * @Method: query
 	 * @param UserGroupPointAccount
-	 * @return UserGroupPointAccount 
-	 * @throws 
-	*/
-	public List<UserPeasHis> queryList (UserPeasHis userPeasHis);
-	
+	 * @return UserGroupPointAccount
+	 * @throws
+	 */
+	public List<UserPeasHis> queryList(UserPeasHis userPeasHis);
+
 	/**
 	 * <p>
 	 * Description: 查询数据 客户豆豆历史表 分页
@@ -38,9 +44,9 @@ public interface UserPeasHisDao {
 	 * @return UserRecord
 	 * @throws
 	 */
-	public int count(@Param(value = "userPeasHis")UserPeasHis userPeasHis,
+	public int count(@Param(value = "userPeasHis") UserPeasHis userPeasHis,
 			@Param(value = "filter") Map<String, Object> filter);
-	
+
 	/**
 	 * <p>
 	 * Description: 查询数据: 客户豆豆历史表 集合
@@ -48,9 +54,16 @@ public interface UserPeasHisDao {
 	 * 
 	 * @Method: query
 	 * @param UserRecord
-	 * @return  List<UserRecord> 
+	 * @return List<UserRecord>
 	 * @throws
 	 */
 	public List<UserPeasHis> queryListbyUserId(@Param(value = "userPeasHis") UserPeasHis userPeasHis,
 			@Param(value = "filter") Map<String, Object> filter);
+
+	/**
+	 * 更新内勤兑换
+	 * 
+	 * @param filter
+	 */
+	public void update(@Param(value = "filter") Map<String, Object> filter);
 }

@@ -21,8 +21,8 @@
 	
 	
 	$('.num-point-input').change(function(){
-	
-		if(!isIntAndNotNull($(this).val())){
+		
+		if(!isFloatOrIntAndNotNull($(this).val())){
 			$(this).val(0);
 		}
 		
@@ -44,16 +44,18 @@
 			isContindue = false;
 			alert("对不起您的积分不够!");
 			$(this).val(oldpointnum);
+			return;
 		}
 		
 		var singPrice = $("#singlePrice_" +this.id).text();
 		var singleNum = $("#singleNum_"+ this.id).text();
 		var totalPrice = toDecimal(singPrice *singleNum);
 		
-		if(toDecimal(sum_point/100) >= toDecimal(totalPrice/2)){
+		if(toDecimal(pointNum) > toDecimal(totalPrice/2)){
 			isContinue = false;
 			alert("对不起您的积分不能超过总价的一半!");
 			$(this).val(oldpointnum);
+			return;
 		}
 		
 		if(isContinue){
@@ -66,7 +68,7 @@
 			var singleNum = $("#singleNum_"+ this.id).text();
 			
 			var totalPrice = toDecimal(singPrice *singleNum);
-			var pointForMoney = toDecimal(pointNum/100);
+			var pointForMoney = toDecimal(pointNum);
 			$('#totalprice_'+this.id).text(toDecimal(totalPrice-pointForMoney));
 			$('#hidden_totalprice_'+this.id).val(toDecimal(totalPrice-pointForMoney));
 		}
@@ -88,9 +90,8 @@
 			<@teacher_headquery startDate endDate userOrderId userInfoMap/>
 			<br>
 			<div class="panel_header">
-				<h3>积分总数: <span id="point_score">${(userGroupPointAccount.pointBalance)!0}<span></h3>
-				<h3>余额: ${(userGroupPointAccount.accountFee)!0}</h3>
-				<h3><span class="hidden_class" id="point_score_sta">${(userGroupPointAccount.pointBalance)!0}<span></h3>
+				<h3>积分总数: ¥<span id="point_score">${(userGroupPointAccount.pointBalance)!0}</span>， 余额: ¥${(userGroupPointAccount.accountFee)!0}</h3>
+				<h3><span class="hidden_class" id="point_score_sta">${(userGroupPointAccount.pointBalance)!0}</span></h3>
 			</div>
 			<form id="list-form" action="" method="post">
 		        <table width="100%" class="table_pro_header">
@@ -130,7 +131,7 @@
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 				                    	<td width="30">
-				                    		<input type="checkbox" name="userOrderAndproductOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}_${index}">
+				                    		<input type="checkbox" class="hidden_class" name="userOrderAndproductOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}_${index}">
 				                    	</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>

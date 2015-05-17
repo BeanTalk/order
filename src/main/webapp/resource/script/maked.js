@@ -50,6 +50,12 @@ var isIntAndNotNull = function(str) {
 	return !isNull(str) && isInt(str);
 }
 
+var isFloatOrIntAndNotNull = function(str) {
+	if (!isObj(str))
+		return 'undefined';
+	return !isNull(str) && !isNaN(str);
+}
+
 var isFloatAndNotNull = function(str) {
 	if (!isObj(str))
 		return 'undefined';
@@ -89,6 +95,26 @@ var isFloat = function(str){
 	var reg = /^(-?\d+)(\.\d+)?$/;
 	return reg.test(str);
 } 
+
+//制保留2位小数，如：2，会在2后面补上00.即2.00    
+var toDecimal2 = function(x) {    
+    var f = parseFloat(x);    
+    if (isNaN(f)) {    
+        return false;    
+    }    
+    var f = Math.round(x*100)/100;    
+    var s = f.toString();    
+    var rs = s.indexOf('.');    
+    if (rs < 0) {    
+        rs = s.length;    
+        s += '.';    
+    }    
+    while (s.length <= rs + 2) {    
+        s += '0';    
+    }    
+    return s;    
+}  
+
 
 $('.float-input').change(function(){
 	if(!isFloatAndNotNull($(this).val())){

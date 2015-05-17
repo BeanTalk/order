@@ -11,6 +11,7 @@
 			point_type ,
 			point_balance ,
 			register_number,
+			user_order_id,
 			accept_person,
 			accept_date 
         ) values (
@@ -18,6 +19,7 @@
           #{pointType},
           #{pointBalance},
           #{registerNumber},
+          #{userOrderId},
           #{acceptPerson},
           now()
         )
@@ -31,7 +33,8 @@
 			point_balance as pointBalance,
 			register_number as registerNumber,
 			accept_person as acceptPerson,
-			accept_date as acceptDate
+			accept_date as acceptDate,
+			user_order_id as userOrderId
 		from st_user_group_point_his
 		where group_id = #{userGroupPointHis.groupId}
 		order by accept_date desc
@@ -55,7 +58,8 @@
 			point_balance  as pointBalance,
 			register_number as registerNumber,
 			accept_person as acceptPerson,
-			accept_date as acceptDate
+			accept_date as acceptDate,
+			user_order_id as userOrderId
 		from st_user_group_point_his
 		where
 		register_number =#{registerNumber}

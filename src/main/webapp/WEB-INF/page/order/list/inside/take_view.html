@@ -40,7 +40,9 @@
 				            <th width="80" align="left">规格</th>
 				            <th width="100" align="left">目录价</th>
 				            <th width="100" align="left">订购价</th>
-				            <th width="80" align="left">数量</th>
+				             <th width="80" align="left">数量</th>
+				             <th width="100" align="left">实收价</th>
+				             <th width="100" align="left">使用积分</th>
 						</tr>
 					</tbody>
 				</table>
@@ -48,12 +50,12 @@
 					<tbody>
 						<#if page.content?size == 0>
 		                    <tr>
-		                        <td colspan="7">没有记录</td>
+		                        <td colspan="10">没有记录</td>
 		                    </tr>
 		                <#else>
 		                    <#list page.content as r>
 		                    	<tr class="user_order_toggle_tr" id="${r.userOrderReturn.userOrderId!""}">
-				                    <td colspan="7">
+				                    <td colspan="10">
 							            <table width="100%">
 							            	<th width="30">
 							            		<input type="checkbox" class="userOrderClass" name="userOrderIds" value="${r.userOrderReturn.userOrderId}">
@@ -77,7 +79,9 @@
 				                        <td width="80" align="center">${productOrderInfo.product.specValue!""}</td>
 							            <td width="100" align="center">${productOrderInfo.product.catalogFee!""}</td>
 							            <td width="100" align="center">${productOrderInfo.orderFee!""}</td>
-										<td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+							            <td width="80" align="center">${productOrderInfo.orderNum!1}</td>
+							            <td width="100" align="center">${productOrderInfo.pricePaidFee!""}</td>
+							            <td width="100" align="center">${productOrderInfo.pointBalanceFee!""}</td>
 				                    </tr>
 			                    </#list>
 			                    <#if r.addressReturn??>

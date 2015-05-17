@@ -12,14 +12,17 @@
 				<h3>我的积分</h3>
 			</div>
 			<div class="panel_body clearfix">
+				<div class="panel_header">
+					<h3>您当前的积分为: ¥<span id="point_score">${(userGroupPointAccount.pointBalance)!0}</span></h3>
+				</div>
 		        <table width="100%" class="table_s_header">
 					<tbody>
 						<tr>
 							<th width="20%"></th>
+							<th width="20%" align="center">创建时间</th>
+							<th width="20%" align="center">积分数量</th>
 				            <th width="20%" align="center">操作类型</th>
-				            <th width="20%" align="center">本次使用数量</th>
 				            <th width="20%" align="center">订单编号</th>
-				            <th width="20%" align="center">创建时间</th>
 						</tr>
 					</tbody>
 				</table>
@@ -33,10 +36,11 @@
 		                    <#list page.content as r>
 			                    <tr>
 									<td width="20%"></td>
-						            <td width="20%" align="center"><#if r.pointType == "1">累积积分<#elseif r.pointType == "2">使用积分<#elseif r.pointType == "3">回退积分</#if></td>
-									<td width="20%" align="center">${r.pointBalance!0}</td>
-									<td width="20%" align="center"> ${r.registerNumber!""}</td>
 									<td width="20%" align="center">${r.acceptDate!""}</td>
+									<td width="20%" align="center">${r.pointBalance!0}</td>
+						            <td width="20%" align="center"><#if r.pointType == "2">累积积分<#elseif r.pointType == "1">使用积分<#elseif r.pointType == "3">回退积分</#if></td>
+									<!--  <td width="20%" align="center"> ${r.registerNumber!""}</td>-->
+									<td width="20%" align="center"> ${r.userOrderId!""}</td>
 			                    </tr>
 		                    </#list>
 		                </#if>

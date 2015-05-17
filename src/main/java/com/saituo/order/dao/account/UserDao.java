@@ -13,6 +13,14 @@ import org.apache.ibatis.annotations.Update;
 public interface UserDao {
 
 	/**
+	 * 增加用户
+	 * 
+	 * @param mapData
+	 * @return
+	 */
+	public void addUserForRegister(Map<String, String> mapData);
+
+	/**
 	 * 获取用户
 	 * 
 	 * @param id

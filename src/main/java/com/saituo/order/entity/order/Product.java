@@ -36,7 +36,7 @@ public class Product {
 
 	// 最高限价折扣
 	private Double limitDiscount;
-
+	
 	public Integer getProductId() {
 		return productId;
 	}

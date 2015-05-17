@@ -5,7 +5,7 @@ import com.saituo.order.entity.order.Product;
 public class ProductOrder {
 
 	// 产品订单编码
-	private Long registerNumber;
+	private Integer registerNumber;
 	// 客户订单编码
 	private Long userOrderId;
 	// 受理地市
@@ -14,6 +14,14 @@ public class ProductOrder {
 	private Integer userId;
 	// 产品编码
 	private Long productId;
+	// 组id
+	private Integer groupId;
+	// 品牌
+	private Integer brandId;
+	// 货号
+	private String productNum;
+	// 产品名称
+	private String productName;
 	// 目录价
 	private Double orderFee;
 	// 订购数量
@@ -35,9 +43,13 @@ public class ProductOrder {
 	// 实收价
 	private Double pricePaidFee;
 	// 使用积分
-	private Long pointBalanceFee;
+	private Double pointBalanceFee;
 	// 总体价格＝单价＊个数
 	private Double totalPrice;
+	// 投诉状态
+	private Integer complainCd;
+	// 导师下单时间
+	private String teacherOrderTime;
 
 	public String getDeliveryDate() {
 		return deliveryDate;
@@ -52,16 +64,16 @@ public class ProductOrder {
 		this.pricePaidFee = pricePaidFee;
 	}
 
-	public Long getPointBalanceFee() {
+	public Double getPointBalanceFee() {
 		return pointBalanceFee;
 	}
-	public void setPointBalanceFee(Long pointBalanceFee) {
+	public void setPointBalanceFee(Double pointBalanceFee) {
 		this.pointBalanceFee = pointBalanceFee;
 	}
-	public Long getRegisterNumber() {
+	public Integer getRegisterNumber() {
 		return registerNumber;
 	}
-	public void setRegisterNumber(Long registerNumber) {
+	public void setRegisterNumber(Integer registerNumber) {
 		this.registerNumber = registerNumber;
 	}
 	public Long getUserOrderId() {
@@ -141,6 +153,42 @@ public class ProductOrder {
 	}
 	public void setTotalPrice(Double totalPrice) {
 		this.totalPrice = totalPrice;
+	}
+	public Integer getComplainCd() {
+		return complainCd;
+	}
+	public void setComplainCd(Integer complainCd) {
+		this.complainCd = complainCd;
+	}
+	public Integer getBrandId() {
+		return brandId;
+	}
+	public void setBrandId(Integer brandId) {
+		this.brandId = brandId;
+	}
+	public String getProductNum() {
+		return productNum;
+	}
+	public void setProductNum(String productNum) {
+		this.productNum = productNum;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	public Integer getGroupId() {
+		return groupId;
+	}
+	public void setGroupId(Integer groupId) {
+		this.groupId = groupId;
+	}
+	public String getTeacherOrderTime() {
+		return teacherOrderTime;
+	}
+	public void setTeacherOrderTime(String teacherOrderTime) {
+		this.teacherOrderTime = teacherOrderTime;
 	}
 
 }

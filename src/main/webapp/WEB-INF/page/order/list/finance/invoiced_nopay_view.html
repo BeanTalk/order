@@ -63,7 +63,7 @@
 					</tbody>
 				</table>
 		        <table width="100%" class="table_pro_body_t">
-					<tbody>
+					<tbody class="second_level">
 						<#if page.content?size == 0>
 		                    <tr>
 		                        <td colspan="10">没有记录</td>
@@ -86,9 +86,7 @@
 								<#list r.productOrderReturn as productOrderInfo>
 				                    <tr class="tr_${r.userOrderReturn.userOrderId!""}">
 										<td width="30">
-											<#if productOrderInfo.invoiceStatus == "2">
-												<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
-											</#if>
+											<input type="checkbox" name="productOrderIds" id="check_prodordid_${r.userOrderReturn.userOrderId}_${productOrderInfo.registerNumber}" value="${productOrderInfo.registerNumber}">
 										</td>
 				                        <td width="248" align="left">
 											<p><span class="pro_name">${productOrderInfo.product.productName!""}</span></p>
@@ -102,19 +100,19 @@
 										<td width="80" align="center">${productStates[productOrderInfo.statusCd]!""}</td>
 									    <td width="80" align="center">${billstates[productOrderInfo.invoiceStatus]!""}</td>
 										<td width="80" align="right">
-										<#if productOrderInfo.invoiceStatus == "2">
 								            <div id="${productOrderInfo.registerNumber}" class="button green medium fl single_business_btn">送发票</div>
-										</#if>
 										</td>
 				                    </tr>
 			                    </#list>
-			                    <#if r.addressReturn??>
-			                    	<@address_plugin r.addressReturn />
-			                    <#else>
-			                    	<tr>
-										<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
-									</tr>
-			                    </#if>
+			                    <#if r.productOrderReturn?size != 0>
+				                    <#if r.addressReturn??>
+				                    	<@address_plugin r.addressReturn />
+				                    <#else>
+				                    	<tr>
+											<td colspan="10" class="msg_Div" align="center">送货地址: 出现问题，请电话联系!</td>
+										</tr>
+				                    </#if>
+				                 </#if>
 		                    </#list>
 		                </#if>
 					</tbody>

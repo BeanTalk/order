@@ -20,13 +20,13 @@
 	</appender>
 
 	<!--log4jdbc -->
-	<logger name="jdbc.sqltiming" level="debug"/>
-	<logger name="com.ibatis" level="debug" />
-	<logger name="com.ibatis.common.jdbc.SimpleDataSource" level="debug" />
-	<logger name="com.ibatis.common.jdbc.ScriptRunner" level="debug" />
-	<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="debug" />
+	<logger name="jdbc.sqltiming" level="error"/>
+	<logger name="com.ibatis" level="error" />
+	<logger name="com.ibatis.common.jdbc.SimpleDataSource" level="error" />
+	<logger name="com.ibatis.common.jdbc.ScriptRunner" level="error" />
+	<logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" level="error" />
 	
-	<root level="INFO">
+	<root level="ERROR">
 		<appender-ref ref="console" />
 		<appender-ref ref="rollingFile" />
 	</root>

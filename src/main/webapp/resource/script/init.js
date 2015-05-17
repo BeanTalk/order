@@ -3,11 +3,9 @@ $(document).ready(function() {
 	// 行点击样式
 	$(".table_pro_body tr >td:not(:last-child)").click(function() {
 		if ($(this).parent().hasClass('selected')) {
-			$(this).parent().removeClass('selected').find(':checkbox').attr(
-					'checked', false);
+			$(this).parent().removeClass('selected');
 		} else {
-			$(this).parent().addClass('selected').find(':checkbox').attr(
-					'checked', true);
+			$(this).parent().addClass('selected');
 		}
 	});
 

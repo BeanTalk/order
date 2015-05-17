@@ -59,7 +59,7 @@ public class StockOrderService {
 
 		// 产品订单项列表
 		List<String> stockProductOrderList = (List<String>) filter.get("stockProductOrderList");
-		// 前台页面传的订购的产品订单串，格式：产品编号~产品品牌~备货价格～数量～供货商
+		// 前台页面传的订购的产品订单串，格式：产品编号~产品品牌~备货价格～数量
 		String prodcutString[];
 
 		StockProductOrder stockProductOrder = null;
@@ -88,7 +88,6 @@ public class StockOrderService {
 				stockProductOrder.setProductId(VariableUtils.typeCast(prodcutString[0], Integer.class)); // 产品编码
 				stockProductOrder.setBrandId(VariableUtils.typeCast(prodcutString[1], Integer.class));// 产品品牌
 				stockProductOrder.setStockFee(VariableUtils.typeCast(prodcutString[2], Double.class));// 备货价
-				stockProductOrder.setSupplierId(VariableUtils.typeCast(prodcutString[4], Integer.class));// 供应商编码
 				// 判断是否时客户订单转备货单
 				if (null == userOrderId && null == registerNumber) {
 					stockProductOrder.setIfUserOderTransition("0");// 是否客户订单转备货单：0.否
@@ -274,7 +273,7 @@ public class StockOrderService {
 		String statusCd = VariableUtils.typeCast(filter.get("statusCd"), String.class); // 备货产品单状态
 		// 备货 产品订单项列表
 		List<String> stockProductOrderList = (List<String>) filter.get("stockProductOrderList");
-		// 前台页面传的订购的产品订单串，格式：备货产品订单编码~重分配原因
+		// 前台页面传的订购的产品订单串，格式：备货产品订单编码~供应商编码~重分配原因
 		String prodcutString[];
 
 		if (stockProductOrderList != null && stockProductOrderList.size() > 0) {
@@ -284,8 +283,10 @@ public class StockOrderService {
 				prodcutString = productOrderString.split("~");
 				stockProductOrder = new StockProductOrder();
 				stockProductOrder.setStockNumber(VariableUtils.typeCast(prodcutString[0], Integer.class));// 备货产品订单编码
-				stockProductOrder.setStatusCd(statusCd);// 状态:1.待采购 2.已分配 3.已采购
-														// 4.已入库
+				stockProductOrder.setStatusCd(statusCd);// 状态:1.待采购;2.已分配;3.已采购;4.已入库
+				if (prodcutString[1] != null && prodcutString[1] != "") {
+					stockProductOrder.setSupplierId(VariableUtils.typeCast(prodcutString[1], Integer.class)); // 供应商编码
+				}
 				// 如果状态为待采购，则证明采购人员点击重新分配
 				if (statusCd.equals("1")) {
 					stockProductOrder.setIfAutoAllot("0"); // 是否自动分配:0.否 1.是
@@ -293,7 +294,7 @@ public class StockOrderService {
 					againAllot.setAcceptPerson(String.valueOf(buyerUserId));// 采购人
 					againAllot.setStockNumber(VariableUtils.typeCast(prodcutString[0], Integer.class));// 备货产品订单编码
 					if (prodcutString.length > 1) {
-						againAllot.setAgainAllotReason(VariableUtils.typeCast(prodcutString[1], String.class));// 重分配原因
+						againAllot.setAgainAllotReason(VariableUtils.typeCast(prodcutString[2], String.class));// 重分配原因
 					}
 					againAllotDao.insert(againAllot);
 				}

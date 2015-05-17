@@ -4,7 +4,7 @@ public class AuditHis {
 	//审批记录ID
 	private Long auditId;
 	//产品订单编码
-	private Long  registerNumber;
+	private Integer  registerNumber;
 	//审批人
 	private String auditPerson;
 	//审批时间
@@ -26,10 +26,10 @@ public class AuditHis {
 		this.auditId = auditId;
 	}
 
-	public Long getRegisterNumber() {
+	public Integer getRegisterNumber() {
 		return registerNumber;
 	}
-	public void setRegisterNumber(Long registerNumber) {
+	public void setRegisterNumber(Integer registerNumber) {
 		this.registerNumber = registerNumber;
 	}
 	public String getAuditPerson() {

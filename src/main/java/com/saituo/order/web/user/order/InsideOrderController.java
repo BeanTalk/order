@@ -25,7 +25,9 @@ import com.saituo.order.commons.enumeration.entity.UserOrderingState;
 import com.saituo.order.commons.page.Page;
 import com.saituo.order.commons.page.PageRequest;
 import com.saituo.order.entity.user.UserOrder;
+import com.saituo.order.entity.user.UserPeasHis;
 import com.saituo.order.service.account.AccountService;
+import com.saituo.order.service.gift.GiftService;
 import com.saituo.order.service.user.UserOrderService;
 import com.saituo.order.service.variable.SystemVariableService;
 
@@ -42,6 +44,9 @@ public class InsideOrderController {
 
 	@Autowired
 	private AccountService accountService;
+
+	@Autowired
+	private GiftService giftService;
 
 	/**
 	 * 内勤查看可议价订单
@@ -231,7 +236,7 @@ public class InsideOrderController {
 	}
 
 	/**
-	 * 内勤查看接单状态的订单
+	 * 内勤查看出单状态的订单
 	 * 
 	 * @param filter
 	 * @param productIds
@@ -261,6 +266,7 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("productStatusCd", ProductOrderState.UNSETTLED.getValue());
 			mapData.put(
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
@@ -354,6 +360,7 @@ public class InsideOrderController {
 			String userOrderId = String.valueOf(userOrder.getUserOrderId());
 			Map<String, Object> mapData = Maps.newHashMap();
 			mapData.put("userOrderId", userOrderId);
+			mapData.put("productStatusCd", ProductOrderState.DEALED.getValue());
 			mapData.put(
 					"userName",
 					systemVariableService.getUserByAreaIdData(String.valueOf(areaId),
@@ -369,13 +376,10 @@ public class InsideOrderController {
 
 		String groupId = VariableUtils.typeCast(filter.get("groupId"));
 		model.addAttribute("groupId", groupId);
-		model.addAttribute("startDate", filter.get("startDate"));
-		model.addAttribute("endDate", filter.get("endDate"));
-		model.addAttribute("userId", filter.get("userId"));
-		model.addAttribute("userOrderId", filter.get("userOrderId"));
 		if (StringUtils.isNotEmpty(groupId)) {
 			model.addAttribute("userInfoMap", accountService.findUserByOfficeId(groupId));
 		}
+		model.addAllAttributes(filter);
 	}
 
 	/**
@@ -417,13 +421,47 @@ public class InsideOrderController {
 	@RequestMapping(value = "return", method = RequestMethod.POST)
 	public String returnOrder(@RequestParam Map<String, Object> filter) {
 
-		String productOrderId = VariableUtils.typeCast(filter.get("productOrderId"), String.class);
+		String userOrderIdAndProductOrderId = VariableUtils.typeCast(filter.get("userOrderIdAndProductOrderId"),
+				String.class);
+		String productOrderId = StringUtils.substringAfter(userOrderIdAndProductOrderId, "_");
+		String userOrderId = StringUtils.substringBefore(userOrderIdAndProductOrderId, "_");
+
 		List<String> list = Lists.newArrayList();
 		list.add(productOrderId);
 		filter.put("productOrderList", list);
+		filter.put("userOrderId", userOrderId);
 
 		userOrderService.doProductOrderReturn(filter);
 		return "redirect:/order/list/all_order";
+	}
+
+	@RequestMapping(value = "exchange_view", method = RequestMethod.GET)
+	public void exChangeView(PageRequest pageRequest, @RequestParam Map<String, Object> filter, Model model) {
+
+		String areaId = VariableUtils.typeCast(SessionVariable.getCurrentSessionVariable().getAreaId(), String.class);
+		filter.putAll(pageRequest.getMap());
+		int count = giftService.getUserPeasHisCount(filter);
+		List<UserPeasHis> peasList = giftService.getUserPeasHisList(filter);
+		Page<UserPeasHis> page = new Page<UserPeasHis>(pageRequest, peasList, count);
+		model.addAttribute("giftMaps", giftService.getGiftIdAndNameMap());
+		model.addAttribute("userInfoMap", accountService.findAllofUserByAreaId(areaId));
+		model.addAttribute("offices", systemVariableService.getGroupNameByAreaIdAndGroupIdDataToShow(SessionVariable
+				.getCurrentSessionVariable().getAreaId()));
+		model.addAttribute("page", page);
+		model.addAllAttributes(filter);
+	}
+
+	/**
+	 * 内勤兑换
+	 * 
+	 * @param filter
+	 * @param productIds
+	 * @return
+	 */
+	@RequestMapping(value = "exchange", method = RequestMethod.POST)
+	public String exchange(@RequestParam Map<String, Object> filter) {
+		giftService.update(filter);
+		return "redirect:/order/list/inside/exchange_view";
 	}
 
 }

@@ -97,7 +97,7 @@ public class RecordCardController {
 
 		model.addAttribute("customerOrderingList", recordCardService.getProductListFromBag(userId));
 		model.addAttribute("addressList", addressService.queryList(userId));
-		model.addAttribute("agents", recordCardService.getAgentList());
+		model.addAttribute("agents", recordCardService.getAgentList(true));
 	}
 
 	@RequestMapping(value = "save", method = RequestMethod.POST)

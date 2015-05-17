@@ -47,7 +47,7 @@ public class SystemVariableService {
 
 	public void init() {
 		initUserByOfficeIdData();
-		initUserByAreaIdData();
+		// initUserByAreaIdData();
 	}
 
 	public Map<String, String> getAreaIdAndName() {
@@ -149,36 +149,38 @@ public class SystemVariableService {
 	 * 
 	 * @param areaId
 	 * @return
+	 * 
+	 *         private void initUserByAreaIdData() {
+	 * 
+	 *         Map<String, String> mapCond = Maps.newConcurrentMap();
+	 *         List<Map<String, Object>> userList =
+	 *         userDao.findAllofUserByAreaId(mapCond);
+	 * 
+	 *         Map<String, Map<String, String>> mapRes = Maps.newHashMap(); for
+	 *         (Map<String, Object> mapData : userList) { String areaId =
+	 *         String.valueOf(mapData.get("areaId")); Map<String, String>
+	 *         mapInternalData = mapRes.get(areaId); if (mapInternalData ==
+	 *         null) { mapInternalData = Maps.newHashMap(); }
+	 *         mapInternalData.put(String.valueOf(mapData.get("id")),
+	 *         String.valueOf(mapData.get("name"))); mapRes.put(areaId,
+	 *         mapInternalData); }
+	 * 
+	 *         for (Entry<String, Map<String, String>> entry :
+	 *         mapRes.entrySet()) {
+	 *         orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, entry.getKey(),
+	 *         entry.getValue()); } }
 	 */
-	private void initUserByAreaIdData() {
-
-		Map<String, String> mapCond = Maps.newConcurrentMap();
-		List<Map<String, Object>> userList = userDao.findAllofUserByAreaId(mapCond);
-
-		Map<String, Map<String, String>> mapRes = Maps.newHashMap();
-		for (Map<String, Object> mapData : userList) {
-			String areaId = String.valueOf(mapData.get("areaId"));
-			Map<String, String> mapInternalData = mapRes.get(areaId);
-			if (mapInternalData == null) {
-				mapInternalData = Maps.newHashMap();
-			}
-			mapInternalData.put(String.valueOf(mapData.get("id")), String.valueOf(mapData.get("name")));
-			mapRes.put(areaId, mapInternalData);
-		}
-
-		for (Entry<String, Map<String, String>> entry : mapRes.entrySet()) {
-			orderCacheService.put(AREA_TO_USER_ID_NAME_CACHE, entry.getKey(), entry.getValue());
-		}
-	}
 
 	public String getUserByAreaIdData(String areaId, String userId) {
 
-		Map<String, Object> mapData = (Map<String, Object>) orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE,
-				String.valueOf(areaId));
-
-		if (mapData != null && StringUtils.isNotEmpty(String.valueOf(mapData.get(userId)))) {
-			return String.valueOf(mapData.get(userId));
-		}
+		// Map<String, Object> mapData = (Map<String, Object>)
+		// orderCacheService.get(AREA_TO_USER_ID_NAME_CACHE,
+		// String.valueOf(areaId));
+		//
+		// if (mapData != null &&
+		// StringUtils.isNotEmpty(String.valueOf(mapData.get(userId)))) {
+		// return String.valueOf(mapData.get(userId));
+		// }
 
 		Map<String, String> mapTemp = Maps.newHashMap();
 		mapTemp.put("areaId", String.valueOf(areaId));

@@ -6,6 +6,8 @@ public class UserPeasHis {
 	private Long peasId;
 	// 客户编码
 	private String userId;
+	//
+	private Integer areaId;
 	// 操作类型:1.累积积分2.使用积分
 	private String peasType;
 	// 本次使用或累计豆豆数
@@ -18,7 +20,14 @@ public class UserPeasHis {
 	private String acceptDate;
 	// 礼品ID
 	private Long giftId;
-	
+	private Integer ifExchange;
+
+	public Integer getAreaId() {
+		return areaId;
+	}
+	public void setAreaId(Integer areaId) {
+		this.areaId = areaId;
+	}
 	public Long getGiftId() {
 		return giftId;
 	}
@@ -69,4 +78,11 @@ public class UserPeasHis {
 	public void setAcceptDate(String acceptDate) {
 		this.acceptDate = acceptDate;
 	}
+	public Integer getIfExchange() {
+		return ifExchange;
+	}
+	public void setIfExchange(Integer ifExchange) {
+		this.ifExchange = ifExchange;
+	}
+
 }

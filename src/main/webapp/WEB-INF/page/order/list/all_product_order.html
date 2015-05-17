@@ -1,0 +1,153 @@
+<#include "*/basic/default.html"/>
+
+<#macro head>
+<script type="text/javascript">
+	$("#query_btn").click(function(event){
+		$("#head_query_form").attr("action", "${viewURL}");
+		$("#head_query_form").submit();
+	});
+	
+</script>
+</#macro>
+
+<#macro body>
+
+<#assign viewURL = "${base}/order/list/all_product_order">
+
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+			<h3>产品统计</h3>
+		</div>
+		<div class="panel_body clearfix">
+			<form id="head_query_form">
+				<table width="100%" height='40px'>
+					<tr>
+						<td width="60" nowrap="nowrap" align='left'>订单状态</td>
+			            	<td width='80'><select name="statusCd" id="statusCd" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list productStates?keys as key>  
+					            	<option value="${key}" <#if key == statusCd!"">selected</#if>>${productStates[key]!""}</option>
+								</#list> 
+		                    </select>
+			            </td>
+			            <td width="60" nowrap="nowrap" >货号</td>
+			            <td width="70" nowrap="nowrap"><input type="text" id="productNum" name="productNum" value="${productNum!""}"></td>
+			            <td width="60" nowrap="nowrap" >产品名称</td>
+			            <td width="70" nowrap="nowrap"><input type="text" id="productName" name="productName" value="${productName!""}"></td>
+			            <td width="60" nowrap="nowrap">品牌</td>
+			            	<td width='80'><select name="brandId" id="brandId" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list brands?keys as key>  
+					            	<option value="${key}" <#if key == brandId!"">selected</#if>>${brands[key]!""}</option>
+								</#list> 
+		                    </select>
+			            </td>
+			            <td nowrap="nowrap">
+			            	<div id="query_btn" class="button blue ">搜索</div>
+			            </td>
+			        </tr>
+				 </table>
+				 <table width="100%">
+			        <tr>
+				        <td width="60" nowrap="nowrap" >开始时间</td>
+			            <td width="80" nowrap="nowrap" align='left'><input name="startDate" type="text" class="datepicker" size="12" value="${startDate!""}"></td>
+			            <td width="60" nowrap="nowrap" >结束时间</td>
+			            <td width="80" nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
+			            <td width="60" nowrap="nowrap" align='left'>审批状态</td>
+			            	<td width='80'><select name="auditCd" id="auditCd" style='width:90px'>
+		                        <option value="">请选择...</option>
+		                        <#list auditStatues?keys as key>  
+					            	<option value="${key}" <#if key == auditCd!"">selected</#if>>${auditStatues[key]!""}</option>
+								</#list> 
+		                    </select>
+			            </td>
+			            <#if role=="teacher">
+				            <td width="60" nowrap="nowrap" >订购人</td>
+				            <td width='80' >
+				            	<select name="userId" id="userId" style='width:90px'>
+				            		<#if userInfoMap?size == 0>
+			                        	<option value="">请选择...</option>
+			                        <#else>
+			                        	<#list userInfoMap?keys as key>  
+			                        		<option value="${key}" <#if key == userId!"">selected</#if>> ${userInfoMap[key]!""}</option>
+			                        	</#list>
+			                        </#if>
+			                    </select>
+				            </td>
+				        </#if>
+			            <#if role=="internal">
+				            <td width="60" nowrap="nowrap" >课题组</td>
+				            	<td align='left' width='140' align='left'><select name="groupId" id="groupId" style='width:180px'>
+			                        <option value="">请选择...</option>
+			                        <#list offices?keys as key>  
+						            	<option value="${key}" <#if key == groupId!"">selected</#if>>${offices[key]!""}</option>
+									</#list> 
+			                    </select>
+				            </td>
+				            <td width="60" nowrap="nowrap">订购人</td>
+				            	<td align='left' width="80"><select name="userId" id="userId" style='width:100px'>
+				            		<option value="">请选择...</option>
+				            		<#if userId?? && userId != "">
+				            			<option value="${userId}" selected>${userInfoMap[userId]!""}</option>
+				            		</#if>
+			                    </select>
+				            </td>
+				        </#if>
+				   </tr>
+				</table>
+			</form>
+			<br>
+			<form id="list-form" action="" method="post">
+		        <table width="100%" class="table_pro_header">
+					<tbody>
+						<tr>
+				            <th width="180" align="left">产品名称</th>
+				            <th width="80" align="left">货号</th>
+				            <th width="120" align="left">品牌</th>
+				            <th width="100" align="left">订购单价</th>
+				            <th width="50" align="left">数量</th>
+				            <th width="60" align="left">使用积分</th>
+				            <th width="80" align="left">实收价</th>
+				            <th width="80" align="left">产品状态</th>
+				            <th width="80" align="left">审批状态</th>
+				            <th width="80" align="left">下单时间</th>
+						</tr>
+					</tbody>
+				</table>
+		        <table width="100%" class="table_pro_body_t">
+					<tbody>
+						<#if page.content?size == 0>
+		                    <tr>
+		                        <td colspan="11">没有记录</td>
+		                    </tr>
+		                <#else>
+		                    <#list page.content as r>
+		                    	<tr height="30">
+									<td width="30">
+									</td>
+			                        <td width="180" >
+										<span class="pro_name">${r.productName!""}</span>
+									</td>
+			                        <td width="80" align="left">${r.productNum!""}</td>
+			                        <td width="120" align="left">${brands[r.brandId?string]!""}</td>
+						            <td width="100" align="left">${r.orderFee!""}</td>
+									<td width="50" align="left">${r.orderNum!1}</td>
+									<td width="60" align="left">${r.pointBalanceFee!0}</td>
+									<td width="80" align="left"><#if r.pricePaidFee??>${r.pricePaidFee!0}<#else>${r.totalPrice!0}</#if></td>
+									<td width="80" align="left">${productStates[r.statusCd]!""}</td>
+						            <td width="80" align="left">${auditStatues[r.auditCd]!""}</td>
+						            <td width="80" align="left">${r.teacherOrderTime!""}</td>
+			                    </tr>
+		                    </#list>
+		                </#if>
+					</tbody>
+				</table>
+				<p class="pageBar"></p>
+		    	<#assign parameterMap = { "startDate": "${startDate!}", "endDate": "${endDate!}", "productNum" : "${productNum!}", "productName": "${productName!}", "brandId": "${brandId!}", "auditCd": "${auditCd!}", "statusCd" :"${statusCd!}", "userId": "${userId!}", "groupId" : "${groupId!}"}>
+				<@pager page "${viewURL}" parameterMap />
+			</form>
+	 	</div>
+	</div>
+</div>
+</#macro>

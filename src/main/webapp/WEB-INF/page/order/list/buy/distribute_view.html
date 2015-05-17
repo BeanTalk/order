@@ -64,10 +64,6 @@
 		            <td width="60" nowrap="nowrap" >结束时间</td>
 		            <td width="80" nowrap="nowrap" align='left'><input name="endDate" type="text" class="datepicker" size="12" value="${endDate!""}"></td>
 		            <td>&nbsp;</td>
-		        </tr>
-			 </table>
-			 <table width="100%">
-		        <tr>
 		            <td width="60" nowrap="nowrap">备货人</td>
 		            <td width='140'>
 		            	<select name="userId" id="userId" style='width:140px'>
@@ -89,10 +85,10 @@
                     	</select>
 	            	</td>
 			        <td nowrap="nowrap">
-		            	<div id="query_btn" class="button white medium">搜索</div>
+		            	<div id="query_btn" class="button blue large">搜索</div>
 		            </td>
-			   </tr>
-			</table>
+		        </tr>
+			 </table>
 		</form>
 		<br>
 	    <form id="buycard-list-form" method="post">
@@ -100,7 +96,6 @@
 		    	<table width="100%" class="table_pro_header">
 		      		<tbody>
 		          		<tr>
-							<th width="30"><input type="checkbox" id="all_checkbox" name="all_checkbox"></th>
 							<th width="60">备货号</th>
 							<th width="218">产品</th>
 							<th width="80">备货价</th>
@@ -122,9 +117,6 @@
 	                	<#else>
 	                    <#list page.content as r>
 							<tr>
-								<td width="30">
-									<input type="checkbox" name="stockNumbers" id="check_stocknumber_${r.stockNumber}" value="${r.stockNumber}">
-								</td>
 								<td width="60" align="center">${r.stockNumber}</td>
 								<td width="218" align="left">
 									<p><span class="pro_name">${r.product.productName!""}</span></p>
@@ -133,10 +125,14 @@
 								</td>
 					            <td width="80" align="center">${r.stockFee!""}</td>
 					            <td width="80" align="center">${r.orderNum!""}</td>
-					            <td width="80" align="center">${supplyIdAndName[r.supplierId?string]!""}</td>
+					            <td width="80" align="center"><#if r.supplierId??>${supplyIdAndName[r.supplierId?string]!""}<#else></#if></td>
 					            <td width="80" align="center">${areaIdAndName[r.areaId?string]!""}</td>
 		                        <td width="80" align="center">${userIdAndName[r.userId?string]!""}</td>
-		                        <td width="80" align="center">${userIdAndName[r.buyerUserId?string]!""}</td>
+		                        <td width="80" align="center">
+		                        <#if r.buyerUserId??>
+		                        	${userIdAndName[r.buyerUserId?string]!""}
+		                        </#if>
+		                        </td>
 								<td width="100" align="center">
 									<div id="${r.stockNumber}" class="button green medium fl D-operation reasonInfo_btn">原因</div>
 									<div id="${r.stockNumber}" class="button orange medium fl D-operation distribute_btn">分配</div>
