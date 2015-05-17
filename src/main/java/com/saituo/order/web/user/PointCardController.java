@@ -61,13 +61,6 @@ public class PointCardController {
 	public @ResponseBody Page<Gift> getGiftList(PageRequest pageRequest, @RequestParam Map<String, Object> filter,
 			Model model) {
 
-		UserBeans userBeans = giftService.getUserBeans();
-		Long beansNum = 0L;
-		if (userBeans != null) {
-			beansNum = userBeans.getBeansNum();
-		}
-
-		filter.put("beansNum", beansNum);
 		filter.putAll(pageRequest.getMap());
 		int count = giftService.getGiftCount(filter);
 		List<Gift> giftList = giftService.getGiftList(filter);

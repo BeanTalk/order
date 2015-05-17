@@ -10,15 +10,18 @@
 </#macro>
 
 <#macro body>
-<div class="containerPx clearfix">
-	<@shiro.guest>
-	<div class="grid1 m_t">
-		<div class="subnav">
-			<p class="subnav-header">产品中心</p>
-		</div>
+<@shiro.guest>
+<div class="grid1 m_t">
+	<div class="subnav">
+		<p class="subnav-header">产品中心</p>
 	</div>
-	</@shiro.guest>
-	<div class="grid2 m_t">
+</div>
+</@shiro.guest>
+<div class="grid2 m_t">
+	<div class="panel">
+		<div class="panel_header">
+			<h3>搜索信息</h3>
+		</div>
 		<div class="panel_body clearfix">
         	<table width="100%" class="table_pro_header">
           		<tbody>

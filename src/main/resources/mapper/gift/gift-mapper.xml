@@ -27,9 +27,6 @@
 			<if test="gift.giftStatus !=null and gift.giftStatus != ''">
 				and gift_status =#{gift.giftStatus}
 			</if>
-			<if test="filter.beansNum !=null and filter.beansNum != ''">
-				<![CDATA[ and need_pea <= #{filter.beansNum} ]]>
-			</if>
 		</trim> 
 		order by create_date desc
 		<if test="filter.first != null and filter.last != null">
@@ -47,9 +44,6 @@
 			</if>
 			<if test="gift.giftStatus !=null and gift.giftStatus != ''">
 				and gift_status =#{gift.giftStatus}
-			</if>
-			<if test="filter.beansNum !=null and filter.beansNum != ''">
-				<![CDATA[ and need_pea <= #{filter.beansNum} ]]>
 			</if>
 		</trim> 
 	</select>
