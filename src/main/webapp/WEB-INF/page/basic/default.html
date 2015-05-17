@@ -45,7 +45,9 @@
 	<#-- 未登录显示 -->
     <@shiro.notAuthenticated>
     	<#include "./header.html" />
-		<@body/>
+    	<div class="containerPx clearfix">
+			<@body/>
+		</div>
 	</@shiro.notAuthenticated>
 	
 	<#-- 已登录显示 -->
